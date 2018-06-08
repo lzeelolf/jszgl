@@ -1,0 +1,255 @@
+html,body,*{
+    margin: 0;
+    padding: 0;
+    font: 16px '微软雅黑';
+    color: #555;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+}
+body{
+    overflow-x: hidden;
+    overflow-y: visible;
+    background-color: #eee;
+    position: relative;
+    min-height: 1000px;
+}
+a,a:hover,a:active,a:visited{
+    text-decoration: none;
+}
+#loadingPic{
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: 0.4;
+    position: fixed;
+    z-index: 9999;
+    display: none;
+}
+#loadingPic p{
+    position: absolute;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+    width: 200px;
+    height: 60px;
+    line-height: 60px;
+    top: 50%;
+    left: 50%;
+    margin-top: -75px;
+    margin-left: -100px;
+}
+#bigContent{
+    width: 96%;
+    background-color: #eee;
+    position: absolute;
+    left: 3%;
+    top: 40px;
+}
+#bigContent #leftContent{
+    float: left;
+    width: 12%;
+    min-height: 600px;
+    text-align: center;
+    background-color: white;
+    box-shadow: 0 0 3px 1px #999 ;
+    border-radius: 2px;
+}
+#bigContent #leftContent .welcome{
+    height: 150px;
+    line-height: 150px;
+    font-weight: bold;
+}
+#bigContent #leftContent .name{
+    height: 50px;
+    line-height: 50px;
+}
+#bigContent #leftContent #buttonList{
+    margin-top: 30px;
+    list-style-type: none;
+}
+#bigContent #leftContent #buttonList li{
+    text-align: center;
+    font-size: 12px;
+    height: 50px;
+    line-height: 50px;
+    cursor: pointer;
+    border-top: solid #ccc 1px;
+}
+#bigContent #leftContent #buttonList li:last-child{
+    border-bottom: solid #ccc 1px;
+}
+#bigContent #leftContent #buttonList li:hover{
+    font-weight: bold;
+    background-color: #bbb;
+    color: white;
+    transition: 0.3s;
+}
+#bigContent #rightContent{
+    float: left;
+    width: 80%;
+    margin-left: 4%;
+    min-height: 600px;
+    background-color: white;
+    box-shadow: 0 0 3px 1px #999 ;
+    border-radius: 2px;
+}
+#bigContent #rightContent h1{
+    border-bottom: 2px solid #ddd;
+    text-align: center;
+    height: 80px;
+    line-height: 80px;
+    font-size: 30px;
+}
+#bigContent #rightContent .operateContent{
+    width: 95%;
+    min-height: 460px;
+    padding-bottom: 40px;
+    margin: 30px 0 0 2.5%;
+}
+#bigContent #rightContent .operateContent>div{
+    background-color: #eee;
+    width: 100%;
+    min-height: 460px;
+    text-align: center;
+    display: none;
+}
+#bigContent #rightContent .operateContent #appendContainer{
+    width: 100%;
+}
+#bigContent #rightContent .operateContent #queryCardContainer{
+
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner{
+    height: 30px;
+    line-height: 30px;
+    overflow: hidden;
+    padding-left: 130px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner label{
+    height: 30px;
+    line-height: 30px;
+    margin: 0 15px 0 5px;
+    float: left;
+    font-size: 14px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner input{
+    margin: 9px 0 0 0 ;
+    float: left;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner #queryCardButton{
+    width: 60px;
+    height: 26px;
+    line-height: 26px;
+    margin-top: 2px;
+    font-size: 14px;
+    float: left;
+    overflow: hidden;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner #htmlToXls{
+    width: 100px;
+    height: 26px;
+    line-height: 26px;
+    margin-top: 2px;
+    font-size: 14px;
+    float: left;
+    overflow: hidden;
+    margin-left: 40px;
+    visibility: hidden;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #moreButtonBanner{
+    height: 30px;
+    overflow: hidden;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #moreButtonBanner #more{
+    height: 30px;
+    width: 60px;
+    float: left;
+    font-size: 12px;
+    margin-left: 18px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner{
+    height: 100px;
+    padding: 0 28px;
+    margin-top: 10px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay{
+    height: 100px;
+    overflow: hidden;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay #controlArea{
+    float: left;
+    height: 90px;
+    width: 70px;
+    padding-top: 10px;
+    border-right: dashed 1px #333;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay #controlArea span{
+    display: block;
+    height: 22px;
+    width: 70px;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay #controlArea span input{
+    float: left;
+    margin-top: 2px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay #controlArea span label{
+    float: left;
+    font-size: 12px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay>#inputArea{
+    width: 617px;
+    float: left;
+    height: 70px;
+    overflow: hidden;
+    padding-top: 30px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay #inputArea>div{
+    float: left;
+    margin: 5px 3px;
+    height: 20px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay #inputArea>div label{
+    font-size: 12px;
+    float: left;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay #inputArea>div input{
+    float: left;
+    margin-top: 2px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent{
+    overflow-x: auto;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table{
+    background-color: white;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr{
+    height: 24px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr>th:last-child,td:last-child{
+    border-right: 1px solid #333;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr th{
+    background-image: none;
+    background-origin: content-box;
+    background-position-y: -3px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent th,td{
+    height: 24px;
+    line-height: 24px;
+    padding: 0 15px 0 15px;
+    border: 1px solid #333;
+    border-right: none;
+    font-size: 14px!important;
+    white-space: nowrap;
+    user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #cardPageContent{
+    display: none;
+    margin-top: 20px;
+    padding: 10px 0 10px 0;
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>洛阳机务段机车驾驶证管理系统</title>
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+<div id="loadingPic">
+    <p>正在连接,请稍候...</p>
+</div>
+<div id="bigContent">
+    <div id="leftContent">
+        <p class="welcome">欢迎</p>
+        <p class="name"></p>
+        <ul id="buttonList">
+            <li class="appendButton">证件添加</li>
+            <li class="queryButton">证件查询</li>
+            <li class="checkButton">申请审核</li>
+            <li class="giveOutButton">证件发放</li>
+            <li class="cancelButton">证件注销</li>
+            <li class="logOutButton">退出系统</li>
+        </ul>
+    </div>
+    <div id="rightContent">
+        <h1>洛阳机务段机车驾驶证管理系统</h1>
+        <div class="operateContent">
+            <div id="appendContainer">
+                <div id="checkBoxBand">
+                    <input type="button" value="单个添加">
+                    <input type="button" value="批次添加">
+                </div>
+            </div>
+            <div id="queryCardContainer">
+                <div id="queryCardBanner">
+                    <input type="checkbox" id="lyyy"><label for="lyyy">洛阳运用</label><input type="checkbox" id="lxyy"><label for="lxyy">洛襄运用</label><input type="checkbox" id="lbyy"><label for="lbyy">洛北运用</label><input type="checkbox" id="sxyy"><label for="sxyy">三西运用</label><button id="queryCardButton">查询</button><button id="htmlToXls">生成Excel文件</button>
+                </div>
+                <div id="moreButtonBanner">
+                    <button id="more">更多...</button>
+                </div>
+                <div id="querySelectBanner">
+                    <div id="whatToDisplay">
+                        <div id="controlArea">
+                            <span>查看：</span>
+                            <span><input type="checkbox" id="all"><label for="all">全选</label></span>
+                            <span><input type="checkbox" id="allNo"><label for="allNo">全不选</label></span>
+                        </div>
+                        <div id="inputArea">
+
+                        </div>
+                    </div>
+                    <div id="whatToSelect">
+                        <div>选取：</div>
+                        <div id="selectArea">
+                            <select name="column" id="column">
+                                <option value="archivesId">档案号</option>
+                                <option value="payId">工资号</option>
+                                <option value="age">年龄</option>
+                                <option value="fsjDate">副司机初次领证日期</option>
+                                <option value="fsjRemark">副司机批准文号</option>
+                                <option value="fsjDriveCode">副司机准驾类型代码</option>
+                                <option value="fsjDriveType">副司机准驾类型</option>
+                                <option value="sjDate">司机初次领证日期</option>
+                                <option value="sjRemark">司机批准文号</option>
+                                <option value="sjDriveCode">司机准驾类型代码</option>
+                                <option value="sjDriveType">司机准驾类型</option>
+                                <option value="deadline">证件有效期剩余时间</option>
+                                <option value="status">证件状态</option>
+                            </select>
+                            <div id="selectTypeDiv"></div>
+                            <div id="valueDiv"></div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <div id="queryCardContent">
+                </div>
+                <div id="cardPageContent">
+                    <span id="home">首页</span>
+                    <span id="prev">上一页</span>
+                    <span>第</span>
+                    <span id="cur"></span>
+                    <span>页&nbsp;/</span>
+                    <span>共</span>
+                    <span id="total"></span>
+                    <span>页</span>
+                    <span id="next">下一页</span>
+                    <span id="last">末页</span>
+                    <span>转到：第</span>
+                    <select name="selectPage" id="selectPage"></select>
+                    <span>页</span>
+                </div>
+            </div>
+            <div id="checkContainer">
+                审核申请
+            </div>
+            <div id="giveOutContainer">
+                证件发放
+            </div>
+            <div id="cancelContainer">
+                证件注销
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="../js/demo.js"></script>
+<script type="text/javascript" src="../js/jquery-1.11.3.js"></script>
+<script type="text/javascript" src="../js/jsonExportExcel.min.js"></script>
+<script type="text/javascript" src="../js/base_64.js"></script>
+<script type="text/javascript" src="../js/Funcs.js"></script>
+<script type="text/javascript" src="../js/index1.js"></script>
+</body>
+</html>
