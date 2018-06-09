@@ -124,7 +124,7 @@ a,a:hover,a:active,a:visited{
     height: 30px;
     line-height: 30px;
     overflow: hidden;
-    padding-left: 130px;
+    padding-left: 25%;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner label{
     height: 30px;
@@ -219,6 +219,26 @@ a,a:hover,a:active,a:visited{
     float: left;
     margin-top: 2px;
 }
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect {
+    overflow: hidden;
+    width: 100%;
+    margin-top: 20px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect>div{
+    float: left;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect>div:first-child{
+    width: 70px;
+    text-align: center;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea{
+    width: 90%;
+    overflow: hidden;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea>select,#selectArea>div{
+    float: left;
+    margin-left: 30px;
+ }
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent{
     overflow-x: auto;
 }

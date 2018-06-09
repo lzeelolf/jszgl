@@ -1,7 +1,7 @@
 $(document).ready(function(){
     var queryCardButton = document.getElementById("queryCardButton");
     initialScreen();
-    loginStatus();
+    ///loginStatus();
     //证件查询按钮的事件,调用displayQueryForm函数
     //eventBound(queryCardButton,'click',displayQueryForm);
     //给左边的按钮添加事件，更新右边容器的内容
@@ -137,4 +137,12 @@ function appendValue(){
         }
         $("#valueDiv").empty().append(_html)
 }
+lockQueryRange()
+//根据用户的权限及所属车间，限制用户的查询只能在这个车间:如果是高级用户，则不受限制
+    function lockQueryRange(){
+        var power = sessionGet('power');
+        //调试，周一取数据
+        $("#lyyy").attr('checked','checked');
+        $("#queryCardBanner").children('input').attr("disabled",'disabled')
+    }
 });
