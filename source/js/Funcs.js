@@ -82,55 +82,41 @@ function loginStatus(){
 
 
 //显示证件查询结果(index.html)
-//2018.6.7，将以下函数注释，改为测试函数testNewQuery()
-// function displayQueryForm(){
-//     var checkBoxArray = document.getElementById("queryCardBanner").getElementsByTagName("input");
-//     var data ='';
-//     for(var i =0,j=0;i<4;i++){
-//         if(checkBoxArray[i].checked){
-//             //例如“洛阳运用&洛襄运用&三西运用&”
-//             data+=  $("#queryCardBanner>label:eq("+i+")").text()+'&';
-//             j+=1;
-//         }
-//     }
-//     //验证用户没有空选，把字符串最后一个&去掉,发送ajax请求后台处理数据
-//     if(data!==''){
-//         data = data.substr(0,data.length-1);
-//         var ajaxTimeOut = $.ajax({
-//             url: "../../../index.php",
-//             type:"POST",
-//             timeout:8000,
-//             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-//             data:{key:data,target:'department',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
-//             tableName:'jbxx',column:'*',order:' '},
-//             dataType:'json',
-//             success:function(data){
-//                 if(data.success === 1){
-//                     //把使用过的多余属性删除，便于处理数据
-//                     delete data['success'];
-//                     displayQueryTable(data,document.getElementById('queryCardContent'),'pageMode');
-//                     //生成EXCEL按钮出现
-//                     $("#htmlToXls").css("visibility",'visible')
-//                 }else{
-//                     alert('您查询的信息不存在');
-//                 }
-//             },
-//             beforeSend:function(){
-//                 loadingPicOpen();
-//                 testSession(userSessionInfo);
-//             },
-//             complete: function (XMLHttpRequest,status) {
-//                 loadingPicClose();
-//                 if(status === 'timeout') {
-//                     ajaxTimeOut.abort();    // 超时后中断请求
-//                     alert('网络超时，请检查网络连接');
-//                 }
-//             }
-//         })
-//     }else{
-//         alert('请至少选择一个车间')
-//     }
-// }
+function displayQueryForm(){
+    checkQueryRequest()
+        // var ajaxTimeOut = $.ajax({
+        //     url: "../../../index.php",
+        //     type:"POST",
+        //     timeout:8000,
+        //     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+        //     data:{key:data,target:'department',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+        //     tableName:'jbxx',column:'*',order:' '},
+        //     dataType:'json',
+        //     success:function(data){
+        //         if(data.success === 1){
+        //             //把使用过的多余属性删除，便于处理数据
+        //             delete data['success'];
+        //             displayQueryTable(data,document.getElementById('queryCardContent'),'pageMode');
+        //             //生成EXCEL按钮出现
+        //             $("#htmlToXls").css("visibility",'visible')
+        //         }else{
+        //             alert('您查询的信息不存在');
+        //         }
+        //     },
+        //     beforeSend:function(){
+        //         testSession(userSessionInfo);
+        //         loadingPicOpen();
+        //         checkQueryRequest()
+        //     },
+        //     complete: function (XMLHttpRequest,status) {
+        //         loadingPicClose();
+        //         if(status === 'timeout') {
+        //             ajaxTimeOut.abort();    // 超时后中断请求
+        //             alert('网络超时，请检查网络连接');
+        //         }
+        //     }
+        // })
+}
 
 
 //displayQueryTable函数，用来显示查询结果的表格(table)并添加内容   最好做成可以通用的函数，根据传入数据的不同来改变
@@ -528,8 +514,144 @@ function testSession(obj){
     }
 }
 
-
-//测试函数
-function testNewQuery(){
-
+//该函数为查询按钮点击时发送ajax请求前进行的客户端验证函数，主要使用正则表达式来
+//校验、补全用户的输入
+function checkQueryRequest(){
+    var checkBoxArray = document.getElementById("queryCardBanner").getElementsByTagName("input");
+    var departArray ='';
+    for(var i =0,j=0;i<4;i++){
+        if(checkBoxArray[i].checked){
+            //例如“洛阳运用&洛襄运用&三西运用&”
+            departArray+=  $("#queryCardBanner>label:eq("+i+")").text()+'&';
+            j+=1;
+        }
+    }
+    //验证用户没有空选，把字符串最后一个&去掉,发送ajax请求后台处理数据
+    if(departArray!==''){
+        var column = '';
+        var where = '';
+        var order = '';
+        var arr  = $("#inputArea>div>input:checked");
+        if(arr.length === 0){
+            alert('请至少选择一列您要查看的信息');
+        }else if(arr.length === 16){
+            column = '*';
+        }else{
+            for(var i =0;i<arr.length;i++){
+                column += $(arr[i]).attr('id')+',';
+            }
+            column = column.substring(0,column.length-1)
+        }
+        //6-11下午继续做拼接字符串
+        console.log(column)
+    }else{
+        alert('请至少选择一个车间');
+    }
+}
+//渲染页面中需要动态添加的元素(高级搜索中的checkbox)
+function appendElement(){
+    var html ='';
+    $.ajax({
+        url: "../../../index.php",
+        type:"POST",
+        timeout:8000,
+        //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+        data:{funcName:'appendElement',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+            tableName:'jbxx',column:'top 1 *'},
+        dataType:'json',
+        success:function(data){
+            for(var i in data['row']){
+                //字典，中英文对照
+                var j ='';
+                switch(i){
+                    case 'PayId':
+                        j = '工资号';
+                        break;
+                    case 'ArchivesId':
+                        j = '档案号';
+                        break;
+                    case 'UName':
+                        j = '姓名';
+                        break;
+                    case 'Department':
+                        j = '部门';
+                        break;
+                    case 'BirthDate':
+                        j = '出生日期';
+                        break;
+                    case 'Txrq':
+                        j = '退休日期';
+                        break;
+                    case 'deadline':
+                        j = '截止日期';
+                        break;
+                    case '':
+                        j = '工资号';
+                        break;
+                    case 'fsjDate':
+                        j = '副司机初次领证日期';
+                        break;
+                    case 'fsjRemark':
+                        j = '批准文号';
+                        break;
+                    case 'fsjDriveCode':
+                        j = '准驾类型代码';
+                        break;
+                    case 'fsjDriveType':
+                        j = '准驾类型';
+                        break;
+                    case 'sjDate':
+                        j = '司机初次领证日期';
+                        break;
+                    case 'sjRemark':
+                        j = '批准文号';
+                        break;
+                    case 'sjDriveCode':
+                        j = '准驾类型代码';
+                        break;
+                    case 'sjDriveType':
+                        j = '准驾类型';
+                        break;
+                    case 'status':
+                        j = '驾驶证状态';
+                        break;
+                }
+                html += '<div><input type=\"checkbox\" id=\"'+ i +'\"><label for=\"'+i+'\">'+j+'</label></div>';
+            }
+            $("#inputArea").append(html);
+            //给单选框和复选框分别绑定事件，全选、全不选
+            $("#inputArea>div>input").off('change').on('change',function(){
+                $("#all").prop('checked',false);
+                $("#allNo").prop('checked',false);
+                //该全局变量表示被选中的复选框个数
+                numOfSelect =0;
+                var arr  = $("#inputArea>div>input");
+                for(var i =0;i<16;i++){
+                    if($(arr[i]).prop('checked')){
+                        numOfSelect++;
+                    }
+                }
+                if(numOfSelect ===0){
+                    $("#allNo").prop('checked',true);
+                }else if(numOfSelect ===16){
+                    $("#all").prop('checked',true);
+                }
+            });
+            //绑定单选框事件
+            $("#all").off('change').on("change",function () {
+                if($(this).prop('checked')){
+                    numOfSelect=16;
+                    $("#inputArea>div>input").prop("checked",true);
+                }
+            });
+            $("#allNo").off('change').on("change",function () {
+                if($(this).prop('checked')){
+                    numOfSelect=0;
+                    $("#inputArea>div>input").prop("checked",false);
+                }
+            });
+            $("#all").prop("checked",true);
+            $("#inputArea>div>input").prop("checked",true);
+        }
+    });
 }

@@ -169,9 +169,10 @@ a,a:hover,a:active,a:visited{
     margin-left: 18px;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner{
-    height: 100px;
+    height: 0;
     padding: 0 28px;
     margin-top: 10px;
+    overflow: hidden;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay{
     height: 100px;
@@ -223,22 +224,44 @@ a,a:hover,a:active,a:visited{
     overflow: hidden;
     width: 100%;
     margin-top: 20px;
+    height: 80px;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect>div{
-    float: left;
+
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect>div:first-child{
-    width: 70px;
-    text-align: center;
+    width: 100%;
+    text-align: left;
+    text-indent: 0.7em;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea{
-    width: 90%;
+    width:100%;
+    margin-top: 20px;
     overflow: hidden;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea>select,#selectArea>div{
     float: left;
     margin-left: 30px;
+    font-size: 14px;
  }
+
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #value{
+    width: auto;
+    height: 19px;
+    font-size: 12px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea>select>option,#selectTypeDiv>select,#selectTypeDiv>select>option,#valueDiv,#value>option,select#value{
+    font-size: 14px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea select#value{
+    font-size: 14px;
+    height: 23px;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #value1,#value2{
+    height: 19px;
+    width: 65px;
+    font-size: 12px;
+}
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent{
     overflow-x: auto;
 }
