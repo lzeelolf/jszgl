@@ -83,7 +83,7 @@ function loginStatus(){
 
 //显示证件查询结果(index.html)
 function displayQueryForm(){
-    checkQueryRequest()
+    console.log(checkQueryRequest())
         // var ajaxTimeOut = $.ajax({
         //     url: "../../../index.php",
         //     type:"POST",
@@ -529,8 +529,9 @@ function checkQueryRequest(){
     //验证用户没有空选，把字符串最后一个&去掉,发送ajax请求后台处理数据
     if(departArray!==''){
         var column = '';
-        var where = '';
-        var order = '';
+        var data = {};
+        data.where = '';
+        data.order = '';
         var arr  = $("#inputArea>div>input:checked");
         if(arr.length === 0){
             alert('请至少选择一列您要查看的信息');
@@ -540,15 +541,52 @@ function checkQueryRequest(){
             for(var i =0;i<arr.length;i++){
                 column += $(arr[i]).attr('id')+',';
             }
+            //该column变量是sql语句的列名（*）
             column = column.substring(0,column.length-1)
         }
-        //6-11下午继续做拼接字符串
-        console.log(column)
+        //以下代码做用户输入的正则验证，为便于后期修改，将每种情况都分开
+        if($("#column option:selected").val() === 'payId'){
+            if($("#selectType option:selected").val() === 'greater'){
+                //工资号的正则表达式
+                if($("#value").val().match(/^[0-9]{5}$/)){
+                    data.where = ' where payId >= '+$("#value").val();
+                    data.order = ' order by payId';
+                    return data;
+                }else{
+                    alert('请输入正确的工资号');
+                }
+            }else if($("#selectType option:selected").val() === 'less'){
+                if($("#value").val().match(/^[0-9]{5}$/)){
+                    data.where = ' where payId <= '+$("#value").val();
+                    data.order = ' order by payId';
+                    return data;
+                }else{
+                    alert('请输入正确的工资号');
+                }
+            }else if($("#selectType option:selected").val() === 'between'){
+                if($("#value1").val().match(/^[0-9]{5}$/) && $("#value2").val().match(/^[0-9]{5}$/)){
+                    var a = $("#value1").val();
+                    var b = $("#value2").val();
+                    if(a<b){
+                        data.where = ' where payId between \''+a+'\' AND \''+b+'\'';
+                        data.order = ' order by payId';
+                        return data;
+                    }else {
+                        data.where = ' where payId between \''+b+'\' AND \''+a+'\'';
+                        data.order = ' order by payId';
+                        return data;
+                    }
+                }
+            }else{
+                //如果用户没有选择内容则以默认值检索
+                return data;
+            }
+        }
     }else{
         alert('请至少选择一个车间');
     }
 }
-//渲染页面中需要动态添加的元素(高级搜索中的checkbox)
+//渲染页面中需要动态添加的元素(高级搜索中的checkbox等)
 function appendElement(){
     var html ='';
     $.ajax({
@@ -654,4 +692,133 @@ function appendElement(){
             $("#inputArea>div>input").prop("checked",true);
         }
     });
+}
+function appendSelection(){
+    var _html = '';
+    var __html = '';
+    var column = $("#column").val();
+    if(column === 'payId' || column==='archivesId' || column === 'age'){
+        _html = '<select name=\"selectType\" id=\"selectType\"><option value="please">--请选择--</option><option value=\"greater\">大于</option><option value=\"less\">小于</option><option value=\"between\">介于</option></select>';
+    }else if(column === 'fsjDate' || column ==='sjDate'){
+        _html = '<select name="selectType" id="selectType"><option value="please">--请选择--</option><option value=\"later\">晚于</option><option value=\"earlier\">早于</option><option value=\"between\">介于</option></select>';
+    }else if(column === 'fsjRemark' || column === 'sjRemark'){
+        _html = '等于';
+        $.ajax({
+            url: "../../../index.php",
+            type:"POST",
+            timeout:8000,
+            data:{funcName:'select',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                tableName:'jbxx',column:'DISTINCT '+column,where:' '},
+            dataType:'json',
+            success:function(data){
+                delete data['success'];
+                delete data['count'];
+                __html = '<select name=\"value\" id=\"value\">';
+                for(var i in data){
+                    if(data[i][column]!==''){
+                        __html += '<option value=\"'+data[i][column]+'\">'+data[i][column]+'</option>';
+                    }
+                }
+                __html += '</select>';
+                $("#valueDiv").empty().append(__html)
+            }
+        })
+
+    }else if(column === 'fsjDriveCode' || column ==='sjDriveCode'){
+        _html = '属于';
+        $.ajax({
+            url: "../../../index.php",
+            type:"POST",
+            timeout:8000,
+            data:{funcName:'select',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                tableName:'csxx',column:'name',where:' where lb = \'zjlx\' ',order:' '},
+            dataType:'json',
+            success:function(data){
+                delete data['success'];
+                delete data['count'];
+                __html = '';
+                for(var i in data){
+                    if(data[i]['name']!==''){
+                        __html += '<input class=\"marginLeft10px marginTop24px\" type=\"checkbox\" id=\"'+data[i]['name']+'\"/><label for=\"'+data[i]['name']+'\">'+data[i]['name']+'</label>';
+                    }
+                }
+                $("#valueDiv").empty().append(__html)
+            }
+        })
+    }else if(column === 'fsjDriveType' || column==='sjDriveType'){
+        _html = '属于';
+        $.ajax({
+            url: "../../../index.php",
+            type:"POST",
+            timeout:8000,
+            data:{funcName:'select',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                tableName:'csxx',column:'name,nr1',where:' where lb = \'zjlx\' ',order:' '},
+            dataType:'json',
+            success:function(data){
+                delete data['success'];
+                delete data['count'];
+                __html = '';
+                for(var i in data){
+                    if(data[i]['nr1']!==''){
+                        __html += '<input class="marginLeft6px" type=\"checkbox\" id=\"'+data[i]['name']+'\"/><label class=\"font12px" for=\"'+data[i]['name']+'\">'+data[i]['nr1']+'</label>';
+                    }
+                }
+                $("#valueDiv").empty().append(__html)
+            }
+        })
+    }else if(column === 'deadline'){
+        _html = '<select name=\"selectType\" id=\"selectType\"><option value="please">--请选择--</option><option value=\"later\">晚于</option><option value=\"earlier\">早于</option><option value=\"between\">介于</option></select>';
+    }else{
+        _html = '为';
+        $.ajax({
+            url: "../../../index.php",
+            type:"POST",
+            timeout:8000,
+            data:{funcName:'select',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                tableName:'csxx',column:'nr2',where:' where lb = \'zjzt\' ',order:' '},
+            dataType:'json',
+            success:function(data){
+                delete data['success'];
+                delete data['count'];
+                __html = '<select name=\"value\" id=\"value\">';
+                for(var i in data){
+                    if(data[i]['nr2']!==''){
+                        __html += '<option value=\"'+data[i]['nr2']+'\">'+data[i]['nr2']+'</option>';
+                    }
+                }
+                __html += '</select>';
+                $("#valueDiv").empty().append(__html)
+            }
+        })
+    }
+    $("#selectTypeDiv").empty().append(_html);
+    $("#valueDiv").empty().append(__html);
+    $('#selectType').off('change').on('change',appendValue);
+}
+function appendValue(){
+    var selectType = $("#selectType").val()? $("#selectType").val() : $("#selectType").text();
+    var column = $("#column").val();
+    var _html ='';
+    if((selectType === 'less' || selectType ==='greater') && (column === 'payId' || column === 'archivesId' || column === 'age')){
+        _html = '<input type=\"text\" id=\"value\"/>';
+    }else if((selectType === 'earlier' || selectType ==='later') && (column === 'fsjDate' || column === 'sjDate')){
+        //input type=date 标签只有chrome支持，IE和FF都不支持
+        //_html = '<input type=\"date\" id=\"value\"/>';
+        _html = '<input type=\"text\" id=\"value\"/>';
+    }else if((selectType === 'between') && (column === 'payId' || column === 'archivesId' || column === 'age')){
+        _html = '<input type="text" id="value1"/>至<input type="text" id="value2"/>之间'
+    }else if((selectType === 'between') && (column === 'fsjDate' || column === 'sjDate')){
+        _html = '<input type="text" id="value1"/>至<input type="text" id="value2"/>之间'
+    }else if((selectType === 'earlier' || selectType ==='later') && column === 'deadline'){
+        var flag = '';
+        if(selectType === 'earlier'){
+            flag = '<=';
+        }else{
+            flag = '>=';
+        }
+        _html = '<input class="marginTop20px" type=\"text\" id=\"value\"/>';
+    }else if((selectType === 'between') && column === 'deadline'){
+        _html = '<input class="marginTop20px" type="text" id="value1"/>至<input type="text" id="value2"/>之间'
+    }
+    $("#valueDiv").empty().append(_html)
 }

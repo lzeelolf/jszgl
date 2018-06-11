@@ -21,6 +21,13 @@ function select($where,$serverName,$uid,$pwd,$Database,$tableName,$column,$order
             //这个变量是sql语句where之后的句段
 
             $query = sqlsrv_query($conn, "select ".$column." from ".$tableName.$where.$order);
+            //测试sql拼接结果
+//                $ret = array();
+//                $ret['success'] = 1;
+//                $ret['sql'] = "select ".$column." from ".$tableName.$where.$order;
+//                echo json_encode($ret);
+
+
             //若查询无数据，html页面alert输出
             if(sqlsrv_rows_affected($query) === 0){
                 $ret = array();
