@@ -300,6 +300,9 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr>th:last-child,td:last-child{
     border-right: 1px solid #333;
 }
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr>th{
+    cursor:pointer;
+}
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr th{
     background-image: none;
     background-origin: content-box;

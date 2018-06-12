@@ -37,6 +37,7 @@ function select($where,$serverName,$uid,$pwd,$Database,$tableName,$column,$order
                 //$ret是返回结果数组。状态码1表示选取有结果，$i临时变量，用来标识结果集数目
                 $ret = array();
                 $ret['success'] = 1;
+                //$ret['sql'] = "select ".$column." from ".$tableName.$where.$order;
                 $i = 1;
                 while($row= sqlsrv_fetch_array($query,SQLSRV_FETCH_ASSOC)){
                     //$ret['sql'] = "select ".$column." from ".$tableName." where ".$departmentSelected.$order;
