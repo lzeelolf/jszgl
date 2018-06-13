@@ -27,7 +27,7 @@
             </div>
             <div id="queryCardContainer">
                 <div id="queryCardBanner">
-                    <input type="checkbox" id="lyyy"><label for="lyyy">洛阳运用</label><input type="checkbox" id="lxyy"><label for="lxyy">洛襄运用</label><input type="checkbox" id="lbyy"><label for="lbyy">洛北运用</label><input type="checkbox" id="sxyy"><label for="sxyy">三西运用</label><button id="queryCardButton">查询</button><button id="htmlToXls">生成Excel文件</button>
+                    <button id="queryCardButton">查询</button><button id="htmlToXls">生成Excel文件</button>
                 </div>
                 <div id="moreButtonBanner">
                     <button id="more" class="more">更多...</button>
@@ -58,7 +58,9 @@
                                 <option value="sjRemark">司机批准文号</option>
                                 <option value="sjDriveCode">司机准驾类型代码</option>
                                 <option value="sjDriveType">司机准驾类型</option>
-                                <option value="deadline">证件有效期截止日期</option>
+                                <option value="startDate">有效起始日期</option>
+                                <option value="deadline">有效截止日期</option>
+                                <option value="remainingDays">剩余天数</option>
                                 <option value="status">证件状态</option>
                             </select>
                             <div id="selectTypeDiv" class="marginTop20px"></div>
@@ -103,7 +105,15 @@
                 证件注销
             </div>
             <div id="informationContainer">
-                证件信息
+                <div id="cardPicContent">
+
+                </div>
+                <table id="cardInfoContent" cellpadding="0" cellspacing="0">
+                    <tr><td>姓名</td><td class="name"></td><td>出生日期</td><td class="birth"></td></tr>
+                    <tr><td>身份证号</td><td class="idCard"></td><td>准驾机型</td><td class="driveType"></td></tr>
+                    <tr><td>有效起始</td><td class="startDate"></td><td>有效截止</td><td class="deadline"></td></tr>
+                    <tr><td>初次领证日期</td><td class="sjDate"></td><td>年鉴时间</td><td class="?"></td></tr>
+                </table>
             </div>
             <div id="applyContainer">
                 换补申请

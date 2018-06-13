@@ -139,10 +139,12 @@ a,a:hover,a:active,a:visited{
 
 }
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner{
-    height: 30px;
-    line-height: 30px;
     overflow: hidden;
-    padding-left: 25%;
+    padding-left: 10%;
+}
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner>div{
+    overflow: hidden;
+    float: left;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner label{
     height: 30px;
@@ -221,9 +223,9 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay>#inputArea{
     width: 617px;
     float: left;
-    height: 70px;
+    height: 90px;
     overflow: hidden;
-    padding-top: 30px;
+    padding-top: 10px;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToDisplay #inputArea>div{
     float: left;
@@ -324,4 +326,31 @@ a,a:hover,a:active,a:visited{
     display: none;
     margin-top: 20px;
     padding: 10px 0 10px 0;
+}
+
+#bigContent #rightContent .operateContent #informationContainer{
+    position: relative;
+}
+#bigContent #rightContent .operateContent #informationContainer #cardPicContent{
+    position: absolute;
+    width: 40%;
+    height: 200px;
+    top: 80px;
+    left: 5%;
+    background: white;
+}
+#bigContent #rightContent .operateContent #informationContainer #cardInfoContent{
+    position: absolute;
+    background-color: whitesmoke;
+    height: 200px;
+    top: 80px;
+    left: 45%;
+}
+#bigContent #rightContent .operateContent #informationContainer #cardInfoContent td{
+    padding: 0;
+    width: 100px;
+}
+#bigContent #rightContent .operateContent #informationContainer #cardInfoContent td.idCard{
+    padding: 0;
+    width: 100px;
 }

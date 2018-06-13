@@ -10,7 +10,7 @@ $password = isset($_POST['password']) ? $_POST["password"] : $_GET["password"];
 //参数三为数据库地址，参数四为用户名，五为密码，六为数据库名
 //参数七为表名，参数八为需要取出数据的列名
 login($username,'PayId','10.101.62.62',
-    'sa','2huj15h1','USERINFO','userinfo1','payid,pwd,uname,power');
+    'sa','2huj15h1','USERINFO','userinfo1','payid,pwd,uname,power,department');
 function login($content,$target,$serverName,$uid,$pwd,$Database,$tableName,$column){
     $connectionInfo = array("Uid"=>$uid, "Pwd"=>$pwd, "Database"=>$Database,"CharacterSet"=>"UTF-8");
     $conn = sqlsrv_connect($serverName, $connectionInfo);
@@ -40,6 +40,8 @@ function login($content,$target,$serverName,$uid,$pwd,$Database,$tableName,$colu
                 if($row['pwd'] === $password && $row['payid']===$username){
                     //'验证正确';
                     $ret['login'] = 1;
+                    $ret['department'] = $row['department'];
+                    $ret['payId'] = $row['payid'];
                     //用某一列数据生成一个token来验证用户，测试阶段使用uname列
                     $ret['token'] = base64_encode($row['uname']);
                     //系统使用power字段的第21位作为权限判断，截取出来发给客户端存session

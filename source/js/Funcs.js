@@ -59,7 +59,7 @@ function resizePage(){
 //主页面单击左边li显示右边内容的函数，注销功能也在这里实现
 function displayContainer(){
     var power = sessionGet('power');
-    if(power === '0' || power==='1'){
+    if(power === 'V' || power==='1'){
         //教育科管理人员或车间管理人员
         var index = $(this).index();
         if($(this).next().length>0){
@@ -71,7 +71,7 @@ function displayContainer(){
                 window.location.href = '../html/login.html'
             }
         }
-    }else if(power === '2'){
+    }else if(power === '0'){
         //把页面中前7个教育科人员使用的div跳过
         var index_7 = $(this).index()+7;
         if($(this).next().length>0){
@@ -120,6 +120,7 @@ function displayQueryForm(){
                     //生成EXCEL按钮出现
                     $("#htmlToXls").css("visibility",'visible')
                 }else{
+                    console.log(data['sql'])
                     alert('您查询的信息不存在');
                 }
             },
@@ -287,7 +288,6 @@ function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj){
     }
     //参数：要按哪列排序、排序方式、当前是第几页、sql语句对象
     function orderAjaxRequest(orderColumn,orderWay,current,obj){
-
         var ajaxTimeOut = $.ajax({
             url: "../../../index.php",
             type:"POST",
@@ -299,7 +299,6 @@ function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj){
             success:function(data){
                 if(data.success === 1){
                     //把使用过的多余属性删除，便于处理数据
-                    console.log('接收到数据');
                     delete data['success'];
                     delete data['count'];
                     showList(data,current,countPerPage,dataPosition);
@@ -396,16 +395,16 @@ function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj){
             }
         });
         $("#prev").off('click').click(function(){
-            if(cur!==1){
+            if(parseInt(cur)!==1){
                 showList(data,cur-1,countPerPage,dataPosition);
                 showPagingList(data,total,countPerPage,pagePosition,cur-1);
                 cur-=1;
             }
         });
         $("#next").off('click').click(function(){
+            cur =parseInt(cur);
             if(cur!==max){
                 //此处要做类型转换，以免页码的类型由数值变成字符串，+1操作就出现bug了
-                cur = parseInt(cur);
                 showList(data,cur+1,countPerPage,dataPosition);
                 showPagingList(data,total,countPerPage,pagePosition,cur+1);
                 cur+=1;
@@ -481,6 +480,8 @@ function login(){
                     sessionSet('token',data.token);
                     sessionSet('power',data.power);
                     sessionSet('user',data.username);
+                    sessionSet('department',data.department);
+                    sessionSet('payId',data.payId);
                     window.location.href = 'index.html'
                 }else if(data.success===1 && data.login !==1){
                     alert('密码错误！')
@@ -505,19 +506,20 @@ function login(){
 
 
 //记住登陆时的session状态，以免用户更改权限
-function rememberSession(token,user,power){
+function rememberSession(token,user,power,department,payId){
     var userInfo = {};
     userInfo.token = sessionGet(token);
     userInfo.user = sessionGet(user);
     userInfo.power = sessionGet(power);
-    console.log(userInfo)
+    userInfo.department = sessionGet(department);
+    userInfo.payId = sessionGet(payId);
     return userInfo;
 }
 
 
 //测试session是否被更改过
 function testSession(obj){
-    if(obj.token === sessionGet('token') && obj.user ===sessionGet('user') && obj.power ===sessionGet('power')){
+    if(obj.token === sessionGet('token') && obj.user ===sessionGet('user') && obj.power ===sessionGet('power') && obj.department === sessionGet('department') && obj.payId === sessionGet('payID')){
         console.log('session 正常')
     }else{
         alert('用户信息发生变化，请重新登录');
@@ -534,9 +536,9 @@ function checkQueryRequest(){
         $("#value1").css('backgroundColor','white');
         $("#value2").css('backgroundColor','white');
     }
-    var checkBoxArray = document.getElementById("queryCardBanner").getElementsByTagName("input");
+    var checkBoxArray = $('#queryCardBanner>div>input');
     var departArray ='';
-    for(var i =0,j=0;i<4;i++){
+    for(var i =0,j=0;i<checkBoxArray.length;i++){
         if(checkBoxArray[i].checked){
             //例如“洛阳运用&洛襄运用&三西运用&”
             departArray+=  $("#queryCardBanner>label:eq("+i+")").text()+'&';
@@ -664,7 +666,7 @@ function checkQueryRequest(){
         }
         if($("#column option:selected").val() === 'age'){
             if($("#selectType option:selected").val() === 'greater'){
-                //工资号的正则表达式,五位数字，待定
+                //年龄的正则表达式,1到3位数字，待定
                 if($("#value").val().match(/^[0-9]{1,3}$/)){
                     querySql.where = ' where DATEDIFF(day,birthdate,getdate())/365 >= '+$("#value").val();
                     querySql.order = ' order by age';
@@ -1184,25 +1186,201 @@ function checkQueryRequest(){
                 return querySql;
             }
         }
+        if($("#column option:selected").val() === 'startDate'){
+            var yearS = '';
+            var monthS = '';
+            var dayS = '';
+            var dateS='';
+            if($("#selectType option:selected").val() === 'later'){
+                //日期的正则表达式
+                if($("#value").val().match(/^\d{8}$/) || $("#value").val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                    if($("#value").val().match(/^\d{8}$/)){
+                        yearS = $("#value").val().substr(0,4);
+                        monthS = $("#value").val().substr(4,2);
+                        dayS = $("#value").val().substr(6,2);
+                    }else{
+                        yearS = $("#value").val().split('-')[0];
+                        monthS = $("#value").val().split('-')[1];
+                        dayS = $("#value").val().split('-')[2];
+                    }
+                    if(yearS<1900 || monthS>12 || monthS<1 || dayS<1 ||dayS>31){
+                        alert('请输入正确的时间');
+                        $("#value").focus().css('backgroundColor','#ffcccc');
+                    }else if(yearS%4 !== 0 && monthS==='02' && dayS>28){
+                        alert('请输入正确的时间，该年不是闰年');
+                        $("#value").focus().css('backgroundColor','#ffcccc');
+                    }else if((monthS === '04' || monthS === '06' || monthS === '09' || monthS === '11') && dayS>30){
+                        alert('请输入正确的时间，该月最多30天');
+                        $("#value").focus().css('backgroundColor','#ffcccc');
+                    }else{
+                        dateS = yearS+'-'+monthS+'-'+dayS;
+                        querySql.where = ' where startDate >= \''+dateS+'\'';
+                        querySql.order = ' order by startDate';
+                        return querySql;
+                    }
+                }else{
+                    alert('请输入正确的时间:\"xxxxxxxx\"或\"xxxx-xx-xx\"');
+                    $("#value").focus().css('backgroundColor','#ffcccc');
+                    return false;
+                }
+            }
+            else if($("#selectType option:selected").val() === 'earlier'){
+                //日期的正则表达式
+                if($("#value").val().match(/^\d{8}$/) || $("#value").val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                    if($("#value").val().match(/^\d{8}$/)){
+                        yearS = $("#value").val().substr(0,4);
+                        monthS = $("#value").val().substr(4,2);
+                        dayS = $("#value").val().substr(6,2);
+                    }else{
+                        yearS = $("#value").val().split('-')[0];
+                        monthS = $("#value").val().split('-')[1];
+                        dayS = $("#value").val().split('-')[2];
+                    }
+                    if(yearS<1900 || monthS>12 || monthS<1 || dayS<1 ||dayS>31){
+                        alert('请输入正确的时间');
+                        $("#value").focus().css('backgroundColor','#ffcccc');
+                    }else if(yearS%4 !== 0 && monthS==='02' && dayS>28){
+                        alert('请输入正确的时间，该年不是闰年');
+                        $("#value").focus().css('backgroundColor','#ffcccc');
+                    }else if((monthS === '04' || monthS === '06' || monthS === '09' || monthS === '11') && dayS>30){
+                        alert('请输入正确的时间，该月最多30天');
+                        $("#value").focus().css('backgroundColor','#ffcccc');
+                    }else{
+                        dateS = yearS+'-'+monthS+'-'+dayS;
+                        querySql.where = ' where startDate <= \''+dateS+'\'';
+                        querySql.order = ' order by startDate';
+                        return querySql;
+                    }
+                }else{
+                    alert('请输入正确的时间:\"xxxxxxxx\"或\"xxxx-xx-xx\"');
+                    $("#value").focus().css('backgroundColord','#ffcccc');
+                    return false;
+                }
+            }
+            else if($("#selectType option:selected").val() === 'between'){
+                //日期的正则表达式
+                if($("#value1").val().match(/^\d{8}$/) || $("#value1").val().match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    if ($("#value1").val().match(/^\d{8}$/)) {
+                        var yearS1 = $("#value1").val().substr(0, 4);
+                        var monthS1 = $("#value1").val().substr(4, 2);
+                        var dayS1 = $("#value1").val().substr(6, 2);
+                        var dateS1 ='';
+                    } else {
+                        yearS1 = $("#value1").val().split('-')[0];
+                        monthS1 = $("#value1").val().split('-')[1];
+                        dayS1 = $("#value1").val().split('-')[2];
+                    }
+                }else{
+                    alert('请输入正确的时间:\"xxxxxxxx\"或\"xxxx-xx-xx\"');
+                    $("#value1").focus().css('backgroundColor','#ffcccc');
+                    return false;
+                }
+                if($("#value2").val().match(/^\d{8}$/) || $("#value2").val().match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    if ($("#value2").val().match(/^\d{8}$/)) {
+                        var yearS2 = $("#value2").val().substr(0, 4);
+                        var monthS2 = $("#value2").val().substr(4, 2);
+                        var dayS2 = $("#value2").val().substr(6, 2);
+                        var dateS2 ='';
+                    } else {
+                        yearS2 = $("#value2").val().split('-')[0];
+                        monthS2 = $("#value2").val().split('-')[1];
+                        dayS2 = $("#value2").val().split('-')[2];
+                    }
+                    if(yearS1<1900 || monthS1>12 || monthS1<1 || dayS1<1 ||dayS1>31){
+                        alert('请输入正确的时间');
+                        $("#value1").focus().css('backgroundColor','#ffcccc');
+                    }else if(yearS1%4 !== 0 && monthS1==='02' && dayS1>28){
+                        alert('请输入正确的时间，该年不是闰年');
+                        $("#value1").focus().css('backgroundColor','#ffcccc');
+                    }else if((monthS1 === '04' || monthS1 === '06' || monthS1 === '09' || monthS1 === '11') && dayS1>30){
+                        alert('请输入正确的时间，该月最多30天');
+                        $("#value1").focus().css('backgroundColor','#ffcccc');
+                    }else if(yearS2<1900 || monthS2>12 || monthS2<1 || dayS2<1 ||dayS2>31){
+                        alert('请输入正确的时间');
+                        $("#value2").focus().css('backgroundColor','#ffcccc');
+                    }else if(yearS2%4 !== 0 && monthS2==='02' && dayS2>28){
+                        alert('请输入正确的时间，该年不是闰年');
+                        $("#value2").focus().css('backgroundColor','#ffcccc');
+                    }else if((monthS2 === '04' || monthS2 === '06' || monthS2 === '09' || monthS2 === '11') && dayS2>30){
+                        alert('请输入正确的时间，该月最多30天');
+                        $("#value2").focus().css('backgroundColor','#ffcccc');
+                    }else{
+                        dateS1 = yearS1+'-'+monthS1+'-'+dayS1;
+                        dateS2 = yearS2+'-'+monthS2+'-'+dayS2;
+                        if(yearS1>yearS2 || (yearS1===yearS2 && monthS1>monthS2) || (yearS1===yearS2 && monthS1===monthS2 && dayS1>dayS2)){
+                            querySql.where = ' where startDate between \''+dateS2+'\' AND \''+dateS1+'\'';
+                        }else{
+                            querySql.where = ' where startDate between \''+dateS1+'\' AND \''+dateS2+'\'';
+                        }
+                        querySql.order = ' order by startDate';
+                        return querySql;
+                    }
+                }else{
+                    alert('请输入正确的时间:\"xxxxxxxx\"或\"xxxx-xx-xx\"');
+                    $("#value2").focus().css('backgroundColor','#ffcccc');
+                    return false;
+                }
+            }
+            else{
+                //如果用户没有选择内容则以默认值检索
+                return querySql;
+            }
+        }
         if($("#column option:selected").val() === 'status'){
             querySql.order = ' order by status';
             querySql.where = ' where status =\''+$("#value option:selected").val()+'\'';
             return querySql;
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        if($("#column option:selected").val() === 'remainingDays'){
+            if($("#selectType option:selected").val() === 'greater'){
+                //剩余天数的正则表达式,1到4位数字，待定
+                if($("#value").val().match(/^[0-9]{1,4}$/)){
+                    querySql.where = ' where remainingDays >= '+$("#value").val();
+                    querySql.order = ' order by remainingDays';
+                    return querySql;
+                }else{
+                    alert('请输入正确的年龄');
+                    $("#value").focus().css('backgroundColor','#ffcccc');
+                }
+            }else if($("#selectType option:selected").val() === 'less'){
+                if($("#value").val().match(/^[0-9]{1,4}$/)){
+                    querySql.where = ' where remainingDays <= '+$("#value").val();
+                    querySql.order = ' order by remainingDays';
+                    return querySql;
+                }else{
+                    alert('请输入正确的年龄');
+                    $("#value").focus().css('backgroundColor','#ffcccc');
+                }
+            }else if($("#selectType option:selected").val() === 'between'){
+                if($("#value1").val() !== '' || $("#value2").val() !== ''){
+                    if($("#value1").val().match(/^[0-9]{1,4}$/) && $("#value2").val().match(/^[0-9]{1,4}$/)){
+                        var g = parseInt($("#value1").val());
+                        var h = parseInt($("#value2").val());
+                        if(g<h){
+                            querySql.where = ' where remainingDays between '+g+' AND '+h+'';
+                            querySql.order = ' order by remainingDays';
+                            return querySql;
+                        }else {
+                            querySql.where = ' where remainingDays between '+h+' AND '+g+'';
+                            querySql.order = ' order by remainingDays';
+                            return querySql;
+                        }
+                    }else{
+                        alert('请输出正确的年龄');
+                        if(!$("#value1").val().match(/^[0-9]{1,4}$/)){
+                            $("#value1").focus().css('backgroundColor','#ffcccc');
+                        }else{
+                            $("#value2").focus().css('backgroundColor','#ffcccc');
+                        }
+                        return false;
+                    }
+                }
+            }
+            else{
+                //如果用户没有选择内容则以默认值检索
+                return querySql;
+            }
+        }
 
         }else{
         alert('请至少选择一个车间');
@@ -1244,7 +1422,7 @@ function appendElement(){
                         j = '退休日期';
                         break;
                     case 'deadline':
-                        j = '截止日期';
+                        j = '有效截止日期';
                         break;
                     case '':
                         j = '工资号';
@@ -1276,6 +1454,13 @@ function appendElement(){
                     case 'status':
                         j = '驾驶证状态';
                         break;
+                    case 'startDate':
+                        j = '有效起始日期';
+                        break;
+                    case 'remainingDays':
+                        j = '有效剩余天数';
+                        break;
+
                 }
                 html += '<div><input type=\"checkbox\" id=\"'+ i +'\"><label for=\"'+i+'\">'+j+'</label></div>';
             }
@@ -1287,21 +1472,21 @@ function appendElement(){
                 //该全局变量表示被选中的复选框个数
                 numOfSelect =0;
                 var arr  = $("#inputArea>div>input");
-                for(var i =0;i<16;i++){
+                for(var i =0;i<18;i++){
                     if($(arr[i]).prop('checked')){
                         numOfSelect++;
                     }
                 }
                 if(numOfSelect ===0){
                     $("#allNo").prop('checked',true);
-                }else if(numOfSelect ===16){
+                }else if(numOfSelect ===18){
                     $("#all").prop('checked',true);
                 }
             });
             //绑定单选框事件
             $("#all").off('change').on("change",function () {
                 if($(this).prop('checked')){
-                    numOfSelect=16;
+                    numOfSelect=18;
                     $("#inputArea>div>input").prop("checked",true);
                 }
             });
@@ -1389,8 +1574,10 @@ function appendSelection(){
                 $("#valueDiv").empty().append(__html)
             }
         })
-    }else if(column === 'deadline'){
+    }else if(column === 'deadline' || column === 'startDate'){
         _html = '<select name=\"selectType\" id=\"selectType\"><option value="please">--请选择--</option><option value=\"later\">晚于</option><option value=\"earlier\">早于</option><option value=\"between\">介于</option></select>';
+    }else if(column === 'remainingDays'){
+        _html = '<select name=\"selectType\" id=\"selectType\"><option value="please">--请选择--</option><option value=\"greater\">大于</option><option value=\"less\">小于</option><option value=\"between\">介于</option></select>';
     }else{
         _html = '为';
         $.ajax({
@@ -1422,17 +1609,17 @@ function appendValue(){
     var selectType = $("#selectType").val()? $("#selectType").val() : $("#selectType").text();
     var column = $("#column").val();
     var _html ='';
-    if((selectType === 'less' || selectType ==='greater') && (column === 'payId' || column === 'archivesId' || column === 'age')){
+    if((selectType === 'less' || selectType ==='greater') && (column === 'payId' || column === 'archivesId' || column === 'age' || column ==='remainingDays')){
         _html = '<input type=\"text\" id=\"value\"/>';
     }else if((selectType === 'earlier' || selectType ==='later') && (column === 'fsjDate' || column === 'sjDate')){
         //input type=date 标签只有chrome支持，IE和FF都不支持
         //_html = '<input type=\"date\" id=\"value\"/>';
         _html = '<input type=\"text\" id=\"value\"/>';
-    }else if((selectType === 'between') && (column === 'payId' || column === 'archivesId' || column === 'age')){
+    }else if((selectType === 'between') && (column === 'payId' || column === 'archivesId' || column === 'age' || column ==='remainingDays')){
         _html = '<input type="text" id="value1"/>至<input type="text" id="value2"/>之间'
     }else if((selectType === 'between') && (column === 'fsjDate' || column === 'sjDate')){
         _html = '<input type="text" id="value1"/>至<input type="text" id="value2"/>之间'
-    }else if((selectType === 'earlier' || selectType ==='later') && column === 'deadline'){
+    }else if((selectType === 'earlier' || selectType ==='later') && (column === 'deadline' || column === 'startDate')){
         var flag = '';
         if(selectType === 'earlier'){
             flag = '<=';
@@ -1440,13 +1627,13 @@ function appendValue(){
             flag = '>=';
         }
         _html = '<input class="marginTop20px" type=\"text\" id=\"value\"/>';
-    }else if((selectType === 'between') && column === 'deadline'){
+    }else if((selectType === 'between') && (column === 'deadline' || column ==='startDate')){
         _html = '<input class="marginTop20px" type="text" id="value1"/>至<input type="text" id="value2"/>之间'
     }
     $("#valueDiv").empty().append(_html)
 }
 
-//
+//添加车间选项
 function addQueryDepartment(obj){
     var reg = 'where';
     if(reg.search(obj.where)){

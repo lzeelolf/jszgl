@@ -3,6 +3,7 @@ $(document).ready(function(){
     sessionRemove('user');
     sessionRemove('token');
     sessionRemove('power');
+    sessionRemove('department')
     //登录按钮
     var loginBtn = document.getElementById('login');
     loginBtn.onclick = login;
