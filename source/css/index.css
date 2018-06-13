@@ -345,12 +345,104 @@ a,a:hover,a:active,a:visited{
     height: 200px;
     top: 80px;
     left: 45%;
+    width:52%;
 }
-#bigContent #rightContent .operateContent #informationContainer #cardInfoContent td{
+#bigContent #rightContent .operateContent #informationContainer #cardInfoContent p{
     padding: 0;
-    width: 100px;
+    float: left;
+    width: 90px;
+    font-size: 14px;
+    margin-top: 20px;
 }
-#bigContent #rightContent .operateContent #informationContainer #cardInfoContent td.idCard{
+#bigContent #rightContent .operateContent #informationContainer #cardInfoContent div{
     padding: 0;
+    font-size: 14px;
+    float: left;
     width: 100px;
+    margin-top: 20px;
+    border-bottom: 1px solid #333;
+}
+#bigContent #rightContent .operateContent #informationContainer #cardInfoContent div.idCard{
+    width: 150px;
+}
+#bigContent #rightContent .operateContent #informationContainer #cardInfoContent div.driveType{
+    width: 50px;
+}
+
+#bigContent #rightContent .operateContent #applyContainer #fixTable{
+    width: 500px;
+    height: 700px;
+    background-color: white;
+    position: relative;
+    left: 100px;
+}
+#bigContent #rightContent .operateContent #applyContainer #fixTable h1{
+    font-size: 26px;
+    font-weight: 900;
+    font-family: '宋体';
+
+}
+#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea{
+    border: solid 1px black;
+    position: relative;
+    overflow: hidden;
+}
+#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea div,span{
+    font-size: 12px;
+    font-family: '仿宋';
+}
+#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea div{
+    overflow: hidden;
+}
+.float{
+    float: left;
+}
+.rela{
+    position: relative;
+}
+.abso{
+    position: absolute;
+}
+.width48{
+    width: 48px;
+}
+.width356{
+    width: 356px;
+}
+.width90{
+    width: 90px;
+}
+.width64{
+    width: 64px;
+}
+.width18{
+    width: 18px;
+}
+.width174{
+    width: 174px;
+}
+.width406{
+    width: 406px;
+}
+.height20{
+    height: 20px;
+    line-height: 20px;
+}
+.height36{
+    height: 36px;
+}
+.borderRight{
+    border-right: 1px solid black;
+}
+.borderLeft{
+    border-left: 1px solid black;
+}
+.borderTop{
+    border-top: 1px solid black;
+}
+.borderBottom{
+    border-bottom: 1px solid black;
+}
+.borderAll{
+    border: 1px solid black;
 }

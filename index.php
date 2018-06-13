@@ -10,6 +10,12 @@ if($_POST['funcName'] === 'select'){
     appendElement($_POST['serverName'],
         $_POST['uid'],$_POST['pwd'],$_POST['Database'],$_POST['tableName'],
         $_POST['column']);
+}else if($_POST['funcName'] === 'checkIfExist'){
+    checkIfExist($_POST['where'],$_POST['serverName'],$_POST['uid'],$_POST['pwd'],
+        $_POST['Database'],$_POST['tableName'],$_POST['column'],$_POST['order']);
+}else if($_POST['funcName'] === 'getInfo'){
+    getInfo($_POST['where'],$_POST['serverName'],$_POST['uid'],$_POST['pwd'],
+        $_POST['Database'],$_POST['tableName'],$_POST['column']);
 }
 
 ?>

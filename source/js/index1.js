@@ -84,11 +84,62 @@ $(document).ready(function(){
     $("#buttonList li").each(function(){
         $(this).on('click',displayContainer);
     });
-
+    //普通用户渲染页面的函数
     function normalUser(){
         var payId = sessionGet('payId');
+        //在这里添加动态渲染页面的代码
 
     }
+    //点击补证按钮，生成表格，发送请求
+    $("#fixButton").off('click').on('click',function(){
+        if(confirm('是否确定要申请补发驾驶证？\u000d请注意，发出申请不可修改，请谨慎操作！')){
+            var payId = sessionGet('payId');
+            $.ajax({
+                url: "../../../index.php",
+                type:"POST",
+                timeout:8000,
+                data:{funcName:'checkIfExist',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                    tableName:'bgxx',column:'payId,finishStatus,changeType',where:' where payId = \''+payId+'\' AND finishStatus != \'ffdgr\'',order:' '},
+                dataType:'json',
+                success:function(data){
+                    //说明此人有待办的申请，不予新增请求
+                    if(data['success'] === 1){
+                        alert('您还有尚未完结的'+data['changeType']+'申请,不允许重复提交')
+                    }else{
+                        //$("#fixButton").css('display','none')
+                        getUserinfo();
+                        appendFixApply();
+                    }
+                }
+            })
+        }
+    })
+    //从全员信息库中取申请表要用的信息
+    function getUserinfo(){
+        var payId = sessionGet('payId');
+        $.ajax({
+            url: "../../../index.php",
+            type:"POST",
+            timeout:8000,
+            data:{funcName:'getInfo',serverName:'10.101.62.62',uid:'sa',pwd:'2huj15h1',Database:'USERINFO',
+                tableName:'userinfo1',column:' uname,sex,birthdate,cardid,phone1,address ',where:' where payId = \''+payId+'\'',order:' '},
+            dataType:'json',
+            success:function(data){
+                //说明此人有待办的申请，不予新增请求
+                console.log(data['row'])
+                fillInTable(data['row']);
+            }
+        })
+    }
+    //用取回的信息渲染申请表
+    function fillInTable(data){
+
+    }
+    //发ajax更新bgxx表
+    function appendFixApply(){
+
+    }
+
 
 
 

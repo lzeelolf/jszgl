@@ -104,6 +104,95 @@ function appendElement($serverName,$uid,$pwd,$Database,$tableName,$column){
         sqlsrv_close($conn);
     }
 }
+
+
+
+function insert($serverName,$uid,$pwd,$Database,$tableName,$column){
+
+}
+
+
+function checkIfExist($where,$serverName,$uid,$pwd,$Database,$tableName,$column,$order){
+    $connectionInfo = array("Uid"=>$uid, "Pwd"=>$pwd, "Database"=>$Database,"CharacterSet"=>"UTF-8");
+    $conn = sqlsrv_connect($serverName, $connectionInfo);
+    if( $conn === false)
+    {
+        //连接失败
+        die(print_r(sqlsrv_errors(), true));
+    }else{
+        //"链接成功";//连接数据库
+        //这个变量是sql语句where之后的句段
+
+        $query = sqlsrv_query($conn, "select ".$column." from ".$tableName.$where.$order);
+        //测试sql拼接结果
+//                $ret = array();
+//                $ret['success'] = 1;
+//                $ret['sql'] = "select ".$column." from ".$tableName.$where.$order;
+//                echo json_encode($ret);
+
+
+        //若查询无数据，html页面alert输出
+        if(sqlsrv_rows_affected($query) === 0){
+            $ret = array();
+            $ret['success'] = 0;
+            $ret['sql'] = "select ".$column." from ".$tableName.$where.$order;
+            echo json_encode($ret);
+        }else{
+            //$ret是返回结果数组。状态码1表示选取有结果，$i临时变量，用来标识结果集数目
+            $ret = array();
+            $ret['success'] = 1;
+            //$ret['sql'] = "select ".$column." from ".$tableName.$where.$order;
+            while($row= sqlsrv_fetch_array($query,SQLSRV_FETCH_ASSOC)){
+                //$ret['sql'] = "select ".$column." from ".$tableName." where ".$departmentSelected.$order;
+                $ret['changeType'] = $row['changeType'];
+            }
+            echo json_encode($ret);
+        }
+        sqlsrv_close($conn);
+    }
+
+}
+
+function getInfo($where,$serverName,$uid,$pwd,$Database,$tableName,$column){
+    $connectionInfo = array("Uid"=>$uid, "Pwd"=>$pwd, "Database"=>$Database,"CharacterSet"=>"UTF-8");
+    $conn = sqlsrv_connect($serverName, $connectionInfo);
+    if( $conn === false)
+    {
+        //连接失败
+        die(print_r(sqlsrv_errors(), true));
+    }else{
+        //"链接成功";//连接数据库
+        //这个变量是sql语句where之后的句段
+
+        $query = sqlsrv_query($conn, "select ".$column." from ".$tableName.$where);
+        //测试sql拼接结果
+//                $ret = array();
+//                $ret['success'] = 1;
+//                $ret['sql'] = "select ".$column." from ".$tableName.$where.$order;
+//                echo json_encode($ret);
+
+
+        //若查询无数据，html页面alert输出
+        if(sqlsrv_rows_affected($query) === 0){
+            $ret = array();
+            $ret['success'] = 0;
+            $ret['sql'] = "select ".$column." from ".$tableName.$where;
+            echo json_encode($ret);
+        }else{
+            //$ret是返回结果数组。状态码1表示选取有结果，$i临时变量，用来标识结果集数目
+            $ret = array();
+            $ret['success'] = 1;
+            //$ret['sql'] = "select ".$column." from ".$tableName.$where.$order;
+            while($row= sqlsrv_fetch_array($query,SQLSRV_FETCH_ASSOC)){
+                //$ret['sql'] = "select ".$column." from ".$tableName." where ".$departmentSelected.$order;
+                $ret['row'] = $row;
+            }
+            echo json_encode($ret);
+        }
+        sqlsrv_close($conn);
+    }
+
+}
 ?>
 
 
