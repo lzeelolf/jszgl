@@ -368,31 +368,52 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent #informationContainer #cardInfoContent div.driveType{
     width: 50px;
 }
-
+#bigContent #rightContent .operateContent #applyContainer #fixButton{
+    width: 230px;
+    height: 30px;
+    line-height: 30px;
+}
 #bigContent #rightContent .operateContent #applyContainer #fixTable{
-    width: 500px;
-    height: 700px;
+    width: 800px;
+    height: 810px;
     background-color: white;
     position: relative;
-    left: 100px;
+    left: 40px;
 }
 #bigContent #rightContent .operateContent #applyContainer #fixTable h1{
     font-size: 26px;
     font-weight: 900;
     font-family: '宋体';
-
+    border:none;
 }
 #bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea{
     border: solid 1px black;
+    width: 600px;
     position: relative;
+    left: 100px;
     overflow: hidden;
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea div,span{
-    font-size: 12px;
+#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea div,#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea span{
+    font-size: 14px;
     font-family: '仿宋';
 }
 #bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea div{
     overflow: hidden;
+}
+#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea #mailInTable{
+    text-indent: 0.3em;
+    font-size: 14px;
+    font-family: '仿宋';
+}
+#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea #addressInTable{
+    text-indent: 1em;
+    font-size: 14px;
+    font-family: '仿宋';
+}
+#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea #mobilePhoneInTable{
+    text-indent: 1em;
+    font-size: 14px;
+    font-family: '仿宋';
 }
 .float{
     float: left;
@@ -403,39 +424,68 @@ a,a:hover,a:active,a:visited{
 .abso{
     position: absolute;
 }
-.width48{
-    width: 48px;
+.width58{
+    width: 58px;
 }
-.width356{
-    width: 356px;
-}
-.width90{
-    width: 90px;
-}
-.width64{
-    width: 64px;
-}
-.width18{
-    width: 18px;
-}
-.width174{
-    width: 174px;
-}
-.width406{
-    width: 406px;
-}
-.width320{
-    width: 320px;
+.width423{
+    width: 423px;
 }
 .width115{
     width: 115px;
 }
-.height20{
-    height: 20px;
-    line-height: 20px;
+.width104{
+    width: 104px;
 }
-.height36{
-    height: 36px;
+.width64{
+    width: 64px;
+}
+.width83{
+    width: 83px;
+}
+.width20{
+    width: 20px;
+}
+.width56{
+    width: 56px;
+}
+.width149{
+    width: 149px;
+}
+.width209{
+    width: 209px;
+}
+.width493{
+    width: 493px;
+}
+.width482{
+    width: 482px;
+}
+.width404{
+    width: 404px;
+}
+.width377{
+    width: 377px;
+}
+.width146{
+    width: 146px;
+}
+.height28{
+    height: 28px;
+    line-height: 28px;
+}
+.height42{
+    height: 42px;
+    line-height: 21px;
+}
+.height56{
+    height: 56px;
+    line-height: 14px;
+}
+.height150{
+    height: 150px;
+}
+.floatR{
+    float: right;
 }
 .borderRight{
     border-right: 1px solid black;
@@ -451,4 +501,21 @@ a,a:hover,a:active,a:visited{
 }
 .borderAll{
     border: 1px solid black;
+}
+.noborder{
+    border:none;
+}
+.origin label,.apply span,.apply label,.apply span{
+    font-size: 14px;
+    font-family: '仿宋';
+    font-weight: bold;
+}
+.phyCheck label,.apply span{
+    font-size: 14px;
+    font-family: '仿宋';
+}
+.reason label{
+    margin-top: 4px;
+    font-size: 14px;
+    font-family: '仿宋';
 }

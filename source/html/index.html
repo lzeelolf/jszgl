@@ -119,56 +119,177 @@
                 <button id="fixButton">驾驶证不慎遗失，申请补证</button>
                 <div id="fixTable">
                     <h1>铁路机车车辆驾驶证换（补）证申请表 </h1>
-                    <div id="fixTableArea">
-                        <div>
-                            <div class="float width406">
-                                <div class="float width48 height20 borderAll">姓名</div>
-                                <div id="nameInTable" class="float width356 height20 borderTop borderBottom"></div>
-                                <div class="float width48 height20 borderBottom borderRight borderLeft">性别</div>
-                                <div id="sexInTable" class="float width90 height20 borderRight"></div>
-                                <div class="width90 height20 borderRight float">出生日期</div>
-                                <div class="width174 height20 float">
-                                    <span id="birthYearInTable" class="height20"></span>年
-                                    <span id="birthMonthInTable" class="height20"></span>月
-                                    <span id="birthDateInTable" class="height20"></span>日
+                    <div id="fixTableArea" class="borderAll">
+                        <div class="borderAll">
+                            <div class="float width482">
+                                <div class="float width58 height28 borderBottom borderRight">姓名</div>
+                                <div id="nameInTable" class="float width423 height28 borderBottom">赵镜可</div>
+                                <div class="float width58 height28 borderRight">性别</div>
+                                <div id="sexInTable" class="float width115 height28 borderRight" style="width: 108px">男</div>
+                                <div class="width115 height28 borderRight float" style="width: 104px">出生日期</div>
+                                <div class="width209 height28 float">
+                                    <span id="birthYearInTable" class="height28">1994</span>年
+                                    <span id="birthMonthInTable" class="height28">6</span>月
+                                    <span id="birthDateInTable" class="height28">6</span>日
                                 </div>
-                                <div class="width406 float">
-                                    <div class="width90 borderLeft height20 float">公民身份号码</div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
-                                    <div class="cardIdInTable borderTop borderLeft width18 height20 float"></div>
+                                <div class="width482 float borderTop">
+                                    <div class="width104 height28 float">公民身份号码</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
+                                    <div class="cardIdInTable borderLeft width20 height28 float">1</div>
                                 </div>
-                                <div class="width406 borderTop float">
-                                    <div class="width90 borderLeft float">固定电话</div>
-                                    <div id="fixedPhoneInTable" class="width115 borderLeft float"></div>
-                                    <div class="width90 borderLeft float">移动电话</div>
-                                    <div id="mobilePhoneInTable" class="width90 borderLeft float"></div>
+                                <div class="width482 borderTop float">
+                                    <div class="width104 float height28">固定电话</div>
+                                    <div class="width146 borderLeft float height28">
+                                        <input class="width146 height28 noborder" id="fixedPhoneInTable" type="text"/>
+                                    </div>
+                                    <div class="width83 borderLeft float height28">移动电话</div>
+                                    <div class="width146 borderLeft float height28">
+                                        <input class="width146 height28 noborder" id="mobilePhoneInTable" type="text"/>
+                                    </div>
                                 </div>
-                                <div class="width406 float borderTop">
-                                    <div class="width90 borderLeft float">所在企业</div>
-                                    <div id="companyInTable" class="width320 borderLeft float"></div>
+                                <div class="width482 float borderTop">
+                                    <div class="width104 float height28 borderRight">所在企业</div>
+                                    <div id="companyInTable" class="height28 width377 float">郑州局集团</div>
                                 </div>
                             </div>
-                            <div class="float width90 borderAll">
-                                照片位置（供信息管理系统用，个人不贴）
+                            <div class="floatR width115 borderLeft borderBottom" style="height: 144px">
+                                <br><br>照片位置（供信息管理系统用，个人不贴）
                             </div>
+                            <div class="float height28 width104 borderTop">通讯地址</div>
+                            <div class="float height28 width377 borderLeft borderTop">
+                                <input id="addressInTable" type="text" class="height28 width377 noborder"/>
+                            </div>
+                            <div class="float height28 width58 borderLeft">邮编</div>
+                            <div class="float height28 borderLeft" style="width: 56px">
+                                <input id="mailInTable" type="text" class="height28 width56 noborder"/>
+                            </div>
+                            <div class="float width104 height28 borderTop">申办类别</div>
+                            <div class="float height28 width493 borderTop borderLeft">
+                                <input type="checkbox" id="changeCheckBox" class="float" style="margin:8px 0 0 15px"/>
+                                <label for="changeCheckBox" class="float height28" style="font-size: 14px;font-family: '仿宋';">换证</label>
+                                <input type="checkbox" id="fixCheckBox" class="float" style="margin: 8px 0 0 50px"/>
+                                <label for="fixCheckBox" class="float height28" style="font-size: 14px;font-family: '仿宋';">补证</label>
+                            </div>
+                            <div class="float height42 width104 borderTop">原证准驾<br>类型</div>
+                            <div class="float width377 borderTop borderLeft height42 origin">
+                                <input type="checkbox" id="originJ1" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originJ1" class="float">J1</label>
+                                <input type="checkbox" id="originJ2" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originJ2" class="float">J2</label>
+                                <input type="checkbox" id="originJ3" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originJ3" class="float">J3</label>
+                                <input type="checkbox" id="originJ4" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originJ4" class="float">J4</label>
+                                <input type="checkbox" id="originJ5" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originJ5" class="float">J5</label>
+                                <input type="checkbox" id="originJ6" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originJ6" class="float">J6</label><br>
+                                <input type="checkbox" id="originL1" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originL1" class="float">L1</label>
+                                <input type="checkbox" id="originL2" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originL2" class="float">L2</label>
+                                <input type="checkbox" id="originL3" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originL3" class="float">L3</label>
+                                <input type="checkbox" id="originOther" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="originOther" class="float">其他（</label>
+                                <input disabled type="text" id="originOtherInput" class="noborder float" style="background-color:white;height: 16px;line-height: 16px;width: 40px"/>
+                                <span class="float" style="font-weight: bold">）</span>
+                            </div>
+                            <div class="float width115 borderLeft height42 borderTop">
+                                原证发证日期：<br>
+                                <span id="originYearInTable"></span>年
+                                <span id="originMonthInTable"></span>月
+                                <span id="originDateInTable"></span>日
+                            </div>
+                            <div class="float height42 width104 borderTop">申请换（补）<br>证准驾类型</div>
+                            <div class="float width493 borderTop borderLeft height42 apply">
+                                <input type="checkbox" id="applyJ1" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyJ1" class="float">J1</label>
+                                <input type="checkbox" id="applyJ2" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyJ2" class="float">J2</label>
+                                <input type="checkbox" id="applyJ3" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyJ3" class="float">J3</label>
+                                <input type="checkbox" id="applyJ4" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyJ4" class="float">J4</label>
+                                <input type="checkbox" id="applyJ5" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyJ5" class="float">J5</label>
+                                <input type="checkbox" id="applyJ6" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyJ6" class="float">J6</label><br>
+                                <input type="checkbox" id="applyL1" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyL1" class="float">L1</label>
+                                <input type="checkbox" id="applyL2" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyL2" class="float">L2</label>
+                                <input type="checkbox" id="applyL3" class="float" style="margin: 3px 0 0 15px"/>
+                                <label for="applyL3" class="float">L3</label>
+                            </div>
+                            <div class="float width104 height56 borderTop">健康检查结<br>论（换证填<br>选）</div>
+                            <div class="float width493 borderTop borderLeft height56 phyCheck">
+                                <input type="checkbox" id="phyOk" class="float" style="margin: 21px 0 0 15px"/>
+                                <label for="phyOk" class="float height56" style="line-height: 56px">合格</label>
+                                <input type="checkbox" id="phyNotOk" class="float" style="margin: 21px 0 0 35px"/>
+                                <label for="phyNotOk" class="float height56" style="line-height: 56px">不合格</label>
+                            </div>
+                            <div class="float width104 height150 borderTop" style="line-height: 150px">申请原因</div>
+                            <div class="float width493 height150 borderTop borderLeft reason">
+                                <input type="checkbox" id="reasonDeadline" class="float" style="margin: 8px 0 0 15px"/>
+                                <label for="reasonDeadline" class="float">驾驶证有效期满</label><br>
+                                <input type="checkbox" id="reasonContChange" class="float" style="margin: 8px 0 0 15px"/>
+                                <label for="reasonContChange" class="float">驾驶证记载内容变化</label><br>
+                                <input type="checkbox" id="reasonLower" class="float" style="margin: 8px 0 0 15px"/>
+                                <label for="reasonLower" class="float">本人自愿降低准驾机型</label><br>
+                                <input type="checkbox" id="cardBreak" class="float" style="margin: 8px 0 0 15px"/>
+                                <label for="cardBreak" class="float">驾驶证损毁</label><br>
+                                <input type="checkbox" id="cardLost" class="float" style="margin: 8px 0 0 15px"/>
+                                <label for="cardLost" class="float">驾驶证丢失</label><br>
+                                <input type="checkbox" id="otherReason" class="float" style="margin: 6px 0 0 15px"/>
+                                <label for="otherReason" class="float">其他说明：</label>
+                                <input disabled type="text" class="float noborder" style="background-color: white;height: 20px;line-height: 20px;font-size: 14px;font-family: '仿宋';"/>
+                            </div>
+                            <div class="float borderTop" style="width: 100%">
+                                <div class="height28" style="text-align: left;margin-bottom: 20px">
+                                    本人承诺上述填报内容真实有效。若提供虚假信息，本人承担相应法律责任。
+                                </div>
+                                <div class="floatR height28">
+                                    年&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;日
+                                </div>
+                                <div class="floatR height28" style="margin-right: 100px">
+                                    申请人签名：
+                                </div>
+                            </div>
+                            <div class="width104 float borderTop" style="height: 97px;line-height: 24px">
+                                <br>所在企业<br>意&nbsp;&nbsp;&nbsp;&nbsp;见
+                            </div>
+                            <div class="width493 float borderTop borderLeft">
+                                <div style="height: 40px;line-height: 40px;text-align: left;margin-bottom: 20px">所需证明材料齐全，并已存入个人技术档案。</div>
+                                <div class="floatR">
+                                    ________年_______月________日<br>
+                                    （所在企业公章）
+                                </div>
+                                <div class="floatR" style="margin-right: 80px">
+                                    主管人员签名：
+                                </div>
+                            </div>
+                            <div class="float width104 height28 borderTop">备注</div>
+                            <div class="float width493 height28 borderTop borderLeft"></div>
                         </div>
                     </div>
+                    <div style="text-align: left;text-indent: 8em;font-size: 14px;font-family: '仿宋'">注：此表为A4纸格式</div>
                 </div>
             </div>
             <div id="statusContainer">

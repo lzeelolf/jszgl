@@ -106,7 +106,7 @@ $(document).ready(function(){
                     if(data['success'] === 1){
                         alert('您还有尚未完结的'+data['changeType']+'申请,不允许重复提交')
                     }else{
-                        //$("#fixButton").css('display','none')
+                        $("#fixButton").css('display','none')
                         getUserinfo();
                         appendFixApply();
                     }
@@ -125,15 +125,49 @@ $(document).ready(function(){
                 tableName:'userinfo1',column:' uname,sex,birthdate,cardid,phone1,address ',where:' where payId = \''+payId+'\'',order:' '},
             dataType:'json',
             success:function(data){
-                //说明此人有待办的申请，不予新增请求
-                console.log(data['row'])
-                fillInTable(data['row']);
+                $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    data:{funcName:'getInfo',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'jszgl',
+                        tableName:'jbxx',column:' fsjDate,fsjDriveCode,sjDate,sjDriveCode ',where:' where payId = \''+payId+'\'',order:' '},
+                    dataType:'json',
+                    success:function(cardData){
+                        fillInTable(data['row'],cardData['row']);
+                    }
+                });
             }
         })
     }
     //用取回的信息渲染申请表
-    function fillInTable(data){
-
+    function fillInTable(data,cardData){
+        console.log(data);
+        console.log(cardData)
+        var cardId =[];
+        cardData['sjDriveCode'] = 'J1';
+        cardData['sjDate'] = '-1994-12-12';
+        //用从全员信息库取出的数据填写基本信息
+        for(var i=0;i<data['cardid'].length;i++){
+            cardId[i] = data['cardid'][i];
+            $(".cardIdInTable:eq("+i+")").text(cardId[i]);
+        }
+        $("#nameInTable").text(data['uname']);
+        $("#sexInTable").text(data['sex']);
+        $("#birthYearInTable").text(data['birthdate'].split('-')[0]);
+        $("#birthMonthInTable").text(data['birthdate'].split('-')[1]);
+        $("#birthDateInTable").text(data['birthdate'].split('-')[2]);
+        $("#mobilePhoneInTable").val(data['phone1']);
+        $("#companyInTable").text('郑州局集团');
+        $("#addressInTable").val(data['address']);
+        $("#mailInTable").val(410000);
+        $("#changeCheckBox").attr("disabled",true);
+        $("#fixCheckBox").attr({"disabled":true,"checked":"checked"});
+        //填写驾驶证信息
+        $("#origin"+cardData['sjDriveCode']).attr({'checked':'checked','disabled':true}).siblings('input').attr('disabled',true);
+        $("#apply"+cardData['sjDriveCode']).attr({'checked':'checked','disabled':true}).siblings('input').attr('disabled',true);
+        $("#phyOk").attr({'checked':'checked','disabled':true}).siblings('input').attr('disabled',true);
+        $("#cardLost").attr({'checked':'checked','disabled':true}).siblings('input').attr('disabled',true);
+        
     }
     //发ajax更新bgxx表
     function appendFixApply(){
