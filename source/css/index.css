@@ -113,7 +113,6 @@ a,a:hover,a:active,a:visited{
     border-radius: 2px;
 }
 #bigContent #rightContent h1{
-    border-bottom: 2px solid #ddd;
     text-align: center;
     height: 80px;
     line-height: 80px;
@@ -372,48 +371,73 @@ a,a:hover,a:active,a:visited{
     width: 230px;
     height: 30px;
     line-height: 30px;
+    font-size: 14px;
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable{
+#bigContent #rightContent .operateContent #applyContainer #applySubmit{
+    width: 60px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    visibility: hidden;
+}
+#bigContent #rightContent .operateContent #applyContainer #print{
+    width: 60px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    margin-left: 100px;
+    visibility: hidden;
+}
+#fixTable{
     width: 800px;
     height: 810px;
     background-color: white;
     position: relative;
-    left: 40px;
+    visibility: hidden;
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable h1{
-    font-size: 26px;
+#fixTable h1{
+    text-align: center;
+    font-size: 30px;
     font-weight: 900;
     font-family: '宋体';
-    border:none;
+    border:none;!important;
+    height: 160px;
+    line-height: 160px;
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea{
+#fixTable #fixTableArea{
     border: solid 1px black;
-    width: 600px;
+    width: 700px;
     position: relative;
-    left: 100px;
+    left: 50px;
     overflow: hidden;
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea div,#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea span{
+#fixTable #fixTableArea div,#fixTable #fixTableArea span{
     font-size: 14px;
     font-family: '仿宋';
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea div{
+#fixTable #fixTableArea div{
     overflow: hidden;
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea #mailInTable{
+#fixTable #fixTableArea .cardIdInTable{
+    text-align: center;
+}
+#fixTable #fixTableArea #mailInTable{
     text-indent: 0.3em;
     font-size: 14px;
     font-family: '仿宋';
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea #addressInTable{
+#fixTable #fixTableArea #addressInTable{
     text-indent: 1em;
     font-size: 14px;
     font-family: '仿宋';
 }
-#bigContent #rightContent .operateContent #applyContainer #fixTable #fixTableArea #mobilePhoneInTable{
+#fixTable #fixTableArea #mobilePhoneInTable{
     text-indent: 1em;
     font-size: 14px;
     font-family: '仿宋';
+}
+.textCenter{
+    text-align: center;
 }
 .float{
     float: left;
@@ -424,26 +448,27 @@ a,a:hover,a:active,a:visited{
 .abso{
     position: absolute;
 }
-.width58{
-    width: 58px;
+.width68{
+    width: 68px;
 }
-.width423{
-    width: 423px;
+.width503{
+    width: 503px;
 }
-.width115{
-    width: 115px;
+.width125{
+    width: 125px;
 }
-.width104{
-    width: 104px;
+.width122{
+    width: 122px;
+    text-align: center;
 }
 .width64{
     width: 64px;
 }
-.width83{
+.width99{
     width: 83px;
 }
-.width20{
-    width: 20px;
+.width24{
+    width: 24px;
 }
 .width56{
     width: 56px;
@@ -451,31 +476,31 @@ a,a:hover,a:active,a:visited{
 .width149{
     width: 149px;
 }
-.width209{
+.width249{
     width: 209px;
 }
-.width493{
-    width: 493px;
+.width575{
+    width: 575px;
 }
-.width482{
-    width: 482px;
+.width572{
+    width: 572px;
 }
 .width404{
     width: 404px;
 }
-.width377{
-    width: 377px;
+.width449{
+    width: 449px;
 }
-.width146{
-    width: 146px;
+.width174{
+    width: 174px;
 }
-.height28{
-    height: 28px;
-    line-height: 28px;
+.height35{
+    height: 35px;
+    line-height: 35px;
 }
-.height42{
-    height: 42px;
-    line-height: 21px;
+.height54{
+    height: 54px;
+    line-height: 24px;
 }
 .height56{
     height: 56px;
@@ -510,12 +535,18 @@ a,a:hover,a:active,a:visited{
     font-family: '仿宋';
     font-weight: bold;
 }
+.origin input,.apply input{
+    margin: 8px 0 0 15px;
+}
+.origin label,.origin span,.apply label{
+    margin: 6px 0 0 3px;
+}
 .phyCheck label,.apply span{
     font-size: 14px;
     font-family: '仿宋';
 }
 .reason label{
-    margin-top: 4px;
+    margin-top: 3px;
     font-size: 14px;
     font-family: '仿宋';
 }

@@ -106,9 +106,11 @@ $(document).ready(function(){
                     if(data['success'] === 1){
                         alert('您还有尚未完结的'+data['changeType']+'申请,不允许重复提交')
                     }else{
-                        $("#fixButton").css('display','none')
+                        $("#fixButton").css('display','none');
+                        $("#fixTable").css('visibility','visible');
+                        $("#print").css('visibility','visible');
+                        $("#applySubmit").css('visibility','visible');
                         getUserinfo();
-                        appendFixApply();
                     }
                 }
             })
@@ -122,7 +124,7 @@ $(document).ready(function(){
             type:"POST",
             timeout:8000,
             data:{funcName:'getInfo',serverName:'10.101.62.62',uid:'sa',pwd:'2huj15h1',Database:'USERINFO',
-                tableName:'userinfo1',column:' uname,sex,birthdate,cardid,phone1,address ',where:' where payId = \''+payId+'\'',order:' '},
+                tableName:'userinfo1',column:' uname,sex,birthdate,cardid,phone1,address,archivesId ',where:' where payId = \''+payId+'\'',order:' '},
             dataType:'json',
             success:function(data){
                 $.ajax({
@@ -141,11 +143,9 @@ $(document).ready(function(){
     }
     //用取回的信息渲染申请表
     function fillInTable(data,cardData){
-        console.log(data);
-        console.log(cardData)
         var cardId =[];
         cardData['sjDriveCode'] = 'J1';
-        cardData['sjDate'] = '-1994-12-12';
+        cardData['sjDate'] = '1994-12-12';
         //用从全员信息库取出的数据填写基本信息
         for(var i=0;i<data['cardid'].length;i++){
             cardId[i] = data['cardid'][i];
@@ -167,14 +167,75 @@ $(document).ready(function(){
         $("#apply"+cardData['sjDriveCode']).attr({'checked':'checked','disabled':true}).siblings('input').attr('disabled',true);
         $("#phyOk").attr({'checked':'checked','disabled':true}).siblings('input').attr('disabled',true);
         $("#cardLost").attr({'checked':'checked','disabled':true}).siblings('input').attr('disabled',true);
-        
+        $("#originYearInTable").text(cardData['sjDate'].split('-')[0]);
+        $("#originMonthInTable").text(cardData['sjDate'].split('-')[1]);
+        $("#originDateInTable").text(cardData['sjDate'].split('-')[2]);
+        //添加提交事件
+        $("#applySubmit").off('click').on('click',function(){
+            if(confirm('请确认提交内容真实有效且正确无误！提交请点“确定”，返回请点“取消”')){
+                $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    data:{funcName:'getCsxx',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'jszgl',
+                        tableName:'csxx',column:' * '},
+                    dataType:'json',
+                    success:function(csData){
+                        appendFixApply(data,cardData,csData);
+                    }
+                })
+            }
+        })
+        $("#print").off('click').on('click',print);
     }
     //发ajax更新bgxx表
-    function appendFixApply(){
-
+    function appendFixApply(data,cardData,csData){
+        var payId = sessionGet('payId');
+        var department = sessionGet('department');
+        var UName = sessionGet('user');
+        var cardId = data['cardid'];
+        var archivesId = data['archivesId'];
+        var changeType = csData['czlb-bz']['nr2'];
+        if($("#cardLost").attr('checked')){
+            var changeReason = csData['bzyy-jszds']['nr2'];
+        }else if($("#cardBreak").attr('checked')){
+            var changeReason = csData['bzyy-jszsh']['nr2'];
+        }
+        var driveCode = $(".origin input:checked").next('label').text();
+        if(driveCode === '其他（'){
+            driveCode = $("#originOtherInput").val()
+        }
+        var drive = csData['zjlx-'+driveCode]['nr1'];
+        var phyTest = $(".phyCheck input:checked").next('label').text();
+        var needed = csData['needed-hbzsqb']['nr2']+','+csData['needed-jszdszm']['nr2'];
+        var checkStatus = csData['checkStatus-cjshz']['nr2'];
+        var lotNumber = new Date();
+        lotNumber.month =lotNumber.getMonth()<9? '0'+(lotNumber.getMonth()+1):lotNumber.getMonth()+1;
+        lotNumber.date = lotNumber.getDate()<10? '0'+lotNumber.getDate():lotNumber.getDate();
+        lotNumber = lotNumber.getFullYear()+'-'+lotNumber.month+'-'+lotNumber.date;
+        $.ajax({
+            url: "../../../index.php",
+            type:"POST",
+            timeout:8000,
+            data:{funcName:'insertFixApply',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'jszgl',
+                tableName:' bgxx',column:' (id,lotNumber,Department,payId,archivesId,UName,cardId,changeType,changeReason,' +
+                'driveCode,drive,phyTest,needed,checkStatus)',
+                values:'(getDate(),\''+lotNumber+'\',\''+department+'\',\''+payId+'\',\''+archivesId+'\',\''+UName+'\',\''+cardId+'\',\''+changeType+'\',\''
+                +changeReason+'\',\''+driveCode+'\',\''+drive+'\',\''+phyTest+'\',\''+needed+'\',\''+checkStatus+'\')'},
+            dataType:'json',
+            success:function(){
+                $("#applySubmit").css('display','none')
+                alert('您的补证申请提交成功，请联系车间开具《驾驶证丢失证明》')
+            }
+        })
     }
 
-
+    //打印
+    function print(){
+        var html = $("#bigContent #rightContent .operateContent #applyContainer #fixTable");
+        console.log(html)
+        $("body").empty().append(html)
+    }
 
 
 
