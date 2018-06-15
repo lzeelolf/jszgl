@@ -251,6 +251,33 @@ function getCsxx($serverName,$uid,$pwd,$Database,$tableName,$column){
     }
 
 }
+
+function update($serverName,$uid,$pwd,$Database,$tableName,$setStr,$where){
+    $connectionInfo = array("Uid"=>$uid, "Pwd"=>$pwd, "Database"=>$Database,"CharacterSet"=>"UTF-8");
+    $conn = sqlsrv_connect($serverName, $connectionInfo);
+    if( $conn === false)
+    {
+        //连接失败
+        die(print_r(sqlsrv_errors(), true));
+    }
+    if ( sqlsrv_begin_transaction( $conn ) === false ) {
+        die( print_r( sqlsrv_errors(), true ));
+    }
+    $sql1 = "UPDATE ".$tableName.' SET '.$setStr.$where;
+    $stmt1 = sqlsrv_query( $conn, $sql1 );
+    if($stmt1){
+        sqlsrv_commit( $conn );
+        $ret = array();
+        $ret['success'] = 1;
+        $ret['sql'] = $sql1 ;
+        echo json_encode($ret);
+    }else{
+        $ret = array();
+        $ret['success'] = 0;
+        $ret['sql'] = $sql1 ;
+        echo json_encode($ret);
+    }
+}
 ?>
 
 

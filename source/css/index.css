@@ -112,7 +112,7 @@ a,a:hover,a:active,a:visited{
     box-shadow: 0 0 3px 1px #999 ;
     border-radius: 2px;
 }
-#bigContent #rightContent h1{
+#bigContent #rightContent h1#title{
     text-align: center;
     height: 80px;
     line-height: 80px;
@@ -349,7 +349,7 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent #informationContainer #cardInfoContent p{
     padding: 0;
     float: left;
-    width: 90px;
+    width: 100px;
     font-size: 14px;
     margin-top: 20px;
 }
@@ -357,7 +357,7 @@ a,a:hover,a:active,a:visited{
     padding: 0;
     font-size: 14px;
     float: left;
-    width: 100px;
+    width: 130px;
     margin-top: 20px;
     border-bottom: 1px solid #333;
 }
@@ -390,7 +390,7 @@ a,a:hover,a:active,a:visited{
 }
 #fixTable{
     width: 800px;
-    height: 810px;
+    height: 1120px;
     background-color: white;
     position: relative;
     visibility: hidden;
@@ -401,8 +401,8 @@ a,a:hover,a:active,a:visited{
     font-weight: 900;
     font-family: '宋体';
     border:none;!important;
-    height: 160px;
-    line-height: 160px;
+    height: 180px;
+    line-height: 260px;
 }
 #fixTable #fixTableArea{
     border: solid 1px black;
@@ -498,16 +498,21 @@ a,a:hover,a:active,a:visited{
     height: 35px;
     line-height: 35px;
 }
+.height28{
+    height: 28px;
+
+}
 .height54{
     height: 54px;
     line-height: 24px;
 }
-.height56{
-    height: 56px;
-    line-height: 14px;
+.height70{
+    height: 70px;
+    line-height: 22px;
 }
-.height150{
-    height: 150px;
+.height170{
+    height: 170px;
+    line-height: 170px;
 }
 .floatR{
     float: right;
@@ -546,7 +551,10 @@ a,a:hover,a:active,a:visited{
     font-family: '仿宋';
 }
 .reason label{
-    margin-top: 3px;
+    line-height: 26px;
     font-size: 14px;
     font-family: '仿宋';
+}
+.reason input{
+    margin: 8px 0 0 15px;
 }

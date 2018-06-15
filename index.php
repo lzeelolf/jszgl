@@ -22,6 +22,9 @@ if($_POST['funcName'] === 'select'){
 }else if($_POST['funcName'] === 'getCsxx'){
     getCsxx($_POST['serverName'],$_POST['uid'],$_POST['pwd'],
         $_POST['Database'],$_POST['tableName'],$_POST['column']);
+}else if($_POST['funcName'] === 'update'){
+    update($_POST['serverName'],$_POST['uid'],$_POST['pwd'],
+        $_POST['Database'],$_POST['tableName'],$_POST['setStr'],$_POST['where']);
 }
 
 ?>

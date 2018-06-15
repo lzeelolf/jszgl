@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
+
 <div id="loadingPic">
     <p>正在连接,请稍候...</p>
 </div>
@@ -17,7 +18,7 @@
         </ul>
     </div>
     <div id="rightContent">
-        <h1>洛阳机务段机车驾驶证管理系统</h1>
+        <h1 id="title">洛阳机务段机车驾驶证管理系统</h1>
         <div class="operateContent">
             <div id="appendContainer">
                 <div id="checkBoxBand">
@@ -109,7 +110,8 @@
 
                 </div>
                 <div id="cardInfoContent">
-                    <p>姓名</p><div class="name">xxx</div><p>出生日期</p><div class="birth">xxxxxxxxxx</div>
+                    <p>姓名</p><div class="name">xxx</div>
+                    <p>出生日期</p><div class="birth">xxxxxxxxxx</div>
                     <p>身份证号</p><div class="idCard">xxxxxxxxxxxxxxxxxx</div><p>准驾机型</p><div class="driveType">xx</div>
                     <p>有效起始</p><div class="startDate">xxxxxxxxxx</div><p>有效截止</p><div class="deadline">xxxxxxxxxx</div>
                     <p>初次领证日期</p><div class="sjDate">xxxxxxxxxx</div><p>年鉴时间</p><div class="?">xxxxxxxxxx</div>
@@ -238,28 +240,41 @@
                                 <input type="checkbox" id="applyL3" class="float"/>
                                 <label for="applyL3" class="float">L3</label>
                             </div>
-                            <div class="float width122 height56 borderTop">健康检查结<br>论（换证填<br>选）</div>
-                            <div class="float width575 borderTop borderLeft height56 phyCheck">
-                                <input type="checkbox" id="phyOk" class="float" style="margin: 21px 0 0 15px"/>
-                                <label for="phyOk" class="float height56" style="line-height: 56px">合格</label>
-                                <input type="checkbox" id="phyNotOk" class="float" style="margin: 21px 0 0 35px"/>
-                                <label for="phyNotOk" class="float height56" style="line-height: 56px">不合格</label>
+                            <div class="float width122 height70 borderTop">健康检查结<br>论（换证填<br>选）</div>
+                            <div class="float width575 borderTop borderLeft height70 phyCheck">
+                                <input type="checkbox" id="phyOk" class="float" style="margin: 29px 0 0 15px"/>
+                                <label for="phyOk" class="float height70" style="line-height: 70px">合格</label>
+                                <input type="checkbox" id="phyNotOk" class="float" style="margin: 29px 0 0 35px"/>
+                                <label for="phyNotOk" class="float height70" style="line-height: 70px">不合格</label>
                             </div>
-                            <div class="float width122 height150 borderTop" style="line-height: 150px">申请原因</div>
-                            <div class="float width575 height150 borderTop borderLeft reason">
-                                <input type="checkbox" id="reasonDeadline" class="float" style="margin: 8px 0 0 15px"/>
-                                <label for="reasonDeadline" class="float">驾驶证有效期满</label><br>
-                                <input type="checkbox" id="reasonContChange" class="float" style="margin: 8px 0 0 15px"/>
-                                <label for="reasonContChange" class="float">驾驶证记载内容变化</label><br>
-                                <input type="checkbox" id="reasonLower" class="float" style="margin: 8px 0 0 15px"/>
-                                <label for="reasonLower" class="float">本人自愿降低准驾机型</label><br>
-                                <input type="checkbox" id="cardBreak" class="float" style="margin: 8px 0 0 15px"/>
-                                <label for="cardBreak" class="float">驾驶证损毁</label><br>
-                                <input type="checkbox" id="cardLost" class="float" style="margin: 8px 0 0 15px"/>
-                                <label for="cardLost" class="float">驾驶证丢失</label><br>
-                                <input type="checkbox" id="otherReason" class="float" style="margin: 6px 0 0 15px"/>
-                                <label for="otherReason" class="float">其他说明：</label>
-                                <input disabled type="text" class="float noborder" style="background-color: white;height: 20px;line-height: 20px;font-size: 14px;font-family: '仿宋';"/>
+                            <div class="float width122 height170 borderTop" style="line-height: 150px">申请原因</div>
+                            <div class="float width575 height170 borderTop borderLeft reason">
+                                <div class="width575 height28">
+                                    <input type="checkbox" id="reasonDeadline" class="float"/>
+                                    <label for="reasonDeadline" class="float">驾驶证有效期满</label><br>
+                                </div>
+                                <div class="width575 height28">
+                                    <input type="checkbox" id="reasonContChange" class="float"/>
+                                    <label for="reasonContChange" class="float">驾驶证记载内容变化</label><br>
+                                </div>
+                                <div class="width575 height28">
+                                    <input type="checkbox" id="reasonLower" class="float"/>
+                                    <label for="reasonLower" class="float">本人自愿降低准驾机型</label><br>
+                                </div>
+                                <div class="width575 height28">
+                                    <input type="checkbox" id="cardBreak" class="float"/>
+                                    <label for="cardBreak" class="float">驾驶证损毁</label><br>
+                                </div>
+                                <div class="width575 height28">
+                                    <input type="checkbox" id="cardLost" class="float"/>
+                                    <label for="cardLost" class="float">驾驶证丢失</label><br>
+                                </div>
+                                <div class="width575 height28">
+                                    <input type="checkbox" id="otherReason" class="float"/>
+                                    <label for="otherReason" class="float">其他说明：</label>
+                                    <input disabled type="text" class="float noborder" style="background-color: white;height: 20px;line-height: 20px;font-size: 14px;font-family: '仿宋';"/>
+                                </div>
+
                             </div>
                             <div class="float borderTop" style="width: 100%">
                                 <div class="height35" style="text-align: left;margin-bottom: 20px">
@@ -294,11 +309,19 @@
                 <button id="applySubmit">提交</button>
                 <button id="print">打印</button>
             </div>
-            <div id="statusContainer">
-                证件状态
+            <div id="statusContainer" style="padding-top: 50px">
+                <span id="firstName"></span><span>师傅，您的驾驶证状态为：</span>
+                <span id="cardStatus" style="text-decoration: underline"></span>
+                <div id="alert"></div>
+
+                <div id="applyInfo" style="margin-top: 50px;text-align: left;text-indent: 2em;padding: 90px">
+                    <span id="checkStatus"></span>
+                    <span id="finishStatus"></span>
+                    <span id="needed"></span>
+                </div>
             </div>
             <div id="improveContainer">
-                完善信息
+                
             </div>
         </div>
     </div>
