@@ -385,6 +385,75 @@ $(document).ready(function(){
     }
 
 
+    //6.15做到这里，完善图片上传功能。
+    $("#cardSubmit").off('click').on('click',function(){
+        var payId = sessionGet('payId');
+        var ajaxTimeOut1 = $.ajax({
+        url: "../../../index.php",
+        type:"POST",
+        timeout:8000,
+        data:{funcName:'getInfo',serverName:'10.101.62.62',uid:'sa',pwd:'2huj15h1',Database:'USERINFO',
+            tableName:'userinfo1',column:' cardid ',where:' where payId = \''+payId+'\'',order:' '},
+        dataType:'json',
+        success:function(data){
+            sessionSet('cardId',data['row']['cardId'])
+        },
+        beforeSend:function(){
+            //在where字段后加入用户选择的车间范围
+            testSession(userSessionInfo);
+            loadingPicOpen();
+        },
+        complete: function (XMLHttpRequest,status) {
+            loadingPicClose();
+            if(status === 'timeout') {
+                ajaxTimeOut1.abort();    // 超时后中断请求
+                alert('网络超时，请检查网络连接');
+            }
+        }
+    })
+        var fileCard = document.getElementById('cardInput').files[0];
+        var filePhoto = document.getElementById('cardInput').files[0];
+        var formData = new FormData();
+        formData.append("action", "UploadVMKImagePath");
+        formData.append("file", fileCard);
+        if (typeof (fileCard) === "undefined" || fileCard.size <= 0) {
+            alert("请选择图片");
+            return;
+        }
+        var ajaxTimeOut = $.ajax({
+            url: "../../../storeImg",
+            type:"POST",
+            timeout:8000,
+            data:{formData:formData,serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                tableName:'jbxx',column:'name,nr1',where:' where lb = \'ssbm\' ',order:' '},
+            dataType:'json',
+            success:function(data){
+                delete data['success'];
+                delete data['count'];
+                html = '';
+                for(var i in data){
+                    if(data[i]['nr1']!==''){
+                        html += '<div><input type="checkbox" id=\"'+data[i]['name']+'\"><label for="'+data[i]['name']+'\">'+data[i]['nr1']+'</label></div>'
+                    }
+                }
+                $("#queryCardBanner").prepend(html);
+            },
+            beforeSend:function(){
+                //在where字段后加入用户选择的车间范围
+                testSession(userSessionInfo);
+                loadingPicOpen();
+            },
+            complete: function (XMLHttpRequest,status) {
+                loadingPicClose();
+                if(status === 'timeout') {
+                    ajaxTimeOut.abort();    // 超时后中断请求
+                    alert('网络超时，请检查网络连接');
+                }
+            }
+        })
+    })
+
+
 
 
 

@@ -558,3 +558,31 @@ a,a:hover,a:active,a:visited{
 .reason input{
     margin: 8px 0 0 15px;
 }
+#bigContent #rightContent #improveContainer{
+    height: 560px;
+}
+#bigContent #rightContent #improveContainer #picContent{
+    width: 180px;
+    padding-left: 100px;
+    height: 560px;
+    padding-top: 40px;
+}
+#bigContent #rightContent #improveContainer #picContent>div{
+    width: 150px;
+    height: 150px;
+    border: 10px solid #fff;
+    line-height: 150px;
+    margin-bottom: 40px;
+}
+#bigContent #rightContent #improveContainer #formContent{
+    width: 400px;
+}
+#bigContent #rightContent #improveContainer #formContent div form{
+    display: block;
+}
+#bigContent #rightContent #improveContainer #formContent div{
+    height: 180px;
+    margin-top: 60px;
+    text-align: left;
+    margin-left: 50px;
+}
