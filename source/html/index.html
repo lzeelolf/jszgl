@@ -407,23 +407,28 @@
                     </div>
                 </div>
                 <div class="float" id="formContent">
-
+                    <form id="cardForm">
                         <div>
 
-                                <label for="cardInput">驾驶证扫描件:</label>
-                                <input type="file" name="file" id="cardInput" accept="image/*"  onchange="setCardPreview();">
-                                <br><br>
-                                <input type="button" name="submit" value="上传" multiple id="cardSubmit"/>
+                            <label for="cardInput">驾驶证扫描件:</label>
+                            <input type="file" name="file" id="cardInput" accept="image/*"  onchange="setCardPreview();">
+                            <br><br>
+                            <input type="button" name="submit" value="上传" multiple id="cardSubmit"/>
 
                         </div>
+                    </form>
+                    <form id="photoForm">
                         <div>
 
-                                <label for="photoInput">个人照片电子档:</label>
-                                <input type="file" name="file" id="photoInput" accept="image/*"  onchange="setPhotoPreview();">
-                                <br><br>
-                                <input type="button" name="submit" value="上传" id="photoSubmit"/>
+                            <label for="photoInput">个人照片电子档:</label>
+                            <input type="file" name="file" id="photoInput" accept="image/*"  onchange="setPhotoPreview();">
+                            <br><br>
+                            <input type="button" name="submit" value="上传" id="photoSubmit"/>
 
                         </div>
+                    </form>
+
+
 
 
                 </div>

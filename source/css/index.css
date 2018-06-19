@@ -8,7 +8,7 @@ html,body,*{
     -moz-user-select: none;
 }
 body{
-    overflow-x: hidden;
+    overflow-x: auto;
     overflow-y: visible;
     background-color: #eee;
     position: relative;
@@ -59,7 +59,7 @@ a,a:hover,a:active,a:visited{
 }
 #bigContent{
     width: 96%;
-    background-color: #eee;
+    background-color: #efefef;
     position: absolute;
     left: 3%;
     top: 40px;
@@ -121,11 +121,10 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent{
     width: 95%;
     min-height: 460px;
-    padding-bottom: 40px;
-    margin: 30px 0 0 2.5%;
+    padding: 0 2.5% 40px 2.5%;
+    background-color: #f4f4f4;
 }
 #bigContent #rightContent .operateContent>div{
-    background-color: #eee;
     width: 100%;
     min-height: 460px;
     text-align: center;
@@ -349,7 +348,7 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent #informationContainer #cardInfoContent p{
     padding: 0;
     float: left;
-    width: 100px;
+    width: 70px;
     font-size: 14px;
     margin-top: 20px;
 }
@@ -357,7 +356,7 @@ a,a:hover,a:active,a:visited{
     padding: 0;
     font-size: 14px;
     float: left;
-    width: 130px;
+    width: 120px;
     margin-top: 20px;
     border-bottom: 1px solid #333;
 }

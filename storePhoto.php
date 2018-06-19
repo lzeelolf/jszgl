@@ -19,7 +19,7 @@ if ($_FILES['file']["type"] == 'image/png' || $_FILES['file']["type"] == 'image/
         //自定义文件名称
         $array=$_FILES['file']["type"];
         $array=explode("/",$array);
-        $newfilename=$_POST['uname'].$_POST['cardId'].'驾驶证';
+        $newfilename=$_POST['uname'].$_POST['cardId'].'电子照';
         $_FILES['file']["name"]=$newfilename.".".$array[1];
         $upload_file = iconv("UTF-8", "GB2312", $_FILES["file"]["name"]);
         if (!is_dir("source/images/userPic"))//当路径不穿在
@@ -36,7 +36,7 @@ if ($_FILES['file']["type"] == 'image/png' || $_FILES['file']["type"] == 'image/
         else//当文件不存在
         {
             move_uploaded_file($_FILES['file']["tmp_name"],$url);
-            $ret['notice'] = '驾驶证上传成功';
+            $ret['notice'] = '电子照上传成功';
         }
         $ret['success'] = 1;
 
