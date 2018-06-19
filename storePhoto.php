@@ -17,10 +17,9 @@ if ($_FILES['file']["type"] == 'image/png' || $_FILES['file']["type"] == 'image/
     {
 
         //自定义文件名称
-        $array=$_FILES['file']["type"];
-        $array=explode("/",$array);
+        $array='jpg';
         $newfilename=$_POST['uname'].$_POST['cardId'].'电子照';
-        $_FILES['file']["name"]=$newfilename.".".$array[1];
+        $_FILES['file']["name"]=$newfilename.".".$array;
         $upload_file = iconv("UTF-8", "GB2312", $_FILES["file"]["name"]);
         if (!is_dir("source/images/userPic"))//当路径不穿在
         {

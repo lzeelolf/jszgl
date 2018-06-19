@@ -103,6 +103,9 @@ function loginStatus(){
 function displayQueryForm(){
     var obj = checkQueryRequest();
     obj = addQueryDepartment(obj);
+    if(obj === undefined){
+        return false
+    }
         var ajaxTimeOut = $.ajax({
             url: "../../../index.php",
             type:"POST",
@@ -196,7 +199,7 @@ function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj){
                 case 'deadline':
                     j = '截止日期';
                     break;
-                case '':
+                case 'payid':
                     j = '工资号';
                     break;
                 case 'fsjDate':
@@ -228,6 +231,14 @@ function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj){
                     break;
                 case 'age':
                     j = '年龄';
+                    break;
+                case 'startDate':
+                    j = '有效起始日期';
+                    break;
+                case 'remainingDays':
+                    j = '剩余天数';
+                    break;
+                case 'cardPath':
                     break;
             }
             html += '<th id='+i+'>'+j+'</th>';
@@ -519,7 +530,7 @@ function rememberSession(token,user,power,department,payId){
 
 //测试session是否被更改过
 function testSession(obj){
-    if(obj.token === sessionGet('token') && obj.user ===sessionGet('user') && obj.power ===sessionGet('power') && obj.department === sessionGet('department') && obj.payId === sessionGet('payID')){
+    if(obj.token === sessionGet('token') && obj.user ===sessionGet('user') && obj.power ===sessionGet('power') && obj.department === sessionGet('department') && obj.payId === sessionGet('payId')){
         console.log('session 正常')
     }else{
         alert('用户信息发生变化，请重新登录');
@@ -554,8 +565,10 @@ function checkQueryRequest(){
         var arr  = $("#inputArea>div>input:checked");
         if(arr.length === 0){
             alert('请至少选择一列您要查看的信息');
-        }else if(arr.length === 16){
-            querySql.column = '*';
+            //后期如果数据库jbxx写入了更多列，在这里更改
+        }else if(arr.length === 18){
+            querySql.column = 'PayId,ArchivesId,UName,Department,Txrq,BirthDate,fsjDate,fsjRemark,' +
+                '           fsjDriveCode,fsjDriveType,sjDate,sjRemark,sjDriveCode,sjDriveType,status,deadline,startDate,remainingDays';
         }else{
             for(var i =0;i<arr.length;i++){
                 querySql.column += $(arr[i]).attr('id')+',';
@@ -1396,7 +1409,8 @@ function appendElement(){
         timeout:8000,
         //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
         data:{funcName:'appendElement',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
-            tableName:'jbxx',column:'top 1 *'},
+            tableName:'jbxx',column:'top 1 PayId,ArchivesId,UName,Department,Txrq,BirthDate,fsjDate,fsjRemark,' +
+            'fsjDriveCode,fsjDriveType,sjDate,sjRemark,sjDriveCode,sjDriveType,status,deadline,startDate,remainingDays'},
         dataType:'json',
         success:function(data){
             for(var i in data['row']){
@@ -1636,14 +1650,19 @@ function appendValue(){
 //添加车间选项
 function addQueryDepartment(obj){
     var reg = 'where';
-    if(reg.search(obj.where)){
-        obj.where +=' AND (';
+    if(obj){
+        if(reg.search(obj.where)){
+            obj.where +=' AND (';
+        }else{
+            obj.where +=' where (';
+        }
+        for(var i =0;i<$("#queryCardBanner input:checked").length;i++){
+            obj.where += 'department like \''+ $("#queryCardBanner input:checked:eq("+i+")").next('label').text()+'%\' or '
+        }
+        obj.where = obj.where.substr(0,obj.where.length-3)+')';
+        return obj;
     }else{
-        obj.where +=' where (';
+        return false;
     }
-    for(var i =0;i<$("#queryCardBanner input:checked").length;i++){
-        obj.where += 'department like \''+ $("#queryCardBanner input:checked:eq("+i+")").next('label').text()+'%\' or '
-    }
-    obj.where = obj.where.substr(0,obj.where.length-3)+')';
-    return obj;
+
 }
