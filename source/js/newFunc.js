@@ -106,46 +106,46 @@ function displayQueryForm(){
     if(obj === undefined){
         return false
     }
-        var ajaxTimeOut = $.ajax({
-            url: "../../../index.php",
-            type:"POST",
-            timeout:8000,
-            //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-            data:{funcName:'select',where:obj.where,serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+    var ajaxTimeOut = $.ajax({
+        url: "../../../index.php",
+        type:"POST",
+        timeout:8000,
+        //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+        data:{funcName:'select',where:obj.where,serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
             tableName:'jbxx',column:obj.column,order:obj.order},
-            dataType:'json',
-            success:function(data){
-                if(data.success === 1){
-                    console.log(data);
-                    //把使用过的多余属性删除，便于处理数据
-                    delete data['success'];
-                    displayQueryTable(data,document.getElementById('queryCardContent'),document.getElementById('cardPageContent'),'pageMode',obj,'queryCardContentTable');
-                    //生成EXCEL按钮出现
-                    $(".htmlToXls").css("visibility",'visible');
-                }else{
-                    console.log(data['sql'])
-                    alert('您查询的信息不存在');
-                }
-            },
-            beforeSend:function(){
-                //在where字段后加入用户选择的车间范围
-                testSession(userSessionInfo);
-                loadingPicOpen();
-            },
-            complete: function (XMLHttpRequest,status) {
-                loadingPicClose();
-                if($("#querySelectBanner").attr('class') === 'less'){
-                    $("#querySelectBanner").dequeue().animate({'height':'0'},700,function(){
-                        $("#querySelectBanner").attr('class','more');
-                        $("#more").text('更多...');
-                    });
-                }
-                if(status === 'timeout') {
-                    ajaxTimeOut.abort();    // 超时后中断请求
-                    alert('网络超时，请检查网络连接');
-                }
+        dataType:'json',
+        success:function(data){
+            if(data.success === 1){
+                console.log(data);
+                //把使用过的多余属性删除，便于处理数据
+                delete data['success'];
+                displayQueryTable(data,document.getElementById('queryCardContent'),document.getElementById('cardPageContent'),'pageMode',obj,'queryCardContentTable');
+                //生成EXCEL按钮出现
+                $(".htmlToXls").css("visibility",'visible');
+            }else{
+                console.log(data['sql'])
+                alert('您查询的信息不存在');
             }
-        })
+        },
+        beforeSend:function(){
+            //在where字段后加入用户选择的车间范围
+            testSession(userSessionInfo);
+            loadingPicOpen();
+        },
+        complete: function (XMLHttpRequest,status) {
+            loadingPicClose();
+            if($("#querySelectBanner").attr('class') === 'less'){
+                $("#querySelectBanner").dequeue().animate({'height':'0'},700,function(){
+                    $("#querySelectBanner").attr('class','more');
+                    $("#more").text('更多...');
+                });
+            }
+            if(status === 'timeout') {
+                ajaxTimeOut.abort();    // 超时后中断请求
+                alert('网络超时，请检查网络连接');
+            }
+        }
+    })
 }
 
 
@@ -464,7 +464,7 @@ function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj,tabl
                 sheetData:arr,
                 sheetName:'sheet',
                 sheetFilter:['PayId','ArchivesId','UName','BirthDate','Txrq','Department','fsjDate','fsjRemark','fsjDriveCode',
-                             'fsjDriveType','sjDate','sjRemark','sjDriveCode','sjDriveType','deadline','status'],
+                    'fsjDriveType','sjDate','sjRemark','sjDriveCode','sjDriveType','deadline','status'],
                 sheetHeader:['工资号','档案号','姓名','出生日期','退休日期','部门','副司机初次领证日期','批准文号','准驾类型代码','准驾类型',
                     '司机初次领证日期','批准文号','准驾类型代码','准驾类型','证件有效截止日期','驾驶证状态']
             }
@@ -814,9 +814,9 @@ function checkQueryRequest(){
                 //日期的正则表达式
                 if($("#value1").val().match(/^\d{8}$/) || $("#value1").val().match(/^\d{4}-\d{2}-\d{2}$/)) {
                     if ($("#value1").val().match(/^\d{8}$/)) {
-                       var year1 = $("#value1").val().substr(0, 4);
-                       var month1 = $("#value1").val().substr(4, 2);
-                       var day1 = $("#value1").val().substr(6, 2);
+                        var year1 = $("#value1").val().substr(0, 4);
+                        var month1 = $("#value1").val().substr(4, 2);
+                        var day1 = $("#value1").val().substr(6, 2);
                         var date1 ='';
                     } else {
                         year1 = $("#value1").val().split('-')[0];
@@ -830,10 +830,10 @@ function checkQueryRequest(){
                 }
                 if($("#value2").val().match(/^\d{8}$/) || $("#value2").val().match(/^\d{4}-\d{2}-\d{2}$/)) {
                     if ($("#value2").val().match(/^\d{8}$/)) {
-                       var year2 = $("#value2").val().substr(0, 4);
-                       var month2 = $("#value2").val().substr(4, 2);
-                       var day2 = $("#value2").val().substr(6, 2);
-                       var date2 ='';
+                        var year2 = $("#value2").val().substr(0, 4);
+                        var month2 = $("#value2").val().substr(4, 2);
+                        var day2 = $("#value2").val().substr(6, 2);
+                        var date2 ='';
                     } else {
                         year2 = $("#value2").val().split('-')[0];
                         month2 = $("#value2").val().split('-')[1];
@@ -872,8 +872,8 @@ function checkQueryRequest(){
                     alert('请输入正确的时间:\"xxxxxxxx\"或\"xxxx-xx-xx\"');
                     $("#value2").focus().css('backgroundColor','#ffcccc');
                     return false;
-                    }
                 }
+            }
             else{
                 //如果用户没有选择内容则以默认值检索
                 return querySql;
@@ -1402,7 +1402,7 @@ function checkQueryRequest(){
             }
         }
 
-        }else{
+    }else{
         alert('请至少选择一个车间');
     }
 
