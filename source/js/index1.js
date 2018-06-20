@@ -130,12 +130,23 @@ $(document).ready(function() {
         $("#exchangeApplyCheck").off('click').on('click',function(){
             $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
             $("#exchangeApplyContent").css('zIndex',999).siblings('div').css('zIndex',1);
+            var obj = {};
+            obj.column = ' lotNumber,payId,UName,changeType ';
+            obj.order = ' order by lotNumber ';
             if(power === '1'){
+                var department = sessionGet('department');
                 //添加目前正在进行车间审核的补证申请
-                var obj = {};
+                obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'换证\' AND department =\''+department+'\'';
+                exchangeApplyAjax(obj)
+
+            }
+            //这里尚未添加教育科人员的审核申请界面
+            if(power === 'V'){
                 obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'换证\'';
-                obj.column = ' lotNumber,payId,UName,changeType ';
-                obj.order = ' order by lotNumber ';
+                exchangeApplyAjax(obj)
+            }
+
+            function exchangeApplyAjax(obj){
                 var ajaxTimeOut = $.ajax({
                     url: "../../../index.php",
                     type:"POST",
@@ -277,20 +288,29 @@ $(document).ready(function() {
                     }
                 })
             }
-            //这里尚未添加教育科人员的审核申请界面
-            if(power === 'V'){
-
-            }
         });
         $("#fixApplyCheck").off('click').on('click',function(){
             $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
             $("#fixApplyContent").css('zIndex',999).siblings('div').css('zIndex',1);
+            var obj = {};
+            obj.column = ' lotNumber,payId,UName,changeType ';
+            obj.order = ' order by lotNumber ';
             if(power === '1'){
+                var department = sessionGet('department');
                 //添加目前正在进行车间审核的补证申请
-                var obj = {};
+                obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'补证\' AND department = \''+department+'\'';
+                fixApplyAjax(obj)
+
+
+
+            }
+            //这里尚未添加教育科人员的审核申请界面
+            if(power === 'V'){
                 obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'补证\'';
-                obj.column = ' lotNumber,payId,UName,changeType ';
-                obj.order = ' order by lotNumber ';
+                fixApplyAjax(obj)
+            }
+            //这个函数是请求换补证申请，然后添加入页面的函数,传入obj是sql对象，内涵where,column,order三个字段
+            function fixApplyAjax(obj){
                 var ajaxTimeOut = $.ajax({
                     url: "../../../index.php",
                     type:"POST",
@@ -415,10 +435,8 @@ $(document).ready(function() {
                                         cur-=1;
                                         $("#fixApplyPage .cur").text(cur);
                                     }
-
                                 })
                             }
-
                         }else{
                             alert('暂无补证申请信息');
                         }
@@ -436,20 +454,17 @@ $(document).ready(function() {
                     }
                 })
             }
-            //这里尚未添加教育科人员的审核申请界面
-            if(power === 'V'){
-
-            }
         });
 
     }
-
+    //审核申请的按钮事件
     function boundCheckEvent(power){
         var payId='';
         var lotNumber = '';
         var changeType = '';
         var setStr = '';
         var where = '';
+        var uname = '';
         if(power === '1'){
             //在这里面定义一些变量用来存放数据库字段，节省代码
         }
@@ -457,29 +472,132 @@ $(document).ready(function() {
             console.log(1)
         })
         $("#fixCheckTable .pass").off('click').on('click',function(){
-            payId = $(this).parent().prev().prev().prev().prev().text();
-            lotNumber = $(this).parent().prev().prev().prev().prev().prev().text();
-            changeType = $(this).parent().prev().prev().text();
-            setStr = 'checkStatus = \'教育科审核中\'';
-            where = ' where payid = \''+payId+'\' and lotNumber = \''+lotNumber+'\' and changeType =\''+changeType+'\'';
-            $.ajax({
-                url: "../../../index.php",
-                type: "POST",
-                timeout: 8000,
-                data: {
-                    funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                    tableName: ' bgxx', setStr: setStr, where: where
-                },
-                dataType: 'json',
-                success: function (data) {
+            if(confirm('请认真核对该申请表信息。操作无法撤回。\u000d确定要通过审核请选“确定”。返回请选“取消”')){
+                payId = $(this).parent().prev().prev().prev().prev().text();
+                lotNumber = $(this).parent().prev().prev().prev().prev().prev().text();
+                changeType = $(this).parent().prev().prev().text();
+                uname = $(this).parent().prev().prev().prev().text();
+                var _this = $(this);
+                setStr = 'checkStatus = \'教育科审核中\'';
+                where = ' where payid = \''+payId+'\' and lotNumber = \''+lotNumber+'\' and changeType =\''+changeType+'\'';
+                $.ajax({
+                    url: "../../../index.php",
+                    type: "POST",
+                    timeout: 8000,
+                    data: {
+                        funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                        tableName: ' bgxx', setStr: setStr, where: where
+                    },
+                    dataType: 'json',
+                    success: function () {
+                        alert('操作成功，您已通过了'+uname+'师傅的'+changeType+'申请');
+                        $(_this).next('span').remove();
+                        $(_this).remove();
+                    }
+                });
+            }
 
-                }
-            })
-            console.log()
         })
         $("#fixCheckTable .reject").off('click').on('click',function(){
+            var shortage ='';
+            var failedReason ='';
+            var _thisReject = $(this);
+            $(".rejectReasonDiv input:checkbox").attr('checked',false);
+            $("#reasonContainer").css('visibility','visible').dequeue().animate({'opacity':0.9},500);
+            $("#short").off('click').on('click',function(){
+                $(".rejectReasonDiv input:checkbox").attr('disabled',false);
+                console.log(this.checked)
+            });
+            $("#false").off('click').on('click',function(){
+                $(".rejectReasonDiv input:checkbox").attr('disabled',true);
+                $(".rejectReasonDiv input:checkbox").attr('checked',false);
+            });
+            $("#rejectReasonSubmit").off('click').on('click',function(){
+                var short = document.getElementById('short').checked;
+                var _false = document.getElementById('false').checked;
+                if(short && $(".rejectReasonDiv input:checked").length===0){
+                    alert('请选择缺少的材料');
+                }else if(short && $(".rejectReasonDiv input:checked").length>0){
+                    for(var i =0;i<$(".rejectReasonDiv input:checked").length;i++){
+                        shortage +=$(".rejectReasonDiv input:checked:eq("+i+")").next('label').text();
+                        shortage+=','
+                    }
+                    shortage = shortage.substring(0,shortage.length-1);
+                    failedReason = '材料不齐全';
+                    if(confirm('请认真核对该申请表信息。操作无法撤回。\u000d确定要驳回该申请请选“确定”。返回请选“取消”')){
+                        payId = $(_thisReject).parent().prev().prev().prev().prev().text();
+                        lotNumber = $(_thisReject).parent().prev().prev().prev().prev().prev().text();
+                        changeType = $(_thisReject).parent().prev().prev().text();
+                        uname = $(_thisReject).parent().prev().prev().prev().text();
+                        setStr = ' checkStatus = \'审核未通过\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\'';
+                        where = ' where payid = \''+payId+'\' and lotNumber = \''+lotNumber+'\' and changeType =\''+changeType+'\'';
+                        $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            timeout: 8000,
+                            data: {
+                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                                tableName: ' bgxx', setStr: setStr, where: where
+                            },
+                            dataType: 'json',
+                            success: function () {
+                                alert('操作成功，您已驳回了'+uname+'师傅的'+changeType+'申请');
+                                $(_thisReject).prev('span').remove();
+                                $(_thisReject).remove();
+                                $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
+                                    $("#reasonContainer").css('visibility','hidden')
+                                });
+                            }
+                        });
+                    }
+                }else if(_false){
+                    failedReason = '信息有误';
+                    if(confirm('请认真核对该申请表信息。操作无法撤回。\u000d确定要驳回该申请请选“确定”。返回请选“取消”')){
+                        payId = $(_thisReject).parent().prev().prev().prev().prev().text();
+                        lotNumber = $(_thisReject).parent().prev().prev().prev().prev().prev().text();
+                        changeType = $(_thisReject).parent().prev().prev().text();
+                        uname = $(_thisReject).parent().prev().prev().prev().text();
+                        setStr = ' checkStatus = \'审核未通过\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\'';
+                        where = ' where payid = \''+payId+'\' and lotNumber = \''+lotNumber+'\' and changeType =\''+changeType+'\'';
+                        $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            timeout: 8000,
+                            data: {
+                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                                tableName: ' bgxx', setStr: setStr, where: where
+                            },
+                            dataType: 'json',
+                            success: function () {
+                                alert('操作成功，您已驳回了'+uname+'师傅的'+changeType+'申请');
+                                $(_thisReject).prev('span').remove();
+                                $(_thisReject).remove();
+                                $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
+                                    $("#reasonContainer").css('visibility','hidden')
+                                });
+                            }
+                        });
+                    }
+                }
 
-            console.log($(this).parent().prev().prev().prev().prev())
+            });
+            $("#cancelReject").off('click').on('click',function(){
+                $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
+                    $("#reasonContainer").css('visibility','hidden')
+                });
+            })
+            $(document).keyup(function(event){
+                switch(event.keyCode) {
+                    case 27:
+                        $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
+                            $("#reasonContainer").css('visibility','hidden')
+                        });
+                    case 96:
+                        $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
+                            $("#reasonContainer").css('visibility','hidden')
+                        });
+                }
+            });
         })
     }
 
@@ -633,6 +751,7 @@ $(document).ready(function() {
     //用取回的信息渲染补证申请表
     function fillInTable(data, cardData) {
         var cardId = [];
+        //这两行是目前没有真实数据，模拟的数据，发布后记得删掉
         cardData['sjDriveCode'] = 'J1';
         cardData['sjDate'] = '1994-12-12';
         //用从全员信息库取出的数据填写基本信息
@@ -645,7 +764,7 @@ $(document).ready(function() {
         $("#birthYearInTable").text(data['birthdate'].split('-')[0]);
         $("#birthMonthInTable").text(data['birthdate'].split('-')[1]);
         $("#birthDateInTable").text(data['birthdate'].split('-')[2]);
-        $("#mobilePhoneInTable").val(data['phone1']);
+        $("#mobilePhoneInTable").text(data['phone1']);
         $("#companyInTable").text('郑州局集团');
         $("#addressInTable").val(data['address']);
         $("#mailInTable").val(410000);

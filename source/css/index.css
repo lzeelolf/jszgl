@@ -585,6 +585,33 @@ a,a:hover,a:active,a:visited{
     text-align: left;
     margin-left: 50px;
 }
+#reasonContainer{
+    width: 100%;
+    height: 100%;
+    background: #eee;
+    opacity: 0;
+    position: absolute;
+    visibility: hidden;
+    z-index: 1000;
+}
+#reasonContainer #reasonContent{
+    position: absolute;
+    background: white;
+    top: 30%;
+    left: 50%;
+    width: 200px;
+    height: 240px;
+    opacity: 1;
+    margin: -100px 0 0 -100px;
+    z-index: 1000;
+}
+#reasonContainer #reasonContent>div{
+    margin-top: 20px;
+    text-align: center;
+}
+#reasonContainer #reasonContent>div>input{
+    float: left;
+}
 #bigContent #rightContent #checkContainer #checkBanner{
     height: 40px;
     border-bottom: 1px solid #333333;

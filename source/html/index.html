@@ -85,6 +85,28 @@
 <div id="loadingPic">
     <p>正在连接,请稍候...</p>
 </div>
+<div id="reasonContainer">
+    <div id="reasonContent">
+        <p>请选择驳回该申请的原因：</p>
+        <div>
+            <div>
+                <input type="radio" id="short" name="reason" checked><label for="short">材料不齐全</label>
+            </div>
+            <div>
+                <input type="radio" id="false" name="reason"/><label for="false">信息有误</label>
+            </div>
+        </div>
+        <div class="rejectReasonDiv">
+            <div><input type="checkbox" id="shortTable"/><label for="shortTable">缺少申请表</label></div>
+            <div><input type="checkbox" id="shortProve"/><label for="shortProve">缺少驾驶证丢失证明</label></div>
+            <div><input type="checkbox" id="shortPhy"/><label for="shortPhy">缺少体检报告</label></div>
+        </div>
+        <div>
+            <button id="rejectReasonSubmit">确定</button>
+            <button id="cancelReject">取消</button>
+        </div>
+    </div>
+</div>
 <div id="bigContent">
     <div id="leftContent">
         <p class="welcome">欢迎</p>
@@ -169,6 +191,7 @@
                 数据统计
             </div>
             <div id="checkContainer">
+
                 <div id="checkBanner">
                     <div class="float" id="exchangeApplyCheck">换证申请</div>
                     <div class="float" id="fixApplyCheck">补证申请</div>
@@ -273,11 +296,11 @@
                                 <div class="width572 borderTop float">
                                     <div class="width122 float height35">固定电话</div>
                                     <div class="width174 borderLeft float height35">
-                                        <input class="width174 height35 noborder" id="fixedPhoneInTable" type="text"/>
+                                        <div class="width174 height35 noborder" id="fixedPhoneInTable"></div>
                                     </div>
                                     <div class="width99 borderLeft float height35 textCenter">移动电话</div>
                                     <div class="width174 borderLeft float height35">
-                                        <input class="width174 height35 noborder" id="mobilePhoneInTable" type="text"/>
+                                        <div class="width174 height35 noborder" id="mobilePhoneInTable"></div>
                                     </div>
                                 </div>
                                 <div class="width572 float borderTop">
