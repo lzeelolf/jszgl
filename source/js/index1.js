@@ -10,6 +10,30 @@ $(document).ready(function() {
     //根据用户的权限来显示左边的li内容
     appendLi(sessionGet('power'))
 
+
+    //取公用参数信息
+    var csData = {};
+    $.ajax({
+        url: "../../../index.php",
+        type: "POST",
+        timeout: 8000,
+        data: {
+            funcName: 'getCsxx', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+            tableName: 'csxx', column: ' * '
+        },
+        dataType: 'json',
+        success: function (Data) {
+            csData = Data;
+            $("li.statusButton").on('click', function () {
+                displayContainer
+                checkCardStatus(csData);
+
+            })
+        }
+    });
+
+
+
     function appendLi(power) {
         var html = '';
         if (power === 'V') {//这里填管理员的权限
@@ -106,79 +130,360 @@ $(document).ready(function() {
         $("#exchangeApplyCheck").off('click').on('click',function(){
             $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
             $("#exchangeApplyContent").css('zIndex',999).siblings('div').css('zIndex',1);
+            if(power === '1'){
+                //添加目前正在进行车间审核的补证申请
+                var obj = {};
+                obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'换证\'';
+                obj.column = ' lotNumber,payId,UName,changeType ';
+                obj.order = ' order by lotNumber ';
+                var ajaxTimeOut = $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                    data:{funcName:'select',where:obj.where,serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                        tableName:' bgxx ',column:obj.column,order:obj.order},
+                    dataType:'json',
+                    success:function(data){
+                        if(data['success'] === 1){
+                            delete data['success'];
+                            var count = data['count'];
+                            delete data['count']
+                            var html = '<tr><th>提交日期</th><th>工资号</th><th>姓名</th><th>申请类型</th><th>申请表详情</th><th>操作</th></tr>';
+                            if(count<11){
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html+= '<td><span class="seeInfo">查看详情</span></td>';
+                                    html += '<td><span class="pass"></span><span class="reject"></span></td>';
+                                    html += '</tr>'
+                                }
+                                $("#exchangeCheckTable").empty().append(html);
+                                //空白tr补齐表格
+                                if($("#exchangeCheckTable tbody tr").length<11){
+                                    html = '';
+                                    var count = 11-$("#exchangeCheckTable tbody tr").length;
+                                    var columns = 6;
+                                    for(var m=0;m<count;m++){
+                                        html+='<tr>';
+                                        for(var n=0;n<columns;n++){
+                                            html+="<td></td>";
+                                        }
+                                        html+="</tr>";
+                                    }
+                                    $("#exchangeCheckTable tbody").append(html);
+                                }
+                            }else{
+                                var q =0;
+                                var cur =1;
+                                var total = Math.ceil(count/10);
+                                $("#exchangeApplyPage").css("display",'block');
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html += '<td><span class="seeInfo">查看详情</span></td>';
+                                    html += '<td><span class="pass"></span><span class="reject"></span></td>';
+                                    html += '</tr>';
+                                    q+=1;
+                                    if(q>9){
+                                        break
+                                    }
+                                }
+                                $("#exchangeCheckTable").empty().append(html);
+                                $("#exchangeApplyPage .cur").text(cur);
+                                $("#exchangeApplyPage .total").text(total);
+                                $("#exchangeApplyPage .next").off('click').on('click',function(){
+                                    if(cur<total){
+                                        var j =0;
+                                        var html = '<tr><th>提交日期</th><th>工资号</th><th>姓名</th><th>申请类型</th><th>申请表详情</th><th>操作</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*cur-1 && j<10*(cur+1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '<td><span class="seeInfo">查看详情</span></td>';
+                                                html += '<td><span class="pass"></span><span class="reject"></span></td>';
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#exchangeCheckTable").empty().append(html);
+                                        //空白tr补齐表格
+                                        if($("#exchangeCheckTable tbody tr").length<11){
+                                            html = '';
+                                            var count = 11-$("#exchangeCheckTable tbody tr").length;
+                                            var columns = 6;
+                                            for(var m=0;m<count;m++){
+                                                html+='<tr>';
+                                                for(var n=0;n<columns;n++){
+                                                    html+="<td></td>";
+                                                }
+                                                html+="</tr>";
+                                            }
+                                            $("#exchangeCheckTable tbody").append(html);
+                                        }
+                                        cur+=1;
+                                        $("#exchangeApplyPage .cur").text(cur);
+                                    }
+
+                                })
+                                $("#exchangeApplyPage .prev").off('click').on('click',function(){
+                                    if(cur>1){
+                                        var j =0;
+                                        var html = '<tr><th>提交日期</th><th>工资号</th><th>姓名</th><th>申请类型</th><th>申请表详情</th><th>操作</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '<td><span class="seeInfo">查看详情</span></td>';
+                                                html += '<td><span class="pass"></span><span class="reject"></span></td>';
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#exchangeCheckTable").empty().append(html);
+                                        cur-=1;
+                                        $("#exchangeApplyPage .cur").text(cur);
+                                    }
+
+                                })
+                            }
+
+                        }else{
+                            alert('暂无换证申请信息');
+                        }
+                    },
+                    beforeSend:function(){
+                        loadingPicOpen();
+                        testSession(userSessionInfo);
+                    },
+                    complete: function (XMLHttpRequest,status) {
+                        loadingPicClose();
+                        if(status === 'timeout') {
+                            ajaxTimeOut.abort();    // 超时后中断请求
+                            alert('网络超时，请检查网络连接');
+                        }
+                    }
+                })
+            }
+            //这里尚未添加教育科人员的审核申请界面
+            if(power === 'V'){
+
+            }
         });
         $("#fixApplyCheck").off('click').on('click',function(){
             $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
             $("#fixApplyContent").css('zIndex',999).siblings('div').css('zIndex',1);
-        });
-        if(power === '1'){
-            var obj = {};
-            obj.where = ' where checkStatus = \'车间审核中\' ';
-            obj.column = ' payId,UName,changeType ';
-            obj.order = ' ';
-            var ajaxTimeOut = $.ajax({
-                url: "../../../index.php",
-                type:"POST",
-                timeout:8000,
-                //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-                data:{funcName:'select',where:obj.where,serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
-                    tableName:' bgxx ',column:obj.column,order:obj.order},
-                dataType:'json',
-                success:function(data){
-                    if(data.success === 1){
-                        //把使用过的多余属性删除，便于处理数据
-                        delete data['success'];
-                        delete data['count'];
-                        var html = '';
-                        for(var i in data){
-                            html += '<tr>';
-                            for(var j in data[i]){
-                                html += '<td>'+data[i][j]+'</td>';
-                            }
-                            html+= '<td><span class="seeInfo">查看详情</span></td>';
-                            html += '<td><span class="pass"></span><span class="reject"></span></td>';
-                           html += '</tr>'
-                        }
-                        $("#fixCheckTable tbody").append(html);
+            if(power === '1'){
+                //添加目前正在进行车间审核的补证申请
+                var obj = {};
+                obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'补证\'';
+                obj.column = ' lotNumber,payId,UName,changeType ';
+                obj.order = ' order by lotNumber ';
+                var ajaxTimeOut = $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                    data:{funcName:'select',where:obj.where,serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                        tableName:' bgxx ',column:obj.column,order:obj.order},
+                    dataType:'json',
+                    success:function(data){
+                        if(data['success'] === 1){
+                            delete data['success'];
+                            var count = data['count'];
+                            delete data['count'];
+                            var html = '<tr><th>提交日期</th><th>工资号</th><th>姓名</th><th>申请类型</th><th>申请表详情</th><th>操作</th></tr>';
+                            if(count<11){
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html+= '<td><span class="seeInfo">查看详情</span></td>';
+                                    html += '<td><span class="pass"></span><span class="reject"></span></td>';
+                                    html += '</tr>'
+                                }
+                                $("#fixCheckTable").empty().append(html);
+                                boundCheckEvent(power);
+                                //空白tr补齐表格
+                                if($("#fixCheckTable tbody tr").length<11){
+                                    html = '';
+                                    var count = 11-$("#fixCheckTable tbody tr").length;
+                                    var columns = 6;
+                                    for(var m=0;m<count;m++){
+                                        html+='<tr>';
+                                        for(var n=0;n<columns;n++){
+                                            html+="<td></td>";
+                                        }
+                                        html+="</tr>";
+                                    }
+                                    $("#fixCheckTable tbody").append(html);
+                                }
+                            }else{
+                                var q =0;
+                                var cur =1;
+                                var total = Math.ceil(count/10);
+                                $("#fixApplyPage").css("display",'block');
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html += '<td><span class="seeInfo">查看详情</span></td>';
+                                    html += '<td><span class="pass"></span><span class="reject"></span></td>';
+                                    html += '</tr>'
+                                    q+=1;
+                                    if(q>9){
+                                        break
+                                    }
+                                }
+                                $("#fixCheckTable").empty().append(html);
+                                boundCheckEvent(power);
+                                $("#fixApplyPage .cur").text(cur);
+                                $("#fixApplyPage .total").text(total);
+                                $("#fixApplyPage .next").off('click').on('click',function(){
+                                    if(cur<total){
+                                        var j =0;
+                                        var html = '<tr><th>提交日期</th><th>工资号</th><th>姓名</th><th>申请类型</th><th>申请表详情</th><th>操作</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*cur-1 && j<10*(cur+1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '<td><span class="seeInfo">查看详情</span></td>';
+                                                html += '<td><span class="pass"></span><span class="reject"></span></td>';
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#fixCheckTable").empty().append(html);
+                                        boundCheckEvent(power);
+                                        //空白tr补齐表格
+                                        if($("#fixCheckTable tbody tr").length<11){
+                                            html = '';
+                                            var count = 11-$("#fixCheckTable tbody tr").length;
+                                            var columns = 6;
+                                            for(var m=0;m<count;m++){
+                                                html+='<tr>';
+                                                for(var n=0;n<columns;n++){
+                                                    html+="<td></td>";
+                                                }
+                                                html+="</tr>";
+                                            }
+                                            $("#fixCheckTable tbody").append(html);
+                                        }
+                                        cur+=1;
+                                        $("#fixApplyPage .cur").text(cur);
+                                    }
 
+                                })
+                                $("#fixApplyPage .prev").off('click').on('click',function(){
+                                    if(cur>1){
+                                        var j =0;
+                                        var html = '<tr><th>提交日期</th><th>工资号</th><th>姓名</th><th>申请类型</th><th>申请表详情</th><th>操作</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '<td><span class="seeInfo">查看详情</span></td>';
+                                                html += '<td><span class="pass"></span><span class="reject"></span></td>';
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#fixCheckTable").empty().append(html);
+                                        boundCheckEvent(power);
+                                        cur-=1;
+                                        $("#fixApplyPage .cur").text(cur);
+                                    }
+
+                                })
+                            }
+
+                        }else{
+                            alert('暂无补证申请信息');
+                        }
+                    },
+                    beforeSend:function(){
+                        loadingPicOpen();
+                        testSession(userSessionInfo);
+                    },
+                    complete: function (XMLHttpRequest,status) {
+                        loadingPicClose();
+                        if(status === 'timeout') {
+                            ajaxTimeOut.abort();    // 超时后中断请求
+                            alert('网络超时，请检查网络连接');
+                        }
                     }
+                })
+            }
+            //这里尚未添加教育科人员的审核申请界面
+            if(power === 'V'){
+
+            }
+        });
+
+    }
+
+    function boundCheckEvent(power){
+        var payId='';
+        var lotNumber = '';
+        var changeType = '';
+        var setStr = '';
+        var where = '';
+        if(power === '1'){
+            //在这里面定义一些变量用来存放数据库字段，节省代码
+        }
+        $("#fixCheckTable .seeInfo").off('click').on('click',function(){
+            console.log(1)
+        })
+        $("#fixCheckTable .pass").off('click').on('click',function(){
+            payId = $(this).parent().prev().prev().prev().prev().text();
+            lotNumber = $(this).parent().prev().prev().prev().prev().prev().text();
+            changeType = $(this).parent().prev().prev().text();
+            setStr = 'checkStatus = \'教育科审核中\'';
+            where = ' where payid = \''+payId+'\' and lotNumber = \''+lotNumber+'\' and changeType =\''+changeType+'\'';
+            $.ajax({
+                url: "../../../index.php",
+                type: "POST",
+                timeout: 8000,
+                data: {
+                    funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                    tableName: ' bgxx', setStr: setStr, where: where
                 },
-                beforeSend:function(){
-                    loadingPicOpen();
-                    testSession(userSessionInfo);
-                },
-                complete: function (XMLHttpRequest,status) {
-                    loadingPicClose();
-                    if(status === 'timeout') {
-                        ajaxTimeOut.abort();    // 超时后中断请求
-                        alert('网络超时，请检查网络连接');
-                    }
+                dataType: 'json',
+                success: function (data) {
+
                 }
             })
-        }
+            console.log()
+        })
+        $("#fixCheckTable .reject").off('click').on('click',function(){
+
+            console.log($(this).parent().prev().prev().prev().prev())
+        })
     }
 
 
-    //取公用参数信息
-    var csData = {};
-    $.ajax({
-        url: "../../../index.php",
-        type: "POST",
-        timeout: 8000,
-        data: {
-            funcName: 'getCsxx', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-            tableName: 'csxx', column: ' * '
-        },
-        dataType: 'json',
-        success: function (Data) {
-            csData = Data;
-            $("li.statusButton").on('click', function () {
-                displayContainer
-                checkCardStatus(csData);
-
-            })
-        }
-    });
 
 
     //给左边的按钮添加事件，更新右边容器的内容
@@ -375,8 +680,8 @@ $(document).ready(function() {
     }
 
     //用户提交补证申请，发ajax更新bgxx表,在jbxx表中将此人证件的status改为丢失或损毁
+    //并在sqxx表中插入该条申请的信息
     function appendFixApply(data, cardData, csData) {
-        console.log(csData)
         var payId = sessionGet('payId');
         var department = sessionGet('department');
         var UName = sessionGet('user');
@@ -458,6 +763,41 @@ $(document).ready(function() {
             dataType: 'json',
             success: function (data) {
 
+            }
+        })
+        //插入sqxx表
+        var sex = $("#sexInTable").text();
+        var applyDriveCode = $(".apply input:checked").next('label').text();
+        var fixedPhone = $("#fixedPhoneInTable").val();
+        var mobilePhone = $("#mobilePhoneInTable").val();
+        var company = $("#companyInTable").text();
+        var address = $("#addressInTable").val();
+        var mail = $("#mailInTable").val();
+        var date = new Date();
+        date.month = date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+        date.date = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+        date = date.getFullYear() + '-' + date.month + '-' + date.date;
+        var sjDate = $("#originYearInTable").text()+'-'+$("#originMonthInTable").text()+'-'+$("#originDateInTable").text();
+        $.ajax({
+            url: "../../../index.php",
+            type: "POST",
+            timeout: 8000,
+            data: {
+                funcName: 'insertFixApply',
+                serverName: '10.101.62.73',
+                uid: 'sa',
+                pwd: '2huj15h1',
+                Database: 'jszgl',
+                tableName: ' sqxx',
+                column: ' (date,Department,payId,UName,sex,cardId,changeType,changeReason,' +
+                'driveCode,applyDriveCode,phyTest,fixedPhone,mobilePhone,company,address,mail,sjDate)',
+                values: '(\''+date+'\',\''+department + '\',\'' + payId + '\',\'' + UName + '\',\''+sex+'\',\'' + cardId + '\',\'' + changeType + '\',\''
+                + changeReason + '\',\'' + driveCode + '\',\'' + applyDriveCode + '\',\'' + phyTest + '\',\'' + fixedPhone + '\',\'' + mobilePhone + '\',\''+company
+                +'\',\''+address+'\',\''+mail+'\',\''+sjDate+'\')'
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
             }
         })
     }

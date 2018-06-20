@@ -604,45 +604,51 @@ a,a:hover,a:active,a:visited{
     overflow: hidden;
     height: 700px;
 }
-#bigContent #rightContent #checkContainer #checkContent>div{
+#bigContent #rightContent #checkContainer #checkContent>div:not(#fixCheckPage){
     position: absolute;
     background: white;
     width: 100%;
     height: 100%;
     z-index: 1;
 }
-#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable{
+#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable,#exchangeCheckTable{
     margin: 50px 0 0 80px;
 }
-#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable th,#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable td{
-    padding: 3px 30px 3px 30px;
+#bigContent #rightContent #checkContainer #checkContent th,#bigContent #rightContent #checkContainer #checkContent td{
+    padding: 3px 23px 3px 23px;
     border: 1px solid #333;
     border-right: none;
 }
-#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable th:last-child,#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable td:last-child{
+#bigContent #rightContent #checkContainer #checkContent th:last-child,#bigContent #rightContent #checkContainer #checkContent td:last-child{
     border-right: 1px solid #333;
     font-size: 14px;
     padding: 3px 15px 3px 15px;
 }
-#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable .seeInfo{
+#bigContent #rightContent #checkContainer #checkContent .seeInfo{
     font-size: 12px;
     color: cornflowerblue;
     text-decoration: underline;
     cursor: pointer;
 }
-#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable .pass{
+#bigContent #rightContent #checkContainer #checkContent .pass{
     float: left;
     background:url("../images/pass.png");
     width: 32px;
     height: 32px;
     cursor: pointer;
 }
-#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable .reject{
+#bigContent #rightContent #checkContainer #checkContent .reject{
     float: left;
     margin-left: 30px;
     background: url("../images/reject.png");
     width: 16px;
     height: 16px;
     margin-top: 8px;
+    cursor: pointer;
+}
+#bigContent #rightContent #checkContainer #checkContent #fixApplyPage,#bigContent #rightContent #checkContainer #checkContent #exchangeApplyPage{
+    display: none;
+}
+ .prev, .next{
     cursor: pointer;
 }
