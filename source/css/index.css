@@ -101,6 +101,17 @@ a,a:hover,a:active,a:visited{
     line-height: 50px;
     cursor: pointer;
     border-top: solid #ccc 1px;
+    position: relative;
+}
+#bigContent #leftContent #buttonList span.redPoint{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 7px;
+    height: 7px;
+    display: none;
+    background: url("../images/point.png") no-repeat;
+    background-size: 7px 7px;
 }
 #bigContent #leftContent #buttonList li:last-child{
     border-bottom: solid #ccc 1px;
@@ -688,3 +699,28 @@ a,a:hover,a:active,a:visited{
  .prev, .next{
     cursor: pointer;
 }
+#bigContent #rightContent #alertContainer #alertBanner {
+    height: 60px;
+    padding-left: 100px;
+    border-bottom: 1px solid #333;
+    text-align: left;
+    line-height: 60px;
+}
+#bigContent #rightContent #alertContainer #alertContent #alertTable {
+    margin:40px 0 40px 80px;
+
+}
+#bigContent #rightContent #alertContainer #alertContent #alertPage {
+    display: none;
+
+}
+#bigContent #rightContent #alertContainer #alertContent #alertTable th,#bigContent #rightContent #alertContainer #alertContent #alertTable td{
+    border: 1px solid #333;
+    border-left: none;
+    padding: 5px 10px 5px 10px;
+    font-size: 14px;
+}
+#bigContent #rightContent #alertContainer #alertContent #alertTable th:first-child,#bigContent #rightContent #alertContainer #alertContent #alertTable td:first-child{
+    border-left: 1px solid #333;
+}
+

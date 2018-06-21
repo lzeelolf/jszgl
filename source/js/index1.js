@@ -43,13 +43,13 @@ $(document).ready(function() {
         var html = '';
         if (power === 'V') {//这里填管理员的权限
             html = '<li class=\"appendButton\">证件添加</li><li class=\"queryButton\">证件查询</li><li class=\"dataButton\">数据统计</li><li class=\"checkButton\">申请审核</li>' +
-                '<li class="alertButton">预警信息</li><li class="giveOutButton">证件发放</li><li class="cancelButton">证件注销</li><li class="logOutButton">退出系统</li>'
+                '<li class="alertButton">预警信息<span class="redPoint"></span></li><li class="giveOutButton">证件发放</li><li class="cancelButton">证件注销</li><li class="logOutButton">退出系统</li>'
             $("#buttonList").append(html);
             appendQueryElement(power);
             appendApplyCheck(power,csData);
         } else if (power === '1') {//这里填车间管理人员的权限
             html = '<li class=\"queryButton\">证件查询</li><li class=\"dataButton\">数据统计</li><li class=\"checkButton\">申请审核</li>' +
-                '<li class="alertButton">预警信息</li><li class="giveOutButton">证件发放</li><li class="logOutButton">退出系统</li>';
+                '<li class="alertButton">预警信息<span class="redPoint"></span></li><li class="giveOutButton">证件发放</li><li class="logOutButton">退出系统</li>';
             $("#buttonList").append(html);
             //车间管理人员没有添加和注销功能，移除相应区域
             $("#appendContainer").remove();
@@ -662,28 +662,182 @@ $(document).ready(function() {
             var department = sessionGet('department');
             appendDepartmentAlert(department)
         }else if(power === 'V'){
-
+            appendAllAlert(csData)
         }
 
 
         function appendDepartmentAlert(department){
+            var p = '以下是'+ department.split(',')[0]+'车间驾驶证预警人员';
+            $("#alertBanner").text(p)
             $.ajax({
                 url: "../../../index.php",
                 type: "POST",
                 data: {
                     funcName: 'select', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'JSZGL',
-                    tableName: ' jbxx ', column: ' department,payId,UName,remainingDays', where: ' where department =\''+department+'\' AND remainingDays < '+csData['yjsj-cjyjsj']['nr2'], order: ' '
+                    tableName: ' jbxx ', column: ' department,payId,UName,remainingDays', where: ' where department =\''+department+'\' AND status = \''+csData['zjzt-yj']['nr2']+'\'', order: ' '
                 },
                 dataType: 'json',
                 success: function (data) {
-                    console.log(data)
-                    delete data['count'];
-                    delete data['success'];
+                    if(data['success'] === 1){
+                        $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            data: {
+                                funcName: 'select',
+                                serverName: '10.101.62.73',
+                                uid: 'sa',
+                                pwd: '2huj15h1',
+                                Database: 'JSZGL',
+                                tableName: ' bgxx ',
+                                column: ' checkStatus,payId',
+                                where: ' where department =\'' + department + '\' AND (checkstatus != \'' + csData['checkStatus-shwtg']['nr2'] + '\' AND finishstatus != \''+ csData['finishStatus-ffdgr']['nr2'] + '\')',
+                                order: ' '
+                            },
+                            dataType: 'json',
+                            success: function (bgxx) {
+                                delete data['success'];
+                                var alertCount = data['count'];
+                                $("#alertBanner").append('共'+alertCount+'人：');
+                                delete data['count']
+                                delete bgxx['success'];
+                                delete bgxx['count']
+                                var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                //处理数据，加入两个属性“是否正在换证”、‘审核状态’
+                                for(var i in data){
+                                    for(var j in bgxx){
+                                        if(data[i]['payId'] !== bgxx[j]['payId']){
+                                            data[i]['checking'] = '否';
+                                            data[i]['checkStatus'] = ' ';
+                                        }else{
+                                            data[i]['checkStatus'] = bgxx[j]['checkStatus'];
+                                            data[i]['checking'] = '是';
+                                            break
+                                        }
+                                    }
+                                }
+                                if(alertCount<15){
+                                    for(var i in data){
+                                        html += '<tr>';
+                                        for(var j in data[i]){
+                                            html += '<td>'+data[i][j]+'</td>';
+                                        }
+                                        html += '</tr>'
+                                    }
+                                    $("#alertTable").empty().append(html);
 
+                                    for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
+                                        if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
+                                            $('.redPoint').css('display','block')
+                                            $("#alertTable tbody tr td:nth-child(5):eq("+m+")").css('color','red')
+                                        }else{
+                                            $("#alertTable tbody tr td:nth-child(5):eq("+m+")").css('color','green')
+                                        }
+                                    }
+                                    //空白tr补齐表格
+                                    if($("#alertTable tbody tr").length<11){
+                                        html = '';
+                                        var count = 11-$("#alertTable tbody tr").length;
+                                        var columns = 6;
+                                        for(var m=0;m<count;m++){
+                                            html+='<tr>';
+                                            for(var n=0;n<columns;n++){
+                                                html+="<td></td>";
+                                            }
+                                            html+="</tr>";
+                                        }
+                                        $("#alertTable tbody").append(html);
+                                    }
+                                }else{
+                                    var q =0;
+                                    var cur =1;
+                                    var total = Math.ceil(alertCount/10);
+                                    $("#alertPage").css("display",'block');
+                                    for(var i in data){
+                                        html += '<tr>';
+                                        for(var j in data[i]){
+                                            html += '<td>'+data[i][j]+'</td>';
+                                        }
+                                        html += '</tr>';
+                                        q+=1;
+                                        if(q>9){
+                                            break
+                                        }
+                                    }
+                                    $("#alertTable").empty().append(html);
+                                    $("#alertPage .cur").text(cur);
+                                    $("#alertPage .total").text(total);
+                                    $("#alertPage .next").off('click').on('click',function(){
+                                        if(cur<total){
+                                            var j =0;
+                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                            for(var i in data){
+                                                if(j>10*cur-1 && j<10*(cur+1) && i ){
+                                                    j++;
+                                                    html += '<tr>';
+                                                    for(var m in data[i]){
+                                                        html += '<td>'+data[i][m]+'</td>';
+                                                    }
+                                                    html += '</tr>'
+                                                }else{
+                                                    j++;
+                                                }
+                                            }
+                                            $("#alertTable").empty().append(html);
+                                            //空白tr补齐表格
+                                            if($("#alertTable tbody tr").length<11){
+                                                html = '';
+                                                var count = 11-$("#alertTable tbody tr").length;
+                                                var columns = 6;
+                                                for(var m=0;m<count;m++){
+                                                    html+='<tr>';
+                                                    for(var n=0;n<columns;n++){
+                                                        html+="<td></td>";
+                                                    }
+                                                    html+="</tr>";
+                                                }
+                                                $("#alertTable tbody").append(html);
+                                            }
+                                            cur+=1;
+                                            $("#alertPage .cur").text(cur);
+                                        }
+                                    })
+                                    $("#alertPage .prev").off('click').on('click',function(){
+                                        if(cur>1){
+                                            var j =0;
+                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                            for(var i in data){
+                                                if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
+                                                    j++;
+                                                    html += '<tr>';
+                                                    for(var m in data[i]){
+                                                        html += '<td>'+data[i][m]+'</td>';
+                                                    }
+                                                    html += '</tr>'
+                                                }else{
+                                                    j++;
+                                                }
+                                            }
+                                            $("#alertTable").empty().append(html);
+                                            cur-=1;
+                                            $("#alertPage .cur").text(cur);
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    }
                 }
             })
         }
-        function appendAllAlert(){
+        function appendAllAlert(csData){
+            var html = '<select><option>全段</option>';
+            for(var i in csData){
+                if(csData[i]['lb'] === 'ssbm'){
+                    html += '<option>'+csData[i]['nr1']+'</option>'
+                }
+            }
+            html+='</select>'
+            $("#alertBanner").append(html);
 
         }
     }
@@ -749,13 +903,14 @@ $(document).ready(function() {
                     Database: 'JSZGL',
                     tableName: 'bgxx',
                     column: 'payId,finishStatus,changeType',
-                    where: ' where payId = \'' + payId + '\' AND finishStatus != \'ffdgr\'',
+                    where: ' where payId = \'' + payId + '\' AND (finishStatus != \''+csData['finishStatus-ffdgr']['nr2']+'\' AND checkStatus != \''+csData['checkStatus-shwtg']['nr2']+'\')',
                     order: ' '
                 },
                 dataType: 'json',
                 success: function (data) {
                     //说明此人有待办的申请，不予新增请求
                     if (data['success'] === 1) {
+                        console.log(data)
                         alert('您还有尚未完结的' + data['changeType'] + '申请,不允许重复提交')
                     } else {
                         $("#fixButton").css('display', 'none');

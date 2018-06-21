@@ -64,6 +64,9 @@ function displayContainer(){
         var index = $(this).index();
         if($(this).next().length>0){
             $("#rightContent .operateContent>div:eq("+index+")").css('display','block').siblings().css('display','none');
+            if($(this).text().indexOf('预警信息')>-1){
+                $('.redPoint').css('display','none')
+            }
         }else{
             //最后一个按钮退出系统
             if(confirm("确定要退出系统？")){
