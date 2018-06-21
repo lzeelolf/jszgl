@@ -541,7 +541,6 @@ function rememberSession(token,user,power,department,payId){
 //测试session是否被更改过
 function testSession(obj){
     if(obj.token === sessionGet('token') && obj.user ===sessionGet('user') && obj.power ===sessionGet('power') && obj.department === sessionGet('department') && obj.payId === sessionGet('payId')){
-        console.log('session 正常')
     }else{
         alert('用户信息发生变化，请重新登录');
         window.location.href = 'login.html'

@@ -35,6 +35,14 @@ a,a:hover,a:active,a:visited{
 .marginLeft10px{
     margin-left:10px;
 }
+#displayApplyContainer{
+    width: 100%;
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    background-color: white;
+    z-index: 2000;
+}
 #loadingPic{
     width: 100%;
     height: 100%;
@@ -393,6 +401,7 @@ a,a:hover,a:active,a:visited{
     background-color: white;
     position: relative;
     visibility: hidden;
+    z-index: 2000;
 }
 #fixTable h1{
     text-align: center;

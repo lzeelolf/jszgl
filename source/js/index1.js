@@ -7,13 +7,10 @@ $(document).ready(function() {
     //证件查询按钮的事件,调用displayQueryForm函数
     eventBound(queryCardButton, 'click', displayQueryForm);
 
-    //根据用户的权限来显示左边的li内容
-    appendLi(sessionGet('power'))
 
 
     //取公用参数信息
-    var csData = {};
-    $.ajax({
+    var csData = $.ajax({
         url: "../../../index.php",
         type: "POST",
         timeout: 8000,
@@ -24,24 +21,32 @@ $(document).ready(function() {
         dataType: 'json',
         success: function (Data) {
             csData = Data;
+            //取回参数信息，继续下面的代码
+            //以下函数都是需要参数信息的
+            console.log(csData)
+            //根据用户的权限来显示左边的li内容
+            appendLi(sessionGet('power'),csData)
+            //给左边的按钮添加事件，更新右边容器的内容
+            $("#buttonList li").each(function () {
+                $(this).on('click', displayContainer);
+            });
             $("li.statusButton").on('click', function () {
                 displayContainer
                 checkCardStatus(csData);
-
             })
+            //预警信息
+            appendAlert(csData)
         }
     });
 
-
-
-    function appendLi(power) {
+    function appendLi(power,csData) {
         var html = '';
         if (power === 'V') {//这里填管理员的权限
             html = '<li class=\"appendButton\">证件添加</li><li class=\"queryButton\">证件查询</li><li class=\"dataButton\">数据统计</li><li class=\"checkButton\">申请审核</li>' +
                 '<li class="alertButton">预警信息</li><li class="giveOutButton">证件发放</li><li class="cancelButton">证件注销</li><li class="logOutButton">退出系统</li>'
             $("#buttonList").append(html);
             appendQueryElement(power);
-            appendApplyCheck(power);
+            appendApplyCheck(power,csData);
         } else if (power === '1') {//这里填车间管理人员的权限
             html = '<li class=\"queryButton\">证件查询</li><li class=\"dataButton\">数据统计</li><li class=\"checkButton\">申请审核</li>' +
                 '<li class="alertButton">预警信息</li><li class="giveOutButton">证件发放</li><li class="logOutButton">退出系统</li>';
@@ -50,7 +55,7 @@ $(document).ready(function() {
             $("#appendContainer").remove();
             $("#cancelContainer").remove();
             appendQueryElement(power);
-            appendApplyCheck(power);
+            appendApplyCheck(power,csData);
         } else if (power === '0') {//这里填普通人员的权限
             html = '<li class=\"informationButton\">证件信息</li><li class=\"applyButton\">换补申请</li><li class=\"statusButton\">证件状态</li>' +
                 '<li class="improveButton">完善信息</li><li class="logOutButton">退出系统</li>';
@@ -126,8 +131,9 @@ $(document).ready(function() {
     }
 
     //添加审核申请界面
-    function appendApplyCheck(power) {
+    function appendApplyCheck(power,csData) {
         $("#exchangeApplyCheck").off('click').on('click',function(){
+            //有效期满换证
             $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
             $("#exchangeApplyContent").css('zIndex',999).siblings('div').css('zIndex',1);
             var obj = {};
@@ -135,14 +141,14 @@ $(document).ready(function() {
             obj.order = ' order by lotNumber ';
             if(power === '1'){
                 var department = sessionGet('department');
-                //添加目前正在进行车间审核的补证申请
-                obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'换证\' AND department =\''+department+'\'';
+                //添加目前正在进行车间审核的换证申请
+                obj.where = ' where checkStatus = \''+csData['checkStatus-cjshz']['nr2']+'\' AND changeType = \''+csData['czlb-yxqmhz']['nr2']+'\' AND department =\''+department+'\'';
                 exchangeApplyAjax(obj)
 
             }
             //这里尚未添加教育科人员的审核申请界面
             if(power === 'V'){
-                obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'换证\'';
+                obj.where = ' where checkStatus = \''+csData['checkStatus-jykshz']['nr2']+'\' AND changeType = \''+csData['czlb-yxqmhz']['nr2']+'\'';
                 exchangeApplyAjax(obj)
             }
 
@@ -172,6 +178,7 @@ $(document).ready(function() {
                                     html += '</tr>'
                                 }
                                 $("#exchangeCheckTable").empty().append(html);
+                                boundCheckEvent(power);
                                 //空白tr补齐表格
                                 if($("#exchangeCheckTable tbody tr").length<11){
                                     html = '';
@@ -205,6 +212,7 @@ $(document).ready(function() {
                                     }
                                 }
                                 $("#exchangeCheckTable").empty().append(html);
+                                boundCheckEvent(power);
                                 $("#exchangeApplyPage .cur").text(cur);
                                 $("#exchangeApplyPage .total").text(total);
                                 $("#exchangeApplyPage .next").off('click').on('click',function(){
@@ -226,6 +234,7 @@ $(document).ready(function() {
                                             }
                                         }
                                         $("#exchangeCheckTable").empty().append(html);
+                                        boundCheckEvent(power);
                                         //空白tr补齐表格
                                         if($("#exchangeCheckTable tbody tr").length<11){
                                             html = '';
@@ -264,6 +273,7 @@ $(document).ready(function() {
                                             }
                                         }
                                         $("#exchangeCheckTable").empty().append(html);
+                                        boundCheckEvent(power);
                                         cur-=1;
                                         $("#exchangeApplyPage .cur").text(cur);
                                     }
@@ -298,15 +308,14 @@ $(document).ready(function() {
             if(power === '1'){
                 var department = sessionGet('department');
                 //添加目前正在进行车间审核的补证申请
-                obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'补证\' AND department = \''+department+'\'';
+                obj.where = ' where checkStatus = \''+csData['checkStatus-cjshz']['nr2']+'\' AND changeType = \''+csData['czlb-bz']['nr2']+'\' AND department = \''+department+'\'';
                 fixApplyAjax(obj)
 
 
 
             }
-            //这里尚未添加教育科人员的审核申请界面
             if(power === 'V'){
-                obj.where = ' where checkStatus = \'车间审核中\' AND changeType = \'补证\'';
+                obj.where = ' where checkStatus = \''+csData['checkStatus-jykshz']['nr2']+'\' AND changeType = \''+csData['czlb-bz']['nr2']+'\'';
                 fixApplyAjax(obj)
             }
             //这个函数是请求换补证申请，然后添加入页面的函数,传入obj是sql对象，内涵where,column,order三个字段
@@ -463,22 +472,68 @@ $(document).ready(function() {
         var lotNumber = '';
         var changeType = '';
         var setStr = '';
+        var rejectSetStr = '';
         var where = '';
         var uname = '';
+        //获取当天的xxxx-xx-xx形式时间戳
+        var today = new Date();
+        today.month = today.getMonth() < 9 ? '0' + (today.getMonth() + 1) : today.getMonth() + 1;
+        today.date = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
+        today = today.getFullYear() + '-' + today.month + '-' + today.date;
         if(power === '1'){
             //在这里面定义一些变量用来存放数据库字段，节省代码
+            setStr = 'checkStatus = \''+csData['checkStatus-jykshz']['nr2']+'\', cjOperator = \''+sessionGet('user')+'\', cjCheckDate = \''+today+'\' ';
+            rejectSetStr = ' ,cjOperator = \''+sessionGet('user')+'\', cjCheckDate = \''+today+'\' ';
+        }else if(power === 'V'){
+            setStr = 'checkStatus = \''+csData['checkStatus-shtg']['nr2']+'\', jykOperator = \''+sessionGet('user')+'\', jykCheckDate = \''+today+'\' ';
+            rejectSetStr = ' ,jykOperator = \''+sessionGet('user')+'\', jykCheckDate = \''+today+'\' ';
         }
-        $("#fixCheckTable .seeInfo").off('click').on('click',function(){
-            console.log(1)
-        })
-        $("#fixCheckTable .pass").off('click').on('click',function(){
+        $("#fixCheckTable .seeInfo").off('click').on('click',displayTable);
+        $("#fixCheckTable .pass").off('click').on('click',passApply);
+        $("#fixCheckTable .reject").off('click').on('click',rejectApply);
+        $("#exchangeCheckTable .seeInfo").off('click').on('click',displayTable);
+        $("#exchangeCheckTable .pass").off('click').on('click',passApply);
+        $("#exchangeCheckTable .reject").off('click').on('click',rejectApply);
+
+        function displayTable(){
+            $("#fixTable").appendTo($("#displayApplyContainer"));
+            $("#displayApplyContainer").css('visibility','visible').animate({'opacity':0.9},800)
+            $("#fixTable").css({'visibility':'visible','marginLeft':'200px'}).animate({'opacity':1},800)
+            getUserinfo($(this).parent().prev().prev().prev().text())
+            $("#displayApplyContainer").off('click').on('click',function(){
+                $("#displayApplyContainer").dequeue().animate({'opacity':0},800,function(){
+                    $("#displayApplyContainer").css('visibility','hidden')
+                })
+                $("#fixTable").dequeue().animate({'opacity':0},800,function(){
+                    $("#fixTable").css({'visibility':'hidden','marginLeft':'200px'})
+                })
+            })
+            $(document).keyup(function(event){
+                switch(event.keyCode) {
+                    case 27:
+                        $("#displayApplyContainer").dequeue().animate({'opacity':0},800,function(){
+                            $("#displayApplyContainer").css('visibility','hidden')
+                        });
+                        $("#fixTable").dequeue().animate({'opacity':0},800,function(){
+                            $("#fixTable").css({'visibility':'hidden','marginLeft':'200px'})
+                        });
+                    case 96:
+                        $("#displayApplyContainer").dequeue().animate({'opacity':0},800,function(){
+                            $("#displayApplyContainer").css('visibility','hidden')
+                        });
+                        $("#fixTable").dequeue().animate({'opacity':0},800,function(){
+                            $("#fixTable").css({'visibility':'hidden','marginLeft':'200px'})
+                        });
+                }
+            });
+        }
+        function passApply(){
             if(confirm('请认真核对该申请表信息。操作无法撤回。\u000d确定要通过审核请选“确定”。返回请选“取消”')){
                 payId = $(this).parent().prev().prev().prev().prev().text();
                 lotNumber = $(this).parent().prev().prev().prev().prev().prev().text();
                 changeType = $(this).parent().prev().prev().text();
                 uname = $(this).parent().prev().prev().prev().text();
                 var _this = $(this);
-                setStr = 'checkStatus = \'教育科审核中\'';
                 where = ' where payid = \''+payId+'\' and lotNumber = \''+lotNumber+'\' and changeType =\''+changeType+'\'';
                 $.ajax({
                     url: "../../../index.php",
@@ -496,9 +551,8 @@ $(document).ready(function() {
                     }
                 });
             }
-
-        })
-        $("#fixCheckTable .reject").off('click').on('click',function(){
+        }
+        function rejectApply(){
             var shortage ='';
             var failedReason ='';
             var _thisReject = $(this);
@@ -506,7 +560,6 @@ $(document).ready(function() {
             $("#reasonContainer").css('visibility','visible').dequeue().animate({'opacity':0.9},500);
             $("#short").off('click').on('click',function(){
                 $(".rejectReasonDiv input:checkbox").attr('disabled',false);
-                console.log(this.checked)
             });
             $("#false").off('click').on('click',function(){
                 $(".rejectReasonDiv input:checkbox").attr('disabled',true);
@@ -529,7 +582,7 @@ $(document).ready(function() {
                         lotNumber = $(_thisReject).parent().prev().prev().prev().prev().prev().text();
                         changeType = $(_thisReject).parent().prev().prev().text();
                         uname = $(_thisReject).parent().prev().prev().prev().text();
-                        setStr = ' checkStatus = \'审核未通过\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\'';
+                        rejectSetStr = ' checkStatus = \''+csData['checkStatus-shwtg']['nr2']+'\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\'' + rejectSetStr;
                         where = ' where payid = \''+payId+'\' and lotNumber = \''+lotNumber+'\' and changeType =\''+changeType+'\'';
                         $.ajax({
                             url: "../../../index.php",
@@ -537,7 +590,7 @@ $(document).ready(function() {
                             timeout: 8000,
                             data: {
                                 funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                                tableName: ' bgxx', setStr: setStr, where: where
+                                tableName: ' bgxx', setStr: rejectSetStr, where: where
                             },
                             dataType: 'json',
                             success: function () {
@@ -557,7 +610,7 @@ $(document).ready(function() {
                         lotNumber = $(_thisReject).parent().prev().prev().prev().prev().prev().text();
                         changeType = $(_thisReject).parent().prev().prev().text();
                         uname = $(_thisReject).parent().prev().prev().prev().text();
-                        setStr = ' checkStatus = \'审核未通过\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\'';
+                        rejectSetStr = ' checkStatus = \''+csData['checkStatus-shwtg']['nr2']+'\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\''+rejectSetStr;
                         where = ' where payid = \''+payId+'\' and lotNumber = \''+lotNumber+'\' and changeType =\''+changeType+'\'';
                         $.ajax({
                             url: "../../../index.php",
@@ -565,7 +618,7 @@ $(document).ready(function() {
                             timeout: 8000,
                             data: {
                                 funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                                tableName: ' bgxx', setStr: setStr, where: where
+                                tableName: ' bgxx', setStr: rejectSetStr, where: where
                             },
                             dataType: 'json',
                             success: function () {
@@ -598,16 +651,46 @@ $(document).ready(function() {
                         });
                 }
             });
-        })
+        }
+
+    }
+    //添加预警信息
+    function appendAlert(csData){
+        var power = sessionGet('power');
+
+        if(power === '1'){
+            var department = sessionGet('department');
+            appendDepartmentAlert(department)
+        }else if(power === 'V'){
+
+        }
+
+
+        function appendDepartmentAlert(department){
+            $.ajax({
+                url: "../../../index.php",
+                type: "POST",
+                data: {
+                    funcName: 'select', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'JSZGL',
+                    tableName: ' jbxx ', column: ' department,payId,UName,remainingDays', where: ' where department =\''+department+'\' AND remainingDays < '+csData['yjsj-cjyjsj']['nr2'], order: ' '
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                    delete data['count'];
+                    delete data['success'];
+
+                }
+            })
+        }
+        function appendAllAlert(){
+
+        }
     }
 
 
 
 
-    //给左边的按钮添加事件，更新右边容器的内容
-    $("#buttonList li").each(function () {
-        $(this).on('click', displayContainer);
-    });
 
 
     //以下是普通用户所用函数
@@ -681,7 +764,7 @@ $(document).ready(function() {
                         $("#applySubmit").css('visibility', 'visible');
                         $("#rightContent").css('width', '84%');
                         $(".operateContent").css('margin', 0);
-                        getUserinfo();
+                        getUserinfo(payId);
                     }
                 },
                 beforeSend: function () {
@@ -700,8 +783,7 @@ $(document).ready(function() {
     })
 
     //从全员信息库中取申请表要用的信息
-    function getUserinfo() {
-        var payId = sessionGet('payId');
+    function getUserinfo(payId) {
         var ajaxTimeOut = $.ajax({
             url: "../../../index.php",
             type: "POST",
@@ -888,7 +970,7 @@ $(document).ready(function() {
         var sex = $("#sexInTable").text();
         var applyDriveCode = $(".apply input:checked").next('label').text();
         var fixedPhone = $("#fixedPhoneInTable").val();
-        var mobilePhone = $("#mobilePhoneInTable").val();
+        var mobilePhone = $("#mobilePhoneInTable").text();
         var company = $("#companyInTable").text();
         var address = $("#addressInTable").val();
         var mail = $("#mailInTable").val();
