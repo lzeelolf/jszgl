@@ -2167,69 +2167,73 @@ $(document).ready(function() {
             success: function (data) {
                 $("#firstName").text(data['row']['uname'][0]);
                 $("#cardStatus").text(data['row']['status']).css({'color': 'red', 'fontWeight': 'bold'})
-                if (data['row']['status'] === '预警' || data['row']['status'] === '过期') {
+                if (data['row']['status'] === csData['zjzt-yj']['nr2'] || data['row']['status'] === csData['zjzt-gq']['nr2']) {
                     $("#alert").text('请及时换证或重新参加考试').css({'color': 'red', 'fontWeight': 'bold'})
-                }
-            }
-        });
-        $.ajax({
-            url: "../../../index.php",
-            type: "POST",
-            timeout: 8000,
-            data: {
-                funcName: 'getInfo',
-                serverName: '10.101.62.73',
-                uid: 'sa',
-                pwd: '2huj15h1',
-                Database: 'jszgl',
-                tableName: 'bgxx',
-                column: ' * ',
-                where: ' where payId = \'' + payId + '\' AND finishStatus != \'发放到个人\'',
-                order: ' '
-            },
-            dataType: 'json',
-            success: function (data) {
-                console.log(data)
-                if (data['success'] == 1) {
-                    //换证补证，执行以下
-                    if (data['row']['changeType'] === csData['czlb-fyxqmhz']['nr2'] || data['row']['changeType'] === csData['czlb-yxqmhz']['nr2'] || data['row']['changeType'] === csData['czlb-bz']['nr2']) {
-                        $("#applyInfo").empty().append('您有一项未完结的 ' + data['row']['changeType'] + ' 申请，')
-                        $("#applyInfo").append('<span id="checkStatus"></span>\n' +
-                            '                    <span id="finishStatus"></span>\n' +
-                            '                    <span id="needed"></span>')
-                        //审核未通过，执行以下
-                        if (data['row']['checkStatus'] === csData['checkStatus-shwtg']['nr2']) {
-                            $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus'] + '，原因是：' + data['row']['failedReason']+'，'+data['row']['shortage']);
-                        }//审核通过，执行以下
-                        else if(data['row']['checkStatus'] === csData['checkStatus-shtg']['nr2']){
-                            $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
-                            $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
-                        }//审核中，执行以下
-                        else if(data['row']['checkStatus'] === csData['checkStatus-jykshz']['nr2']){
-                            $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
-                            $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
-                        }else if(data['row']['checkStatus'] === csData['checkStatus-cjshz']['nr2']){
-                            $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
-                            $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
-                            if (data['row']['changeType'] === csData['czlb-fyxqmhz']['nr2'] || data['row']['changeType'] === csData['czlb-yxqmhz']['nr2']) {
-                                $("#needed").empty().append('您需准备如下材料：' + csData['needed-hbzsqb']['nr2'] + '、' + csData['needed-tjhgbg']['nr2']);
-                            } else if (data['row']['changeType'] === csData['czlb-bz']['nr2']) {
-                                $("#needed").empty().append('您需准备如下材料：' + csData['needed-hbzsqb']['nr2'] + '、' + csData['needed-jszdszm']['nr2']);
+                }else if(data['row']['status'] === csData['zjzt-zc']['nr2']){
+
+                }else{
+                    $.ajax({
+                        url: "../../../index.php",
+                        type: "POST",
+                        timeout: 8000,
+                        data: {
+                            funcName: 'getInfo',
+                            serverName: '10.101.62.73',
+                            uid: 'sa',
+                            pwd: '2huj15h1',
+                            Database: 'jszgl',
+                            tableName: 'bgxx',
+                            column: ' * ',
+                            where: ' where payId = \'' + payId + '\' AND finishStatus != \'发放到个人\'',
+                            order: ' '
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log(data)
+                            if (data['success'] == 1) {
+                                //换证补证，执行以下
+                                if (data['row']['changeType'] === csData['czlb-fyxqmhz']['nr2'] || data['row']['changeType'] === csData['czlb-yxqmhz']['nr2'] || data['row']['changeType'] === csData['czlb-bz']['nr2']) {
+                                    $("#applyInfo").empty().append('您有一项未完结的 ' + data['row']['changeType'] + ' 申请，')
+                                    $("#applyInfo").append('<span id="checkStatus"></span>\n' +
+                                        '                    <span id="finishStatus"></span>\n' +
+                                        '                    <span id="needed"></span>')
+                                    //审核未通过，执行以下
+                                    if (data['row']['checkStatus'] === csData['checkStatus-shwtg']['nr2']) {
+                                        $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus'] + '，原因是：' + data['row']['failedReason']+'，'+data['row']['shortage']);
+                                    }//审核通过，执行以下
+                                    else if(data['row']['checkStatus'] === csData['checkStatus-shtg']['nr2']){
+                                        $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
+                                        $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
+                                    }//审核中，执行以下
+                                    else if(data['row']['checkStatus'] === csData['checkStatus-jykshz']['nr2']){
+                                        $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
+                                        $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
+                                    }else if(data['row']['checkStatus'] === csData['checkStatus-cjshz']['nr2']){
+                                        $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
+                                        $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
+                                        if (data['row']['changeType'] === csData['czlb-fyxqmhz']['nr2'] || data['row']['changeType'] === csData['czlb-yxqmhz']['nr2']) {
+                                            $("#needed").empty().append('您需准备如下材料：' + csData['needed-hbzsqb']['nr2'] + '、' + csData['needed-tjhgbg']['nr2']);
+                                        } else if (data['row']['changeType'] === csData['czlb-bz']['nr2']) {
+                                            $("#needed").empty().append('您需准备如下材料：' + csData['needed-hbzsqb']['nr2'] + '、' + csData['needed-jszdszm']['nr2']);
+                                        }
+                                    }
+                                    //新增，执行以下
+                                } else if (data['row']['changeType'] === csData['czlb-diaoru']['nr2'] || data['row']['changeType'] === csData['czlb-levelup1']['nr2'] || data['row']['changeType'] === csData['czlb-levelup2']['nr2']) {
+                                    $("#applyInfo").prepend('您需新发驾驶证');
+                                    $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
+                                    $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
+                                }
+
+
                             }
+
+
                         }
-                        //新增，执行以下
-                    } else if (data['row']['changeType'] === csData['czlb-diaoru']['nr2'] || data['row']['changeType'] === csData['czlb-levelup1']['nr2'] || data['row']['changeType'] === csData['czlb-levelup2']['nr2']) {
-                        $("#applyInfo").prepend('您需新发驾驶证');
-                        $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
-                        $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
-                    }
-
-
+                    });
                 }
-
-
             }
         });
+
 
     }
 
