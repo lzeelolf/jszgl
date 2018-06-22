@@ -712,7 +712,7 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent #alertContainer #alertContent #alertTable {
     margin:40px 0 40px 80px;
 }
-#bigContent #rightContent #alertContainer #alertContent #alertPage ,#dataPage{
+#bigContent #rightContent #alertContainer #alertContent #alertPage ,#dataPage,#giveOutPage{
     display: none;
 }
 #bigContent #rightContent #alertContainer #alertContent #alertTable th,#bigContent #rightContent #alertContainer #alertContent #alertTable td{
@@ -735,6 +735,27 @@ a,a:hover,a:active,a:visited{
     padding: 5px 10px 5px 10px;
     font-size: 14px;
 }
+#bigContent #rightContent #giveOutContainer #giveOutContent{
+    padding-top: 30px;
+}
+#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable{
+    margin: 0 0 0 160px;
+}
 #bigContent #rightContent #dataContainer #dataContent #dataTable th:first-child,#bigContent #rightContent #dataContainer #dataContent #dataTable td:first-child{
     border-left: 1px solid #333;
+}
+#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable th,#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable td{
+    border: 1px solid #333;
+    border-left: none;
+    padding: 5px 10px 5px 10px;
+    font-size: 14px;
+}
+#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable th:first-child,#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable td:first-child{
+    border-left: 1px solid #333;
+}
+#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable .giveOut{
+    color: cornflowerblue;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
 }

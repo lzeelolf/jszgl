@@ -56,39 +56,7 @@ function resizePage(){
     $("#bottom").css('height',windowHeight*0.25+'px');
 }
 
-//主页面单击左边li显示右边内容的函数，注销功能也在这里实现
-function displayContainer(){
-    var power = sessionGet('power');
-    if(power === 'V' || power==='1'){
-        //教育科管理人员或车间管理人员
-        var index = $(this).index();
-        if($(this).next().length>0){
-            $("#rightContent .operateContent>div:eq("+index+")").css('display','block').siblings().css('display','none');
-            if($(this).text().indexOf('预警信息')>-1){
-                $('.redPoint').css('display','none')
-            }
-        }else{
-            //最后一个按钮退出系统
-            if(confirm("确定要退出系统？")){
-                sessionClear();
-                window.location.href = '../html/login.html'
-            }
-        }
-    }else if(power === '0'){
-        //把页面中前7个教育科人员使用的div跳过
-        var index_7 = $(this).index()+7;
-        if($(this).next().length>0){
-            $("#rightContent .operateContent>div:eq("+index_7+")").css('display','block').siblings().css('display','none');
-        }else{
-            //最后一个按钮退出系统
-            if(confirm("确定要退出系统？")){
-                sessionClear();
-                window.location.href = '../html/login.html'
-            }
-        }
-    }
 
-}
 
 //检查登录状态和用户名
 function loginStatus(){
