@@ -659,10 +659,10 @@ a,a:hover,a:active,a:visited{
     z-index: 1;
 }
 #bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable,#exchangeCheckTable{
-    margin: 50px 0 0 80px;
+    margin: 50px 0 0 25px;
 }
 #bigContent #rightContent #checkContainer #checkContent th,#bigContent #rightContent #checkContainer #checkContent td{
-    padding: 3px 23px 3px 23px;
+    padding: 3px 18px 3px 18px;
     border: 1px solid #333;
     border-right: none;
 }
@@ -706,13 +706,14 @@ a,a:hover,a:active,a:visited{
     text-align: left;
     line-height: 60px;
 }
+#bigContent #rightContent #alertContainer #alertBanner *{
+    float: left;
+}
 #bigContent #rightContent #alertContainer #alertContent #alertTable {
     margin:40px 0 40px 80px;
-
 }
-#bigContent #rightContent #alertContainer #alertContent #alertPage {
+#bigContent #rightContent #alertContainer #alertContent #alertPage ,#dataPage{
     display: none;
-
 }
 #bigContent #rightContent #alertContainer #alertContent #alertTable th,#bigContent #rightContent #alertContainer #alertContent #alertTable td{
     border: 1px solid #333;
@@ -723,4 +724,17 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent #alertContainer #alertContent #alertTable th:first-child,#bigContent #rightContent #alertContainer #alertContent #alertTable td:first-child{
     border-left: 1px solid #333;
 }
-
+#bigContent #rightContent #dataContainer #dataContent{
+    padding-top: 30px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+#bigContent #rightContent #dataContainer #dataContent #dataTable th,#bigContent #rightContent #dataContainer #dataContent #dataTable td{
+    border: 1px solid #333;
+    border-left: none;
+    padding: 5px 10px 5px 10px;
+    font-size: 14px;
+}
+#bigContent #rightContent #dataContainer #dataContent #dataTable th:first-child,#bigContent #rightContent #dataContainer #dataContent #dataTable td:first-child{
+    border-left: 1px solid #333;
+}

@@ -170,6 +170,11 @@ function displayQueryTable(data,element,pageElement,mode,obj,tableName){
 function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj,tableName,headEvent){
     //把多余的属性删除，便于处理
     delete data['count'];
+    for(var i in data){
+        if(data[i]['Department'].split(',').length>1){
+            data[i]['Department'] = data[i]['Department'].split(',')[0];
+        }
+    }
     showTableHead(data,pagePosition,dataPosition,headEvent,tableName,obj,total,countPerPage);
     showList(data,1,countPerPage,dataPosition);
     showPagingList(data,total,countPerPage,pagePosition,1,dataPosition);
