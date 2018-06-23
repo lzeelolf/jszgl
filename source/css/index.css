@@ -385,11 +385,16 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent #informationContainer #cardInfoContent div.driveType{
     width: 50px;
 }
-#bigContent #rightContent .operateContent #applyContainer #fixButton{
-    width: 230px;
-    height: 30px;
-    line-height: 30px;
+#bigContent #rightContent .operateContent #applyContainer{
+    padding-top: 50px;
+}
+#bigContent #rightContent .operateContent #applyContainer #fixButton,#yxqmButton,#fyxqmButton{
+    padding: 5px 20px;
+    height: 50px;
+    line-height: 10px;
     font-size: 14px;
+    display: block;
+    margin: 0 0 50px 50px;
 }
 #bigContent #rightContent .operateContent #applyContainer #applySubmit{
     width: 60px;
@@ -577,6 +582,9 @@ a,a:hover,a:active,a:visited{
 .reason input{
     margin: 8px 0 0 15px;
 }
+#otherReasonText{
+    margin-top: 4px;
+}
 #bigContent #rightContent #improveContainer{
     height: 560px;
 }
@@ -659,7 +667,7 @@ a,a:hover,a:active,a:visited{
     z-index: 1;
 }
 #bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable,#exchangeCheckTable{
-    margin: 50px 0 0 25px;
+    margin: 50px 0 0 5px;
 }
 #bigContent #rightContent #checkContainer #checkContent th,#bigContent #rightContent #checkContainer #checkContent td{
     padding: 3px 18px 3px 18px;

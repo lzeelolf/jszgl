@@ -306,6 +306,8 @@
             </div>
             <div id="applyContainer">
                 <button id="fixButton">驾驶证不慎遗失，申请补证</button>
+                <button id="yxqmButton">驾驶证有效期将满，申请换证</button>
+                <button id="fyxqmButton">其他原因需要换证</button>
                 <div id="fixTable">
                     <h1>铁路机车车辆驾驶证换（补）证申请表 </h1>
                     <div id="fixTableArea" class="borderAll">
@@ -441,11 +443,11 @@
                                     <label for="reasonDeadline" class="float">驾驶证有效期满</label><br>
                                 </div>
                                 <div class="width575 height28">
-                                    <input type="checkbox" id="reasonContChange" class="float"/>
+                                    <input type="checkbox" id="reasonContChange" class="float fyxqmhz"/>
                                     <label for="reasonContChange" class="float">驾驶证记载内容变化</label><br>
                                 </div>
                                 <div class="width575 height28">
-                                    <input type="checkbox" id="reasonLower" class="float"/>
+                                    <input type="checkbox" id="reasonLower" class="float fyxqmhz"/>
                                     <label for="reasonLower" class="float">本人自愿降低准驾机型</label><br>
                                 </div>
                                 <div class="width575 height28">
@@ -457,9 +459,9 @@
                                     <label for="cardLost" class="float">驾驶证丢失</label><br>
                                 </div>
                                 <div class="width575 height28">
-                                    <input type="checkbox" id="otherReason" class="float"/>
+                                    <input type="checkbox" id="otherReason" class="float fyxqmhz"/>
                                     <label for="otherReason" class="float">其他说明：</label>
-                                    <input disabled type="text" class="float noborder" style="background-color: white;height: 20px;line-height: 20px;font-size: 14px;font-family: '仿宋';"/>
+                                    <input disabled type="text" class="float noborder" id="otherReasonText" style="background-color: white;height: 20px;line-height: 20px;font-size: 14px;font-family: '仿宋';"/>
                                 </div>
 
                             </div>
