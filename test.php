@@ -103,7 +103,7 @@ function appendElement($serverName,$uid,$pwd,$Database,$tableName,$column){
 
 
 //插入补证申请，于bgxx表,$column = (column1,column2),$values = (value1,value2)
-function insertFixApply($serverName,$uid,$pwd,$Database,$tableName,$column,$values){
+function insert($serverName,$uid,$pwd,$Database,$tableName,$column,$values){
     $connectionInfo = array("Uid"=>$uid, "Pwd"=>$pwd, "Database"=>$Database,"CharacterSet"=>"UTF-8");
     $conn = sqlsrv_connect($serverName, $connectionInfo);
     if( $conn === false)

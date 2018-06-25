@@ -301,17 +301,17 @@
                     <div class="float queryInfo">
                         <div>
                             <p>工资号</p><div class="payId"><input type="text" class="payIdInput"></div>
-                            <p>姓名</p><div class="name">xxx</div>
-                            <p>部门</p><div class="department">xxxxxxxxxx</div>
+                            <p>姓名</p><div class="name"></div>
+                            <p>部门</p><div class="department"></div>
                         </div>
                         <div>
-                            <p>出生日期</p><div class="birth date">xxxxxxxxxx</div>
+                            <p>出生日期</p><div class="birth date"></div>
                             <p>司机领证日期</p><div class="sjDate"><input type="text" class="sjDateInput date"></div>
                         </div>
                         <div>
-                            <p>批准文号</p><div class="sjRemark">xxxxxxxxxx</div>
+                            <p>批准文号</p><div class="sjRemark"></div>
 
-                            <p>年鉴时间</p><div class="?"><input type="text" class="?Input date"></div>
+                            <p>年鉴时间</p><div class="yearlyCheck"><input type="text" class="yearlyCheckInput date"></div>
                         </div>
                         <div>
                             <p>准驾类型代码</p><div class="driveCode"><input type="text" class="driveCodeInput"></div>
@@ -326,6 +326,7 @@
                 <div class="editButtonBanner">
                     <button class="cjEdit">车间转调</button>
                     <button class="rydc">人员调出</button>
+                    <button class="logout">证件注销</button>
                     <button class="infoFix">信息更正</button>
                 </div>
                 <div class="textContent">
@@ -333,6 +334,10 @@
                     <span class="name"></span>
                     <span>师傅的转调去向：</span>
                     <select name="" id="editFixSelect"></select>
+                </div>
+                <div class="logOutContent">
+                    <span>请选择注销该证件的原因：</span>
+                    <select name="" id="logOutReason"></select>
                 </div>
             </div>
             <div class="jykUse" id="cancelContainer">

@@ -38,13 +38,17 @@ $(document).ready(function() {
             //添加预警信息
             appendAlert(csData)
             //添加证件调整的select选择车间
-            var html=''
+            var html='';
+            var _html='';
             for(var i in csData){
                 if(csData[i]['lb'] === 'ssbm'){
                     html += '<option>'+csData[i]['nr2']+'</option>'
+                }else if(csData[i]['lb'] === 'zxyy'){
+                    _html += '<option>'+csData[i]['nr2']+'</option>'
                 }
             }
             $("#editFixSelect").append(html)
+            $("#logOutReason").append(_html)
         }
     });
 
@@ -187,7 +191,7 @@ $(document).ready(function() {
         if(sessionGet('power') === 'V'){
             if($("#editBanner .queryInput").val().match(/^[0-9]{5}$/)){
                 var payid = $("#editBanner .queryInput").val();
-                var column = ' payId,UName,department,birthDate,sjDate,sjRemark,sjDriveCode,sjDriveType,startDate,deadline,cardPath';
+                var column = ' *';
                 var ajaxTimeOut = $.ajax({
                     url: "../../../index.php",
                     type:"POST",
@@ -200,20 +204,20 @@ $(document).ready(function() {
                         if(data['success'] ===1){
                             $('#editContainer .queryInfoContent').css('display','block')
                             $('.queryInfoContent .queryPicInfo img').prop('src',data['row1']['cardPath']);
-                            $('.queryInfoContent .queryInfo .payIdInput').val(data['row1']['payId']);
+                            $('.queryInfoContent .queryInfo .payIdInput').val(data['row1']['PayId']);
                             $('.queryInfoContent .queryInfo .name').text(data['row1']['UName']);
-                            $('.queryInfoContent .queryInfo .department').text(data['row1']['department'].split(',')[0]);
-                            $('.queryInfoContent .queryInfo .birth').text(data['row1']['birthDate']);
+                            $('.queryInfoContent .queryInfo .department').text(data['row1']['Department'].split(',')[0]);
+                            $('.queryInfoContent .queryInfo .birth').text(data['row1']['BirthDate']);
                             $('.queryInfoContent .queryInfo .sjDateInput').val(data['row1']['sjDate']);
                             $('.queryInfoContent .queryInfo .sjRemark').text(data['row1']['sjRemark']);
-                            //$('.queryInfoContent .queryInfo .?Input').val(data['row1']['?']);
+                            $('.queryInfoContent .queryInfo .yearlyCheckInput').val(data['row1']['yearlyCheckDate']);
                             $('.queryInfoContent .queryInfo .driveCodeInput').val(data['row1']['sjDriveCode']);
                             $('.queryInfoContent .queryInfo .driveTypeInput').val(data['row1']['sjDriveType']);
                             $('.queryInfoContent .queryInfo .startDateInput').val(data['row1']['startDate']);
                             $('.queryInfoContent .queryInfo .deadlineInput').val(data['row1']['deadline']);
                             $(".queryInfoContent .queryInfo input").prop('disabled',true)
                             $(".editButtonBanner").css('display','block')
-                            boundEditEvent()
+                            boundEditEvent(data['row1'])
                         }else{
                             alert('您查询的信息不存在')
                         }
@@ -238,7 +242,9 @@ $(document).ready(function() {
         }
     })
     //证件调整的按钮事件
-    function boundEditEvent(){
+    function boundEditEvent(data){
+        var payId = $('.queryInput').val();
+        var flag = true;
         //车间转调按钮
         $('.cjEdit').off('click').on('click',function(){
             $("#editContainer .textContent .name").text($(".queryInfo .name").text())
@@ -268,17 +274,43 @@ $(document).ready(function() {
         $('.rydc').off('click').on('click',function(){
             if(confirm('（注意！请在确认该人员已调出本段的情况下进行调出操作）\u000d'+'确认'+$(".queryInfo .name").text()+'师傅已调出？')){
                 var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
+                var setStr = 'status =\''+csData['zjzt-dc']['nr2']+'\''
                 $.ajax({
                     url: "../../../index.php",
                     type: "POST",
                     timeout: 8000,
                     data: {
-                        funcName: 'delete', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                        tableName: ' jbxx', where: where
+                        funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                        tableName: ' jbxx',setStr:setStr, where: where
                     },
                     dataType: 'json',
-                    success: function (data) {
-                        alert('操作成功。该条信息已从数据库中移除')
+                    success: function () {
+                        var lotNumber = new Date();
+                        lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
+                        lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
+                        lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
+                        $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            timeout: 8000,
+                            data: {
+                                funcName: 'insert',
+                                serverName: '10.101.62.73',
+                                uid: 'sa',
+                                pwd: '2huj15h1',
+                                Database: 'jszgl',
+                                tableName: ' bgxx',
+                                column: ' (id,lotNumber,Department,payId,archivesId,UName,changeType,' +
+                                'driveCode,drive,jykOperator)',
+                                values: '(getDate(),\'' + lotNumber + '\',\'' + data['Department'] + '\',\'' + data['PayId'] + '\',\'' + data['ArchivesId'] + '\',\'' + data['UName'] + '\',\'' + csData['czlb-dc']['nr2'] +
+                                 '\',\'' + data['sjDriveCode'] + '\',\'' + data['sjDriveType'] + '\',\''+sessionGet('user')+'\')'
+                            },
+                            dataType: 'json',
+                            success: function (ret) {
+                                console.log(ret)
+                                alert('操作成功。该证件的状态目前为：'+csData['zjzt-dc']['nr2']);
+                            }
+                        })
                     }
                 })
             }
@@ -286,6 +318,15 @@ $(document).ready(function() {
         })
         //信息更正按钮
         $('.infoFix').off('click').on('click',function(){
+            var arr =[];
+            var j=0;
+            for(var i in csData){
+                if(csData[i]['lb'] === 'zjlx'){
+                    arr[j] = csData[i]['name'];
+                    j++;
+                }
+            }
+
             if($(this).text() === '信息更正'){
                 alert('您现在可以对人员部分信息进行更正');
                 $(this).text('确认更改').css({'color':'GREEN','fontWeight':'bold'})
@@ -298,14 +339,116 @@ $(document).ready(function() {
                             $('.queryInfo .driveTypeInput').val(csData[i]['nr1'])
                         }
                     }
+                    if(checkIfInArray($(this).val(),arr)){
+                        flag = true;
+                    }else{
+                        alert('准驾类型代码输入错误，找不到与之对应的准驾类型')
+                        flag =false;
+                    }
                 })
             }else if($(this).text() === '确认更改'){
+                checkIfInArray($(".queryInfo .driveCodeInput").val(),arr)
                 //提交
-                
+                if($(".queryInfo .payIdInput").val().match(/^[0-9]{5}$/) && $('.queryInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .yearlyCheckInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && flag){
+                    if(confirm('确认要进行更改吗？')){
+                        var setStr ='payid =\''+$(".queryInfo .payIdInput").val()+'\',sjDate =\''+$(".queryInfo .sjDateInput").val()+'\',yearlyCheckDate =\''+$(".queryInfo .yearlyCheckInput").val()+'\',sjDriveCode =\''+$(".queryInfo .driveCodeInput").val()+'\',sjDriveType =\''+$(".queryInfo .driveTypeInput").val()+'\',startDate =\''+$(".queryInfo .startDateInput").val()+'\',deadline = \''+$(".queryInfo .deadlineInput").val()+'\'';
+                        var where = ' where payid =\''+payId+'\'';
+                        var ajaxTimeOut = $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            timeout: 8000,
+                            data: {
+                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                                tableName: ' jbxx', setStr: setStr, where: where
+                            },
+                            dataType: 'json',
+                            success: function () {
+                                alert('信息修改成功')
+                            },
+                            beforeSend: function () {
+                                //在where字段后加入用户选择的车间范围
+                                testSession(userSessionInfo);
+                                loadingPicOpen();
+                            },
+                            complete: function (XMLHttpRequest, status) {
+                                loadingPicClose();
+                                if (status === 'timeout') {
+                                    ajaxTimeOut.abort();    // 超时后中断请求
+                                    alert('网络超时，请检查网络连接');
+                                }
+                            }
+                        })
+                    }
+                }else{
+                    alert('请检查输入格式！(工资号为5位数字，日期格式为"xxxx-xx-xx")')
+                }
             }
 
 
         })
+        //证件注销按钮
+        $('.logout').off('click').on('click',function(){
+            $("#editContainer .textContent").css('display','none');
+            $("#editContainer .logOutContent").css('display','block');
+            $("#logOutReason").off('change').on('change',function(){
+                var reason = $(this).val();
+                if(data['status'] !== csData['zjzt-dc']['nr2'] && data['status'] !== csData['zjzt-zx']['nr2']){
+                    if(confirm('确定要注销该证件吗？')){
+                        var setStr =' status=\''+csData['zjzt-zx']['nr2']+'\'';
+                        var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
+                        $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            timeout: 8000,
+                            data: {
+                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                                tableName: ' jbxx', setStr: setStr, where: where
+                            },
+                            dataType: 'json',
+                            success: function () {
+                                var lotNumber = new Date();
+                                lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
+                                lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
+                                lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
+                                $.ajax({
+                                    url: "../../../index.php",
+                                    type: "POST",
+                                    timeout: 8000,
+                                    data: {
+                                        funcName: 'insert',
+                                        serverName: '10.101.62.73',
+                                        uid: 'sa',
+                                        pwd: '2huj15h1',
+                                        Database: 'jszgl',
+                                        tableName: ' bgxx',
+                                        column: ' (id,lotNumber,Department,payId,archivesId,UName,changeType,changeReason,' +
+                                        'driveCode,drive,jykOperator)',
+                                        values: '(getDate(),\'' + lotNumber + '\',\'' + data['Department'] + '\',\'' + data['PayId'] + '\',\'' + data['ArchivesId'] + '\',\'' + data['UName'] + '\',\'' + csData['czlb-zx']['nr2']+'\',\''+reason +
+                                        '\',\'' + data['sjDriveCode'] + '\',\'' + data['sjDriveType'] + '\',\''+sessionGet('user')+'\')'
+                                    },
+                                    dataType: 'json',
+                                    success: function (ret) {
+                                        alert('已注销该证件');
+                                    }
+                                })
+                            }
+                        })
+                    }
+                }else{
+                    alert('该证件已注销或者调出，不能重复操作')
+                }
+
+            })
+        })
+    }
+    //检查arr数组中是否含有值为字符串str的元素，
+    function checkIfInArray(str,arr){
+        for(var i =0;i<arr.length;i++){
+            if(arr[i] === str){
+                return true
+            }
+        }
+        return false
     }
     //添加审核申请界面
     function appendApplyCheck(power,csData) {
@@ -1609,20 +1752,434 @@ $(document).ready(function() {
                         }
                     }
                 })
+            }else if(name === csData['cjtjxx-zxjl']['nr2']){
+                //呈现注销记录表
+                var ajaxTimeOut1 = $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                    data:{funcName:'select',where:' where department like \''+department+'%\' AND changeType =\''+csData['czlb-zx']['nr2']+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                        tableName:' bgxx ',column:' department,lotNumber,payId,UName,changeType,changeReason,jykOperator',order:' order by lotnumber,payid'},
+                    dataType:'json',
+                    success:function(data){
+                        if(data['success'] === 1){
+                            delete data['success'];
+                            var count = data['count'];
+                            delete data['count'];
+                            for(var i in data){
+                                if(data[i]['department'].split(',').length>1){
+                                    data[i]['department'] = data[i]['department'].split(',')[0];
+                                }
+                            }
+                            var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>注销原因</th><th>教育科经办人</th></tr>';
+                            if(count<11){
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html += '</tr>'
+                                }
+                                $("#dataTable").empty().append(html);
+                                //空白tr补齐表格
+                                if($("#dataTable tbody tr").length<11){
+                                    html = '';
+                                    var count = 11-$("#dataTable tbody tr").length;
+                                    var columns = $("#dataTable tbody tr:first-child th").length;
+                                    for(var m=0;m<count;m++){
+                                        html+='<tr>';
+                                        for(var n=0;n<columns;n++){
+                                            html+="<td></td>";
+                                        }
+                                        html+="</tr>";
+                                    }
+                                    $("#dataTable tbody").append(html);
+                                }
+                            }else{
+                                var q =0;
+                                var cur =1;
+                                var total = Math.ceil(count/10);
+                                $("#dataPage").css("display",'block');
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html += '</tr>';
+                                    q+=1;
+                                    if(q>9){
+                                        break
+                                    }
+                                }
+                                $("#dataTable").empty().append(html);
+                                $("#dataPage .cur").text(cur);
+                                $("#dataPage .total").text(total);
+                                $("#dataPage .next").off('click').on('click',function(){
+                                    if(cur<total){
+                                        var j =0;
+                                        var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>注销原因</th><th>教育科经办人</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*cur-1 && j<10*(cur+1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#dataTable").empty().append(html);
+                                        //空白tr补齐表格
+                                        if($("#dataTable tbody tr").length<11){
+                                            html = '';
+                                            var count = 11-$("#dataTable tbody tr").length;
+                                            var columns = $("#dataTable tbody tr:first-child th").length;
+                                            for(var m=0;m<count;m++){
+                                                html+='<tr>';
+                                                for(var n=0;n<columns;n++){
+                                                    html+="<td></td>";
+                                                }
+                                                html+="</tr>";
+                                            }
+                                            $("#dataTable tbody").append(html);
+                                        }
+                                        cur+=1;
+                                        $("#dataPage .cur").text(cur);
+                                    }
+
+                                })
+                                $("#dataPage .prev").off('click').on('click',function(){
+                                    if(cur>1){
+                                        var j =0;
+                                        var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>注销原因</th><th>教育科经办人</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#dataTable").empty().append(html);
+                                        cur-=1;
+                                        $("#dataPage .cur").text(cur);
+                                    }
+
+                                })
+                            }
+                        }else{
+                            alert('暂无注销记录');
+                        }
+                    },
+                    beforeSend:function(){
+                        loadingPicOpen();
+                        testSession(userSessionInfo);
+                    },
+                    complete: function (XMLHttpRequest,status) {
+                        loadingPicClose();
+                        if(status === 'timeout') {
+                            ajaxTimeOut1.abort();    // 超时后中断请求
+                            alert('网络超时，请检查网络连接');
+                        }
+                    }
+                })
+            }else if(name === csData['cjtjxx-dcjl']['nr2']){
+                //呈现调出记录表
+                var ajaxTimeOut1 = $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                    data:{funcName:'select',where:' where department like \''+department+'%\' AND changeType =\''+csData['czlb-dc']['nr2']+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                        tableName:' bgxx ',column:' department,lotNumber,payId,UName,changeType,jykOperator',order:' order by lotnumber,payid'},
+                    dataType:'json',
+                    success:function(data){
+                        if(data['success'] === 1){
+                            delete data['success'];
+                            var count = data['count'];
+                            delete data['count'];
+                            for(var i in data){
+                                if(data[i]['department'].split(',').length>1){
+                                    data[i]['department'] = data[i]['department'].split(',')[0];
+                                }
+                            }
+                            var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>教育科经办人</th></tr>';
+                            if(count<11){
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html += '</tr>'
+                                }
+                                $("#dataTable").empty().append(html);
+                                //空白tr补齐表格
+                                if($("#dataTable tbody tr").length<11){
+                                    html = '';
+                                    var count = 11-$("#dataTable tbody tr").length;
+                                    var columns = $("#dataTable tbody tr:first-child th").length;
+                                    for(var m=0;m<count;m++){
+                                        html+='<tr>';
+                                        for(var n=0;n<columns;n++){
+                                            html+="<td></td>";
+                                        }
+                                        html+="</tr>";
+                                    }
+                                    $("#dataTable tbody").append(html);
+                                }
+                            }else{
+                                var q =0;
+                                var cur =1;
+                                var total = Math.ceil(count/10);
+                                $("#dataPage").css("display",'block');
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html += '</tr>';
+                                    q+=1;
+                                    if(q>9){
+                                        break
+                                    }
+                                }
+                                $("#dataTable").empty().append(html);
+                                $("#dataPage .cur").text(cur);
+                                $("#dataPage .total").text(total);
+                                $("#dataPage .next").off('click').on('click',function(){
+                                    if(cur<total){
+                                        var j =0;
+                                        var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>教育科经办人</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*cur-1 && j<10*(cur+1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#dataTable").empty().append(html);
+                                        //空白tr补齐表格
+                                        if($("#dataTable tbody tr").length<11){
+                                            html = '';
+                                            var count = 11-$("#dataTable tbody tr").length;
+                                            var columns = $("#dataTable tbody tr:first-child th").length;
+                                            for(var m=0;m<count;m++){
+                                                html+='<tr>';
+                                                for(var n=0;n<columns;n++){
+                                                    html+="<td></td>";
+                                                }
+                                                html+="</tr>";
+                                            }
+                                            $("#dataTable tbody").append(html);
+                                        }
+                                        cur+=1;
+                                        $("#dataPage .cur").text(cur);
+                                    }
+
+                                })
+                                $("#dataPage .prev").off('click').on('click',function(){
+                                    if(cur>1){
+                                        var j =0;
+                                        var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>教育科经办人</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#dataTable").empty().append(html);
+                                        cur-=1;
+                                        $("#dataPage .cur").text(cur);
+                                    }
+
+                                })
+                            }
+                        }else{
+                            alert('暂无调出记录');
+                        }
+                    },
+                    beforeSend:function(){
+                        loadingPicOpen();
+                        testSession(userSessionInfo);
+                    },
+                    complete: function (XMLHttpRequest,status) {
+                        loadingPicClose();
+                        if(status === 'timeout') {
+                            ajaxTimeOut1.abort();    // 超时后中断请求
+                            alert('网络超时，请检查网络连接');
+                        }
+                    }
+                })
+            }else if(name === csData['cjtjxx-xzjl']['nr2']){
+                //呈现新增记录表
+                var ajaxTimeOut1 = $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                    data:{funcName:'select',where:' where department like \''+department+'%\' AND changeType =\''+csData['czlb-levelup2']['nr2']+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                        tableName:' bgxx ',column:' department,lotNumber,payId,UName,changeType,driveCode,drive,jykOperator',order:' order by lotnumber,payid'},
+                    dataType:'json',
+                    success:function(data){
+                        if(data['success'] === 1){
+                            delete data['success'];
+                            var count = data['count'];
+                            delete data['count'];
+                            for(var i in data){
+                                if(data[i]['department'].split(',').length>1){
+                                    data[i]['department'] = data[i]['department'].split(',')[0];
+                                }
+                            }
+                            var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>准驾代码</th><th>准驾类型</th><th>教育科经办人</th></tr>';
+                            if(count<11){
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html += '</tr>'
+                                }
+                                $("#dataTable").empty().append(html);
+                                //空白tr补齐表格
+                                if($("#dataTable tbody tr").length<11){
+                                    html = '';
+                                    var count = 11-$("#dataTable tbody tr").length;
+                                    var columns = $("#dataTable tbody tr:first-child th").length;
+                                    for(var m=0;m<count;m++){
+                                        html+='<tr>';
+                                        for(var n=0;n<columns;n++){
+                                            html+="<td></td>";
+                                        }
+                                        html+="</tr>";
+                                    }
+                                    $("#dataTable tbody").append(html);
+                                }
+                            }else{
+                                var q =0;
+                                var cur =1;
+                                var total = Math.ceil(count/10);
+                                $("#dataPage").css("display",'block');
+                                for(var i in data){
+                                    html += '<tr>';
+                                    for(var j in data[i]){
+                                        html += '<td>'+data[i][j]+'</td>';
+                                    }
+                                    html += '</tr>';
+                                    q+=1;
+                                    if(q>9){
+                                        break
+                                    }
+                                }
+                                $("#dataTable").empty().append(html);
+                                $("#dataPage .cur").text(cur);
+                                $("#dataPage .total").text(total);
+                                $("#dataPage .next").off('click').on('click',function(){
+                                    if(cur<total){
+                                        var j =0;
+                                        var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>准驾代码</th><th>准驾类型</th><th>教育科经办人</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*cur-1 && j<10*(cur+1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#dataTable").empty().append(html);
+                                        //空白tr补齐表格
+                                        if($("#dataTable tbody tr").length<11){
+                                            html = '';
+                                            var count = 11-$("#dataTable tbody tr").length;
+                                            var columns = $("#dataTable tbody tr:first-child th").length;
+                                            for(var m=0;m<count;m++){
+                                                html+='<tr>';
+                                                for(var n=0;n<columns;n++){
+                                                    html+="<td></td>";
+                                                }
+                                                html+="</tr>";
+                                            }
+                                            $("#dataTable tbody").append(html);
+                                        }
+                                        cur+=1;
+                                        $("#dataPage .cur").text(cur);
+                                    }
+
+                                })
+                                $("#dataPage .prev").off('click').on('click',function(){
+                                    if(cur>1){
+                                        var j =0;
+                                        var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>准驾代码</th><th>准驾类型</th><th>教育科经办人</th></tr>';
+                                        for(var i in data){
+                                            if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
+                                                j++;
+                                                html += '<tr>';
+                                                for(var m in data[i]){
+                                                    html += '<td>'+data[i][m]+'</td>';
+                                                }
+                                                html += '</tr>'
+                                            }else{
+                                                j++;
+                                            }
+                                        }
+                                        $("#dataTable").empty().append(html);
+                                        cur-=1;
+                                        $("#dataPage .cur").text(cur);
+                                    }
+
+                                })
+                            }
+                        }else{
+                            alert('暂无新增记录');
+                        }
+                    },
+                    beforeSend:function(){
+                        loadingPicOpen();
+                        testSession(userSessionInfo);
+                    },
+                    complete: function (XMLHttpRequest,status) {
+                        loadingPicClose();
+                        if(status === 'timeout') {
+                            ajaxTimeOut1.abort();    // 超时后中断请求
+                            alert('网络超时，请检查网络连接');
+                        }
+                    }
+                })
             }
         }
         //V级权限人员，先执行这个函数
         function appendDataTableV(name){
+            var html = '<select class="department"><option>--请选择--</option>';
+            for(var i in csData){
+                if(csData[i]['lb'] === 'ssbm'){
+                    html += '<option>'+csData[i]['nr1']+'</option>'
+                }
+            }
+            html+='</select>';
             if(name === '--请选择--'){
 
             }else if(name === csData['cjtjxx-shjl']['nr2']){
-                var html = '<select class="department"><option>--请选择--</option>';
-                for(var i in csData){
-                    if(csData[i]['lb'] === 'ssbm'){
-                        html += '<option>'+csData[i]['nr1']+'</option>'
-                    }
-                }
-                html+='</select>';
                 if($("#dataBanner .department").length>0){
                     $("#dataBanner .department").remove()
                 }
@@ -1631,21 +2188,39 @@ $(document).ready(function() {
                     appendDataTable(csData['cjtjxx-shjl']['nr2'],$(this).val())
                 })
             }else if(name === csData['cjtjxx-ffjl']['nr2']){
-                var _html = '<select class="department"><option>--请选择--</option>';
-                for(var i in csData){
-                    if(csData[i]['lb'] === 'ssbm'){
-                        _html += '<option>'+csData[i]['nr1']+'</option>'
-                    }
-                }
-                _html+='</select>';
                 if($("#dataBanner .department").length>0){
                     $("#dataBanner .department").remove()
                 }
-                $("#dataBanner").append(_html);
+                $("#dataBanner").append(html);
                 $('#dataBanner .department').off('change').on('change',function(){
                     appendDataTable(csData['cjtjxx-ffjl']['nr2'],$(this).val())
                 })
+            }else if(name === csData['cjtjxx-zxjl']['nr2']){
+                if($("#dataBanner .department").length>0){
+                    $("#dataBanner .department").remove()
+                }
+                $("#dataBanner").append(html);
+                $('#dataBanner .department').off('change').on('change',function(){
+                    appendDataTable(csData['cjtjxx-zxjl']['nr2'],$(this).val())
+                })
+            }else if(name === csData['cjtjxx-dcjl']['nr2']){
+                if($("#dataBanner .department").length>0){
+                    $("#dataBanner .department").remove()
+                }
+                $("#dataBanner").append(html);
+                $('#dataBanner .department').off('change').on('change',function(){
+                    appendDataTable(csData['cjtjxx-dcjl']['nr2'],$(this).val())
+                })
+            }else if(name === csData['cjtjxx-xzjl']['nr2']){
+                if($("#dataBanner .department").length>0){
+                    $("#dataBanner .department").remove()
+                }
+                $("#dataBanner").append(html);
+                $('#dataBanner .department').off('change').on('change',function(){
+                    appendDataTable(csData['cjtjxx-xzjl']['nr2'],$(this).val())
+                })
             }
+
         }
     }
 
@@ -2353,7 +2928,7 @@ $(document).ready(function() {
             type: "POST",
             timeout: 8000,
             data: {
-                funcName: 'insertFixApply',
+                funcName: 'insert',
                 serverName: '10.101.62.73',
                 uid: 'sa',
                 pwd: '2huj15h1',
