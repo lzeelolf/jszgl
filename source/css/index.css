@@ -767,3 +767,83 @@ a,a:hover,a:active,a:visited{
     text-decoration: underline;
     cursor: pointer;
 }
+#bigContent #rightContent #editContainer #editBanner{
+    overflow: hidden;
+}
+#bigContent #rightContent #editContainer #tip{
+    text-align: left;
+    text-indent: 2em;
+}
+#bigContent #rightContent #editContainer .queryInput{
+    width: 70px;
+    margin-right: 40px;
+}
+#bigContent #rightContent #editContainer .queryButton{
+    width: 40px;
+}
+#bigContent #rightContent #editContainer .queryInfoContent{
+    width: 100%;
+    overflow: hidden;
+    display: none;
+    margin-top: 50px;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryPicInfo{
+    width: 30%;
+    height: 200px;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo{
+    width: 65%;
+    padding-left: 5%;
+    height: 200px;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .date{
+    width: 100px;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div{
+    margin-top: 8px;
+    height: 30px;
+    white-space: nowrap;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>*{
+    float: left;
+    height: 29px;
+    line-height: 30px;
+    margin-right: 10px;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>div{
+    border-bottom: 1px solid #333;
+    padding: 0 10px;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo input{
+    border:none;
+    background-color: inherit;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .payId{
+    width: 100px;
+}
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .driveCodeInput{
+    width: 40px;
+}
+#bigContent #rightContent #editContainer .editButtonBanner{
+    display: none;
+    height: 40px;
+    margin-top: 50px;
+}
+#bigContent #rightContent #editContainer .editButtonBanner .rydc,.cjEdit,.infoFix{
+    width: 90px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 2px;
+    cursor: pointer;
+    background-color: #eee;
+    margin-right: 50px;
+}
+#bigContent #rightContent #editContainer .textContent{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    display: none;
+}

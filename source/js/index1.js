@@ -37,6 +37,14 @@ $(document).ready(function() {
             })
             //添加预警信息
             appendAlert(csData)
+            //添加证件调整的select选择车间
+            var html=''
+            for(var i in csData){
+                if(csData[i]['lb'] === 'ssbm'){
+                    html += '<option>'+csData[i]['nr2']+'</option>'
+                }
+            }
+            $("#editFixSelect").append(html)
         }
     });
 
@@ -68,9 +76,10 @@ $(document).ready(function() {
             }
         }else if(power === '0'){
             //把页面中前7个教育科人员使用的div跳过
-            var index_7 = $(this).index()+7;
+            var jykUse = $('.jykUse').length;
+            var index_plus = $(this).index()+jykUse;
             if($(this).next().length>0){
-                $("#rightContent .operateContent>div:eq("+index_7+")").css('display','block').siblings().css('display','none');
+                $("#rightContent .operateContent>div:eq("+index_plus+")").css('display','block').siblings().css('display','none');
             }else{
                 //最后一个按钮退出系统
                 if(confirm("确定要退出系统？")){
@@ -86,7 +95,7 @@ $(document).ready(function() {
         var html = '';
         if (power === 'V') {//这里填管理员的权限
             html = '<li class=\"appendButton\">证件添加</li><li class=\"queryButton\">证件查询</li><li class=\"dataButton\">数据统计</li><li class=\"checkButton\">申请审核</li>' +
-                '<li class="alertButton">预警信息<span class="redPoint"></span></li><li class="giveOutButton">证件发放</li><li class="cancelButton">证件注销</li><li class="logOutButton">退出系统</li>'
+                '<li class="alertButton">预警信息<span class="redPoint"></span></li><li class="giveOutButton">证件发放</li><li class="editButton">证件调整</li><li class="cancelButton">证件注销</li><li class="logOutButton">退出系统</li>'
             $("#buttonList").append(html);
             appendQueryElement(power);
             appendApplyCheck(power,csData);
@@ -173,6 +182,131 @@ $(document).ready(function() {
         }
     }
 
+    //证件调整
+    $("#editBanner .queryButton").off('click').on('click',function(){
+        if(sessionGet('power') === 'V'){
+            if($("#editBanner .queryInput").val().match(/^[0-9]{5}$/)){
+                var payid = $("#editBanner .queryInput").val();
+                var column = ' payId,UName,department,birthDate,sjDate,sjRemark,sjDriveCode,sjDriveType,startDate,deadline,cardPath';
+                var ajaxTimeOut = $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                    data:{funcName:'select',where:' where payid =\''+payid+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                        tableName:' jbxx ',column:column,order:' '},
+                    dataType:'json',
+                    success:function(data) {
+                        if(data['success'] ===1){
+                            $('#editContainer .queryInfoContent').css('display','block')
+                            $('.queryInfoContent .queryPicInfo img').prop('src',data['row1']['cardPath']);
+                            $('.queryInfoContent .queryInfo .payIdInput').val(data['row1']['payId']);
+                            $('.queryInfoContent .queryInfo .name').text(data['row1']['UName']);
+                            $('.queryInfoContent .queryInfo .department').text(data['row1']['department'].split(',')[0]);
+                            $('.queryInfoContent .queryInfo .birth').text(data['row1']['birthDate']);
+                            $('.queryInfoContent .queryInfo .sjDateInput').val(data['row1']['sjDate']);
+                            $('.queryInfoContent .queryInfo .sjRemark').text(data['row1']['sjRemark']);
+                            //$('.queryInfoContent .queryInfo .?Input').val(data['row1']['?']);
+                            $('.queryInfoContent .queryInfo .driveCodeInput').val(data['row1']['sjDriveCode']);
+                            $('.queryInfoContent .queryInfo .driveTypeInput').val(data['row1']['sjDriveType']);
+                            $('.queryInfoContent .queryInfo .startDateInput').val(data['row1']['startDate']);
+                            $('.queryInfoContent .queryInfo .deadlineInput').val(data['row1']['deadline']);
+                            $(".queryInfoContent .queryInfo input").prop('disabled',true)
+                            $(".editButtonBanner").css('display','block')
+                            boundEditEvent()
+                        }else{
+                            alert('您查询的信息不存在')
+                        }
+
+                    },
+                    beforeSend:function(){
+                        loadingPicOpen();
+                        testSession(userSessionInfo);
+                    },
+                    complete: function (XMLHttpRequest,status) {
+                        loadingPicClose();
+                        if(status === 'timeout') {
+                            ajaxTimeOut.abort();    // 超时后中断请求
+                            alert('网络超时，请检查网络连接');
+                        }
+                    }
+                })
+            }else{
+                alert('请输入正确的工资号')
+                $("#editBanner .queryInput").focus().css('backgroundColor','#ffcccc');
+            }
+        }
+    })
+    //证件调整的按钮事件
+    function boundEditEvent(){
+        //车间转调按钮
+        $('.cjEdit').off('click').on('click',function(){
+            $("#editContainer .textContent .name").text($(".queryInfo .name").text())
+            $("#editContainer .textContent").css('display','block');
+            $("#editFixSelect").off('change').on('change',function(){
+                if(confirm('确认要将'+$(".queryInfo .name").text()+'的关系调入'+$(this).val().split(',')[0]+'？')){
+                    var setStr =' department =\''+$(this).val()+'\' ';
+                    var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
+                    $.ajax({
+                        url: "../../../index.php",
+                        type: "POST",
+                        timeout: 8000,
+                        data: {
+                            funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                            tableName: ' jbxx', setStr: setStr, where: where
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            $(".textContent").css('display','none')
+                            alert('操作成功')
+                        }
+                    })
+                }
+            })
+        })
+        //人员调出按钮
+        $('.rydc').off('click').on('click',function(){
+            if(confirm('（注意！请在确认该人员已调出本段的情况下进行调出操作）\u000d'+'确认'+$(".queryInfo .name").text()+'师傅已调出？')){
+                var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
+                $.ajax({
+                    url: "../../../index.php",
+                    type: "POST",
+                    timeout: 8000,
+                    data: {
+                        funcName: 'delete', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                        tableName: ' jbxx', where: where
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        alert('操作成功。该条信息已从数据库中移除')
+                    }
+                })
+            }
+
+        })
+        //信息更正按钮
+        $('.infoFix').off('click').on('click',function(){
+            if($(this).text() === '信息更正'){
+                alert('您现在可以对人员部分信息进行更正');
+                $(this).text('确认更改').css({'color':'GREEN','fontWeight':'bold'})
+                $(".queryInfo input").prop('disabled',false).parent().css('backgroundColor','white');
+                $(".queryInfo .driveTypeInput").prop('disabled',true).parent().css('backgroundColor','inherit')
+                //准驾代码失焦，自动对应准驾类型
+                $(".queryInfo .driveCodeInput").blur(function(){
+                    for(var i in csData){
+                        if($(this).val() === csData[i]['name']){
+                            $('.queryInfo .driveTypeInput').val(csData[i]['nr1'])
+                        }
+                    }
+                })
+            }else if($(this).text() === '确认更改'){
+                //提交
+                
+            }
+
+
+        })
+    }
     //添加审核申请界面
     function appendApplyCheck(power,csData) {
         $("#exchangeApplyCheck").off('click').on('click',function(){
@@ -1828,7 +1962,7 @@ $(document).ready(function() {
             }
         }
     }
-    
+
     //以下是普通用户所用函数
     //普通用户渲染页面的函数
     function normalUser() {

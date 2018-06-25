@@ -25,6 +25,9 @@ if($_POST['funcName'] === 'select'){
 }else if($_POST['funcName'] === 'update'){
     update($_POST['serverName'],$_POST['uid'],$_POST['pwd'],
         $_POST['Database'],$_POST['tableName'],$_POST['setStr'],$_POST['where']);
+}else if($_POST['funcName'] === 'delete'){
+    delete($_POST['serverName'],$_POST['uid'],$_POST['pwd'],
+        $_POST['Database'],$_POST['tableName'],$_POST['where']);
 }
 
 ?>
