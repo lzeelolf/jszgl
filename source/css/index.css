@@ -820,6 +820,8 @@ a,a:hover,a:active,a:visited{
     width: 100%;
     height: 100%;
     text-align: center;
+    user-select: initial;
+    -webkit-user-select: unset;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo .payId{
     width: 100px;
@@ -901,5 +903,40 @@ a,a:hover,a:active,a:visited{
     user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
+}
+#appendContainer .appendContent{
+    margin-top: 40px;
+    overflow: hidden;
+}
+#appendContainer .appendContent .singleAppendForm{
+    display: none;
+    overflow: hidden;
+}
+#appendContainer .appendContent .singleAppendForm>div{
+    overflow: hidden;
+    height: 40px;
+    text-align: center;
+    padding-left: 150px;
+}
+#appendContainer .appendContent .singleAppendForm>div p{
+    height: 40px;
+    line-height: 40px;
+}
+#appendContainer .appendContent .singleAppendForm>div input{
+    font-size: 14px;
+    border: none;
+    border-bottom: 1px solid #333;
+    height: 20px;
+    line-height: 20px;
+    margin-top: 10px;
+}
+#appendContainer .appendContent .singleAppendForm #submitAppend{
+    height: 30px;
+    margin-top: 30px;
+    line-height: 30px;
+    width: 50px;
+    border-radius: 4px;
+    background-color: #eeeeee;
+    cursor: pointer;
 }
 

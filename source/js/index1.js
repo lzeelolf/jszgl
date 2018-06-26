@@ -38,9 +38,10 @@ $(document).ready(function() {
             //添加预警信息
             appendAlert(csData)
             appendSummary(csData)
-            //添加证件调整的select选择车间
-            var html='';
-            var _html='';
+            appendAppend(csData)
+            //添加证件调整的select选择车间和注销原因
+            var html='<option>--请选择--</option>';
+            var _html='<option>--请选择--</option>';
             for(var i in csData){
                 if(csData[i]['lb'] === 'ssbm'){
                     html += '<option>'+csData[i]['nr2']+'</option>'
@@ -203,6 +204,7 @@ $(document).ready(function() {
                     dataType:'json',
                     success:function(data) {
                         if(data['success'] ===1){
+                            $('.queryInfo>div>div').css('backgroundColor','inherit')
                             $('#editContainer .queryInfoContent').css('display','block')
                             $('.queryInfoContent .queryPicInfo img').prop('src',data['row1']['cardPath']);
                             $('.queryInfoContent .queryInfo .payIdInput').val(data['row1']['PayId']);
@@ -210,7 +212,7 @@ $(document).ready(function() {
                             $('.queryInfoContent .queryInfo .department').text(data['row1']['Department'].split(',')[0]);
                             $('.queryInfoContent .queryInfo .birth').text(data['row1']['BirthDate']);
                             $('.queryInfoContent .queryInfo .sjDateInput').val(data['row1']['sjDate']);
-                            $('.queryInfoContent .queryInfo .sjRemark').text(data['row1']['sjRemark']);
+                            $('.queryInfoContent .queryInfo .sjRemarkInput').val(data['row1']['sjRemark']);
                             $('.queryInfoContent .queryInfo .yearlyCheckInput').val(data['row1']['yearlyCheckDate']);
                             $('.queryInfoContent .queryInfo .driveCodeInput').val(data['row1']['sjDriveCode']);
                             $('.queryInfoContent .queryInfo .driveTypeInput').val(data['row1']['sjDriveType']);
@@ -249,6 +251,7 @@ $(document).ready(function() {
         //车间转调按钮
         $('.cjEdit').off('click').on('click',function(){
             $("#editContainer .textContent .name").text($(".queryInfo .name").text())
+            $("#editContainer .logOutContent").css('display','none');
             $("#editContainer .textContent").css('display','block');
             $("#editFixSelect").off('change').on('change',function(){
                 if(confirm('确认要将'+$(".queryInfo .name").text()+'的关系调入'+$(this).val().split(',')[0]+'？')){
@@ -274,46 +277,51 @@ $(document).ready(function() {
         //人员调出按钮
         $('.rydc').off('click').on('click',function(){
             if(confirm('（注意！请在确认该人员已调出本段的情况下进行调出操作）\u000d'+'确认'+$(".queryInfo .name").text()+'师傅已调出？')){
-                var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
-                var setStr = 'status =\''+csData['zjzt-dc']['nr2']+'\''
-                $.ajax({
-                    url: "../../../index.php",
-                    type: "POST",
-                    timeout: 8000,
-                    data: {
-                        funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                        tableName: ' jbxx',setStr:setStr, where: where
-                    },
-                    dataType: 'json',
-                    success: function () {
-                        var lotNumber = new Date();
-                        lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
-                        lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
-                        lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
-                        $.ajax({
-                            url: "../../../index.php",
-                            type: "POST",
-                            timeout: 8000,
-                            data: {
-                                funcName: 'insert',
-                                serverName: '10.101.62.73',
-                                uid: 'sa',
-                                pwd: '2huj15h1',
-                                Database: 'jszgl',
-                                tableName: ' bgxx',
-                                column: ' (id,lotNumber,Department,payId,archivesId,UName,changeType,' +
-                                'driveCode,drive,jykOperator)',
-                                values: '(getDate(),\'' + lotNumber + '\',\'' + data['Department'] + '\',\'' + data['PayId'] + '\',\'' + data['ArchivesId'] + '\',\'' + data['UName'] + '\',\'' + csData['czlb-dc']['nr2'] +
-                                 '\',\'' + data['sjDriveCode'] + '\',\'' + data['sjDriveType'] + '\',\''+sessionGet('user')+'\')'
-                            },
-                            dataType: 'json',
-                            success: function (ret) {
-                                console.log(ret)
-                                alert('操作成功。该证件的状态目前为：'+csData['zjzt-dc']['nr2']);
-                            }
-                        })
-                    }
-                })
+                if(data['status'] !== csData['zjzt-dc']['nr2'] && data['status'] !== csData['zjzt-zx']['nr2']){
+                    var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
+                    var setStr = 'status =\''+csData['zjzt-dc']['nr2']+'\''
+                    $.ajax({
+                        url: "../../../index.php",
+                        type: "POST",
+                        timeout: 8000,
+                        data: {
+                            funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                            tableName: ' jbxx',setStr:setStr, where: where
+                        },
+                        dataType: 'json',
+                        success: function () {
+                            var lotNumber = new Date();
+                            lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
+                            lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
+                            lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
+                            $.ajax({
+                                url: "../../../index.php",
+                                type: "POST",
+                                timeout: 8000,
+                                data: {
+                                    funcName: 'insert',
+                                    serverName: '10.101.62.73',
+                                    uid: 'sa',
+                                    pwd: '2huj15h1',
+                                    Database: 'jszgl',
+                                    tableName: ' bgxx',
+                                    column: ' (id,lotNumber,Department,payId,archivesId,UName,changeType,' +
+                                    'driveCode,drive,jykOperator)',
+                                    values: '(getDate(),\'' + lotNumber + '\',\'' + data['Department'] + '\',\'' + data['PayId'] + '\',\'' + data['ArchivesId'] + '\',\'' + data['UName'] + '\',\'' + csData['czlb-dc']['nr2'] +
+                                    '\',\'' + data['sjDriveCode'] + '\',\'' + data['sjDriveType'] + '\',\''+sessionGet('user')+'\')'
+                                },
+                                dataType: 'json',
+                                success: function (ret) {
+                                    console.log(ret)
+                                    alert('操作成功。该证件的状态目前为：'+csData['zjzt-dc']['nr2']);
+                                }
+                            })
+                        }
+                    })
+                }else{
+                    alert('该人员已调出或注销，不能继续调出操作')
+                }
+
             }
 
         })
@@ -341,10 +349,12 @@ $(document).ready(function() {
                         }
                     }
                     if(checkIfInArray($(this).val(),arr)){
+                        $(".driveCode").css('backgroundColor','white')
                         flag = true;
                     }else{
-                        alert('准驾类型代码输入错误，找不到与之对应的准驾类型')
+                        $(".driveCode").css('backgroundColor','#ffcccc')
                         flag =false;
+                        return false
                     }
                 })
             }else if($(this).text() === '确认更改'){
@@ -352,7 +362,7 @@ $(document).ready(function() {
                 //提交
                 if($(".queryInfo .payIdInput").val().match(/^[0-9]{5}$/) && $('.queryInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .yearlyCheckInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && flag){
                     if(confirm('确认要进行更改吗？')){
-                        var setStr ='payid =\''+$(".queryInfo .payIdInput").val()+'\',sjDate =\''+$(".queryInfo .sjDateInput").val()+'\',yearlyCheckDate =\''+$(".queryInfo .yearlyCheckInput").val()+'\',sjDriveCode =\''+$(".queryInfo .driveCodeInput").val()+'\',sjDriveType =\''+$(".queryInfo .driveTypeInput").val()+'\',startDate =\''+$(".queryInfo .startDateInput").val()+'\',deadline = \''+$(".queryInfo .deadlineInput").val()+'\'';
+                        var setStr ='payid =\''+$(".queryInfo .payIdInput").val()+'\',sjDate =\''+$(".queryInfo .sjDateInput").val()+'\',yearlyCheckDate =\''+$(".queryInfo .yearlyCheckInput").val()+'\',sjDriveCode =\''+$(".queryInfo .driveCodeInput").val()+'\',sjDriveType =\''+$(".queryInfo .driveTypeInput").val()+'\',startDate =\''+$(".queryInfo .startDateInput").val()+'\',deadline = \''+$(".queryInfo .deadlineInput").val()+'\',sjRemark =\''+$(".queryInfo .sjRemarkInput").val()+'\'';
                         var where = ' where payid =\''+payId+'\'';
                         var ajaxTimeOut = $.ajax({
                             url: "../../../index.php",
@@ -1738,7 +1748,7 @@ $(document).ready(function() {
                                 })
                             }
                         }else{
-                            alert('暂无审核记录');
+                            alert('暂无发放记录');
                         }
                     },
                     beforeSend:function(){
@@ -2540,8 +2550,15 @@ $(document).ready(function() {
     }
 
     //添加新增证件功能
-    function appendAppend(){
-        //再问一下调入人员是不是已经进了全员信息库再加驾驶证还是直接加驾驶证
+    function appendAppend(csData){
+        var power = sessionGet('power');
+        if(power === 'V'){
+            //再问一下调入人员是不是已经进了全员信息库再加驾驶证还是直接加驾驶证
+            $("#checkBoxBand .singleAppend").off('click').on('click',function(){
+                $('.appendContent .singleAppendForm').css('display','block')
+            })
+        }
+
     }
 
     //添加汇总信息
@@ -2565,7 +2582,7 @@ $(document).ready(function() {
                     $("#summaryContainer .summaryBanner .htmlToXls").css('display', 'none')
                 } else {
                     $("#summaryContainer .summaryBanner .htmlToXls").css('display', 'block')
-                    if ($(this).val() === table2){
+                    if ($(this).val() === table2){//有效期满
                         var ajaxTimeOut1 = $.ajax({
                             url: "../../../index.php",
                             type:"POST",
@@ -2575,25 +2592,23 @@ $(document).ready(function() {
                                 tableName:' bgxx ',column:' UName,sex,cardId,birthDate,applyDriveCode,driveCode,startDate,deadline,sjRemark,phyTest',order:' order by UName'},
                             dataType:'json',
                             success:function(data){
-                                console.log(data)
                                 if(data['success'] === 1){
                                     delete data['success'];
                                     var count = data['count'];
                                     delete data['count'];
                                     var company ='郑州局集团公司';
                                     var k =1;
+                                    var obj ={}
                                     for(var x in data){
-                                        data[x]['num'] = k;
+                                        obj.num = k;
                                         k++;
-                                        data[x]['company'] = company;
+                                        obj.company =company;
+                                        data[x] = Object.assign({},obj,data[x]);
                                     }
                                     var _html = '<thead><tr class="title"><td colspan="13">铁路机车车辆驾驶证（有效期满）换证申请汇总表</td></tr><tr class="info"><td colspan="13">(考试中心公章)    审核人：___________ 填报人：___________ 联系电话：___________ 填报日期：        年       月       日</td></tr></thead>'
                                     var html = '<tr><th>序号</th><th>单位</th><th>姓名</th><th>性别</th><th>公民身份号码</th><th>出生日期</th><th>申请准驾<br>类型代码</th><th>原证准驾<br>类型代码</th><th>原证初次<br>领证日期</th><th>原证有效<br>截止日期</th><th>原证批准文号<br>(公告号)</th><th>体检<br>结论</th><th>备注</th></tr>';
                                     if(count<11){
-                                        var a=1;
                                         for(var i in data){
-                                            html += '<tr><td>'+a+'</td><td>'+company+'</td>';
-                                            a++;
                                             for(var j in data[i]){
                                                 html += '<td>'+data[i][j]+'</td>';
                                             }
@@ -2618,13 +2633,10 @@ $(document).ready(function() {
                                     }else{
                                         var q =0;
                                         var cur =1;
-                                        var d=1;
                                         var total = Math.ceil(count/10);
                                         $("#summaryTable").append(_html)
                                         $("#summaryPage").css("display",'block');
                                         for(var i in data){
-                                            html += '<tr><td>'+d+'</td><td>'+company+'</td>';
-                                            d++;
                                             for(var j in data[i]){
                                                 html += '<td>'+data[i][j]+'</td>';
                                             }
@@ -2640,13 +2652,10 @@ $(document).ready(function() {
                                         $("#summaryPage .next").off('click').on('click',function(){
                                             if(cur<total){
                                                 var j =0;
-                                                var b=1;
                                                 var html = '<tr><th  >序号</th><th  >单位</th><th  >姓名</th><th  >性别</th><th  >公民身份号码</th><th  >出生日期</th><th  >申请准驾<br>类型代码</th><th  >原证准驾<br>类型代码</th><th  >原证初次<br>领证日期</th><th  >原证有效<br>截止日期</th><th  >原证批准文号<br>(公告号)</th><th  >体检<br>结论</th><th  >备注</th></tr>';
                                                 for(var i in data){
                                                     if(j>10*cur-1 && j<10*(cur+1) && i ){
                                                         j++;
-                                                        html += '<tr><td>'+b+'</td><td>'+company+'</td>';
-                                                        b++;
                                                         for(var m in data[i]){
                                                             html += '<td>'+data[i][m]+'</td>';
                                                         }
@@ -2678,13 +2687,10 @@ $(document).ready(function() {
                                         $("#summaryPage .prev").off('click').on('click',function(){
                                             if(cur>1){
                                                 var j =0;
-                                                var c=1;
                                                 var html = '<tr><th  >序号</th><th  >单位</th><th  >姓名</th><th  >性别</th><th  >公民身份号码</th><th  >出生日期</th><th  >申请准驾<br>类型代码</th><th  >原证准驾<br>类型代码</th><th  >原证初次<br>领证日期</th><th  >原证有效<br>截止日期</th><th  >原证批准文号<br>(公告号)</th><th  >体检<br>结论</th><th  >备注</th></tr>';
                                                 for(var i in data){
                                                     if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
                                                         j++;
-                                                        html += '<tr><td>'+c+'</td><td>'+company+'</td>';
-                                                        c++;
                                                         for(var m in data[i]){
                                                             html += '<td>'+data[i][m]+'</td>';
                                                         }
@@ -2693,7 +2699,12 @@ $(document).ready(function() {
                                                         j++;
                                                     }
                                                 }
-                                                $("#summaryTable").empty().append(html);
+                                                if(cur===2){
+                                                    $("#summaryTable").empty().append(_html);
+                                                    $("#summaryTable").append(html);
+                                                }else{
+                                                    $("#summaryTable").empty().append(html);
+                                                }
                                                 cur-=1;
                                                 $("#summaryPage .cur").text(cur);
                                             }
@@ -2708,6 +2719,8 @@ $(document).ready(function() {
                                             htmlToXls(data,table2,filterArray,headerArray)
                                         }
                                     })
+                                }else{
+                                    alert('暂无有效期满汇总信息')
                                 }
                             },
                             beforeSend:function(){
@@ -2718,6 +2731,310 @@ $(document).ready(function() {
                                 loadingPicClose();
                                 if(status === 'timeout') {
                                     ajaxTimeOut1.abort();    // 超时后中断请求
+                                    alert('网络超时，请检查网络连接');
+                                }
+                            }
+                        })
+                    }else if($(this).val() === table3){//非有效期满
+                        var ajaxTimeOut2 = $.ajax({
+                            url: "../../../index.php",
+                            type:"POST",
+                            timeout:8000,
+                            //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                            data:{funcName:'select',where:' where checkstatus = \''+csData['checkStatus-shtg']['nr2']+'\' AND changeType =\''+csData['czlb-fyxqmhz']['nr3']+'\' AND finishStatus !=\''+csData['finishStatus-ffdcj']['nr2']+'\' AND finishStatus !=\''+csData['finishStatus-ffdgr']['nr2']+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                                tableName:' bgxx ',column:' UName,sex,cardId,birthDate,applyDriveCode,driveCode,startDate,sjRemark,phyTest,changeReason',order:' order by UName'},
+                            dataType:'json',
+                            success:function(data){
+                                if(data['success'] === 1){
+                                    delete data['success'];
+                                    var count = data['count'];
+                                    delete data['count'];
+                                    var company ='郑州局集团公司';
+                                    var k =1;
+                                    var obj ={}
+                                    for(var x in data){
+                                        obj.num = k;
+                                        k++;
+                                        obj.company =company;
+                                        data[x] = Object.assign({},obj,data[x]);
+                                    }
+                                    var _html = '<thead><tr class="title"><td colspan="13">铁路机车车辆驾驶证（非有效期满）换证申请汇总表</td></tr><tr class="info"><td colspan="13">(考试中心公章)    审核人：___________ 填报人：___________ 联系电话：___________ 填报日期：        年       月       日</td></tr></thead>'
+                                    var html = '<tr><th>序号</th><th>单位</th><th>姓名</th><th>性别</th><th>公民身份号码</th><th>出生日期</th><th>申请准驾<br>类型代码</th><th>原证准驾<br>类型代码</th><th>原证初次<br>领证日期</th><th>原证批准文号<br>(公告号)</th><th>体检<br>结论</th><th>换证<br>原因</th><th>备注</th></tr>';
+                                    if(count<11){
+                                        for(var i in data){
+                                            for(var j in data[i]){
+                                                html += '<td>'+data[i][j]+'</td>';
+                                            }
+                                            html += '<td>&nbsp</td></tr>'
+                                        }
+                                        $("#summaryTable").empty().append(_html)
+                                        $("#summaryTable").append(html);
+                                        //空白tr补齐表格
+                                        if($("#summaryTable tbody tr").length<11){
+                                            html = '';
+                                            var count = 11-$("#summaryTable tbody tr").length;
+                                            var columns = $("#summaryTable tbody tr:first-child th").length;
+                                            for(var m=0;m<count;m++){
+                                                html+='<tr>';
+                                                for(var n=0;n<columns;n++){
+                                                    html+="<td></td>";
+                                                }
+                                                html+="</tr>";
+                                            }
+                                            $("#summaryTable tbody").append(html);
+                                        }
+                                    }else{
+                                        var q =0;
+                                        var cur =1;
+                                        var total = Math.ceil(count/10);
+                                        $("#summaryPage").css("display",'block');
+                                        for(var i in data){
+                                            for(var j in data[i]){
+                                                html += '<td>'+data[i][j]+'</td>';
+                                            }
+                                            html += '<td>&nbsp</td></tr>';
+                                            q+=1;
+                                            if(q>9){
+                                                break
+                                            }
+                                        }
+                                        $("#summaryTable").empty().append(_html)
+                                        $("#summaryTable").append(html);
+                                        $("#summaryPage .cur").text(cur);
+                                        $("#summaryPage .total").text(total);
+                                        $("#summaryPage .next").off('click').on('click',function(){
+                                            if(cur<total){
+                                                var j =0;
+                                                var html = '<tr><th>序号</th><th>单位</th><th>姓名</th><th>性别</th><th>公民身份号码</th><th>出生日期</th><th>申请准驾<br>类型代码</th><th>原证准驾<br>类型代码</th><th>原证初次<br>领证日期</th><th>原证批准文号<br>(公告号)</th><th>体检<br>结论</th><th>换证<br>原因</th><th>备注</th></tr>';
+                                                for(var i in data){
+                                                    if(j>10*cur-1 && j<10*(cur+1) && i ){
+                                                        j++;
+                                                        for(var m in data[i]){
+                                                            html += '<td>'+data[i][m]+'</td>';
+                                                        }
+                                                        html += '<td>&nbsp</td></tr>'
+                                                    }else{
+                                                        j++;
+                                                    }
+                                                }
+                                                $("#summaryTable").empty().append(html);
+                                                //空白tr补齐表格
+                                                if($("#summaryTable tbody tr").length<11){
+                                                    html = '';
+                                                    var count = 11-$("#summaryTable tbody tr").length;
+                                                    var columns = $("#summaryTable tbody tr:first-child th").length;
+                                                    for(var m=0;m<count;m++){
+                                                        html+='<tr>';
+                                                        for(var n=0;n<columns;n++){
+                                                            html+="<td></td>";
+                                                        }
+                                                        html+="</tr>";
+                                                    }
+                                                    $("#summaryTable tbody").append(html);
+                                                }
+                                                cur+=1;
+                                                $("#summaryPage .cur").text(cur);
+                                            }
+
+                                        })
+                                        $("#summaryPage .prev").off('click').on('click',function(){
+                                            if(cur>1){
+                                                var j =0;
+                                                var html = '<tr><th>序号</th><th>单位</th><th>姓名</th><th>性别</th><th>公民身份号码</th><th>出生日期</th><th>申请准驾<br>类型代码</th><th>原证准驾<br>类型代码</th><th>原证初次<br>领证日期</th><th>原证批准文号<br>(公告号)</th><th>体检<br>结论</th><th>换证<br>原因</th><th>备注</th></tr>';
+                                                for(var i in data){
+                                                    if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
+                                                        j++;
+                                                        for(var m in data[i]){
+                                                            html += '<td>'+data[i][m]+'</td>';
+                                                        }
+                                                        html += '<td>&nbsp</td></tr>'
+                                                    }else{
+                                                        j++;
+                                                    }
+                                                }
+                                                if(cur===2){
+                                                    $("#summaryTable").empty().append(_html);
+                                                    $("#summaryTable").append(html);
+                                                }else{
+                                                    $("#summaryTable").empty().append(html);
+                                                }
+                                                cur-=1;
+                                                $("#summaryPage .cur").text(cur);
+                                            }
+
+                                        })
+                                    }
+                                    $(".summaryBanner .htmlToXls").off('click').on('click',function(){
+                                        if(confirm('是否要生成EXCEL表格')){
+                                            var filterArray=['num','company','UName','sex','cardId','birthDate','applyDriveCode','driveCode','startDate','sjRemark','phyTest','changeReason'];
+                                            var headerArray=['序号','单位','姓名','性别','公民身份号码','出生日期','申请准驾\u000d类型代码','原证准驾\u000d类型代码','原证初次\u000d领证日期','原证批准文号\u000d(公文号)','体检\u000d结论','换证\u000d原因','备注']
+                                            htmlToXls(data,table3,filterArray,headerArray)
+                                        }
+                                    })
+                                }else{
+                                    alert('暂无非有效期满汇总信息')
+                                }
+                            },
+                            beforeSend:function(){
+                                loadingPicOpen();
+                                testSession(userSessionInfo);
+                            },
+                            complete: function (XMLHttpRequest,status) {
+                                loadingPicClose();
+                                if(status === 'timeout') {
+                                    ajaxTimeOut2.abort();    // 超时后中断请求
+                                    alert('网络超时，请检查网络连接');
+                                }
+                            }
+                        })
+                    }else if($(this).val() === table4){//补证
+                        var ajaxTimeOut3 = $.ajax({
+                            url: "../../../index.php",
+                            type:"POST",
+                            timeout:8000,
+                            //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                            data:{funcName:'select',where:' where checkstatus = \''+csData['checkStatus-shtg']['nr2']+'\' AND changeType =\''+csData['czlb-bz']['nr3']+'\' AND finishStatus !=\''+csData['finishStatus-ffdcj']['nr2']+'\' AND finishStatus !=\''+csData['finishStatus-ffdgr']['nr2']+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                                tableName:' bgxx ',column:' UName,sex,cardId,birthDate,applyDriveCode,driveCode,startDate,deadline,sjRemark',order:' order by UName'},
+                            dataType:'json',
+                            success:function(data){
+                                if(data['success'] === 1){
+                                    delete data['success'];
+                                    var count = data['count'];
+                                    delete data['count'];
+                                    var company ='郑州局集团公司';
+                                    var k =1;
+                                    var obj ={}
+                                    for(var x in data){
+                                        obj.num = k;
+                                        k++;
+                                        obj.company =company;
+                                        data[x] = Object.assign({},obj,data[x]);
+                                    }
+                                    var _html = '<thead><tr class="title"><td colspan="12">铁路机车车辆驾驶证补证申请汇总表</td></tr><tr class="info"><td colspan="12">(考试中心公章)    审核人：___________ 填报人：___________ 联系电话：___________ 填报日期：        年       月       日</td></tr></thead>'
+                                    var html = '<tr><th>序号</th><th>单位</th><th>姓名</th><th>性别</th><th>公民身份号码</th><th>出生日期</th><th>申请准驾<br>类型代码</th><th>原证准驾<br>类型代码</th><th>原证初次<br>领证日期</th><th>原证有效<br>截止日期</th><th>原证批准文号<br>(公告号)</th><th>备注</th></tr>';
+                                    if(count<11){
+                                        for(var i in data){
+                                            for(var j in data[i]){
+                                                html += '<td>'+data[i][j]+'</td>';
+                                            }
+                                            html += '<td>&nbsp</td></tr>'
+                                        }
+                                        $("#summaryTable").empty().append(_html)
+                                        $("#summaryTable").append(html);
+                                        //空白tr补齐表格
+                                        if($("#summaryTable tbody tr").length<11){
+                                            html = '';
+                                            var count = 11-$("#summaryTable tbody tr").length;
+                                            var columns = $("#summaryTable tbody tr:first-child th").length;
+                                            for(var m=0;m<count;m++){
+                                                html+='<tr>';
+                                                for(var n=0;n<columns;n++){
+                                                    html+="<td></td>";
+                                                }
+                                                html+="</tr>";
+                                            }
+                                            $("#summaryTable tbody").append(html);
+                                        }
+                                    }else{
+                                        var q =0;
+                                        var cur =1;
+                                        var total = Math.ceil(count/10);
+                                        $("#summaryPage").css("display",'block');
+                                        for(var i in data){
+                                            for(var j in data[i]){
+                                                html += '<td>'+data[i][j]+'</td>';
+                                            }
+                                            html += '<td>&nbsp</td></tr>';
+                                            q+=1;
+                                            if(q>9){
+                                                break
+                                            }
+                                        }
+                                        $("#summaryTable").empty().append(_html)
+                                        $("#summaryTable").append(html);
+                                        $("#summaryPage .cur").text(cur);
+                                        $("#summaryPage .total").text(total);
+                                        $("#summaryPage .next").off('click').on('click',function(){
+                                            if(cur<total){
+                                                var j =0;
+                                                var html = '<tr><th>序号</th><th>单位</th><th>姓名</th><th>性别</th><th>公民身份号码</th><th>出生日期</th><th>申请准驾<br>类型代码</th><th>原证准驾<br>类型代码</th><th>原证初次<br>领证日期</th><th>原证有效<br>截止日期</th><th>原证批准文号<br>(公告号)</th><th>备注</th></tr>';
+                                                for(var i in data){
+                                                    if(j>10*cur-1 && j<10*(cur+1) && i ){
+                                                        j++;
+                                                        for(var m in data[i]){
+                                                            html += '<td>'+data[i][m]+'</td>';
+                                                        }
+                                                        html += '<td>&nbsp</td></tr>'
+                                                    }else{
+                                                        j++;
+                                                    }
+                                                }
+                                                $("#summaryTable").empty().append(html);
+                                                //空白tr补齐表格
+                                                if($("#summaryTable tbody tr").length<11){
+                                                    html = '';
+                                                    var count = 11-$("#summaryTable tbody tr").length;
+                                                    var columns = $("#summaryTable tbody tr:first-child th").length;
+                                                    for(var m=0;m<count;m++){
+                                                        html+='<tr>';
+                                                        for(var n=0;n<columns;n++){
+                                                            html+="<td></td>";
+                                                        }
+                                                        html+="</tr>";
+                                                    }
+                                                    $("#summaryTable tbody").append(html);
+                                                }
+                                                cur+=1;
+                                                $("#summaryPage .cur").text(cur);
+                                            }
+
+                                        })
+                                        $("#summaryPage .prev").off('click').on('click',function(){
+                                            if(cur>1){
+                                                var j =0;
+                                                var html = '<tr><th>序号</th><th>单位</th><th>姓名</th><th>性别</th><th>公民身份号码</th><th>出生日期</th><th>申请准驾<br>类型代码</th><th>原证准驾<br>类型代码</th><th>原证初次<br>领证日期</th><th>原证有效<br>截止日期</th><th>原证批准文号<br>(公告号)</th><th>备注</th></tr>';
+                                                for(var i in data){
+                                                    if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
+                                                        j++;
+                                                        for(var m in data[i]){
+                                                            html += '<td>'+data[i][m]+'</td>';
+                                                        }
+                                                        html += '<td>&nbsp</td></tr>'
+                                                    }else{
+                                                        j++;
+                                                    }
+                                                }
+                                                if(cur===2){
+                                                    $("#summaryTable").empty().append(_html);
+                                                    $("#summaryTable").append(html);
+                                                }else{
+                                                    $("#summaryTable").empty().append(html);
+                                                }
+                                                cur-=1;
+                                                $("#summaryPage .cur").text(cur);
+                                            }
+
+                                        })
+                                    }
+                                    $(".summaryBanner .htmlToXls").off('click').on('click',function(){
+                                        if(confirm('是否要生成EXCEL表格')){
+                                            var filterArray=['num','company','UName','sex','cardId','birthDate','applyDriveCode','driveCode','startDate','deadline','sjRemark'];
+                                            var headerArray=['序号','单位','姓名','性别','公民身份号码','出生日期','申请准驾\u000d类型代码','原证准驾\u000d类型代码','原证初次\u000d领证日期','原证有效\u000d截止日期','原证批准文号\u000d(公文号)','备注']
+                                            htmlToXls(data,table4,filterArray,headerArray)
+                                        }
+                                    })
+                                }else{
+                                    alert('暂无补证汇总信息')
+                                }
+                            },
+                            beforeSend:function(){
+                                loadingPicOpen();
+                                testSession(userSessionInfo);
+                            },
+                            complete: function (XMLHttpRequest,status) {
+                                loadingPicClose();
+                                if(status === 'timeout') {
+                                    ajaxTimeOut3.abort();    // 超时后中断请求
                                     alert('网络超时，请检查网络连接');
                                 }
                             }

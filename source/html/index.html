@@ -122,8 +122,39 @@
         <div class="operateContent">
             <div class="jykUse" id="appendContainer">
                 <div id="checkBoxBand">
-                    <input type="button" value="单个添加">
+                    <input type="button" value="单个添加" class="singleAppend">
                     <input type="button" value="批次添加">
+                </div>
+                <div class="appendContent">
+                    <div class="singleAppendForm">
+                        <div>
+                            <p class="float">档案号：</p><input type="text" class="float archievesIdInput width68">
+                            <p class="float">工资号：</p><input type="text" class="float payIdInput width68">
+                            <p class="float">姓名：</p><input type="text" class="float UNameInput width68">
+                        </div>
+                        <div>
+                            <p class="float">性别：</p><input type="text" class="float sexInput width24">
+                            <p class="float">出生日期：</p><input type="text" class="float birthDateInput date width99">
+                            <p class="float">退休日期：</p><input type="text" class="float txrqInput date width99">
+                        </div>
+                        <div>
+                            <p class="float">年鉴日期：</p><input type="text" class="float yearlyCheckDateInput date width99">
+                            <p class="float">所属部门：</p><input type="text" class="float departmentInput width149">
+                        </div>
+                        <div>
+                            <p class="float">有效起始日期：</p><input type="text" class="float startDateInput date width99">
+                            <p class="float">有效截止日期：</p><input type="text" class="float deadlineInput date width99">
+                        </div>
+                        <div>
+                            <p class="float">准驾代码：</p><input type="text" class="float sjDriveCodeInput date width24">
+                            <p class="float">准驾类型：</p><input type="text" class="float sjDriveTypeInput date width149">
+                        </div>
+                        <div>
+                            <p class="float">领证日期：</p><input type="text" class="float sjDateInput date width99">
+                            <p class="float">批准文号：</p><input type="text" class="float sjRemarkInput date width149">
+                        </div>
+                        <button id="submitAppend">提交</button>
+                    </div>
                 </div>
             </div>
             <div class="jykUse" id="queryCardContainer">
@@ -309,7 +340,7 @@
                             <p>司机领证日期</p><div class="sjDate"><input type="text" class="sjDateInput date"></div>
                         </div>
                         <div>
-                            <p>批准文号</p><div class="sjRemark"></div>
+                            <p>批准文号</p><div class="sjRemark"><input type="text" class="sjRemarkInput"></div>
 
                             <p>年鉴时间</p><div class="yearlyCheck"><input type="text" class="yearlyCheckInput date"></div>
                         </div>
