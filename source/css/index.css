@@ -183,7 +183,7 @@ a,a:hover,a:active,a:visited{
     float: left;
     overflow: hidden;
 }
-#bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner #htmlToXls{
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardBanner .htmlToXls{
     width: 100px;
     height: 26px;
     line-height: 26px;
@@ -327,7 +327,7 @@ a,a:hover,a:active,a:visited{
     background-origin: content-box;
     background-position-y: -3px;
 }
-#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent th,td{
+#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent th,#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent td{
     height: 24px;
     line-height: 24px;
     padding: 0 15px 0 15px;
@@ -853,3 +853,53 @@ a,a:hover,a:active,a:visited{
     line-height: 40px;
     display: none;
 }
+#summaryContainer .summaryBanner p{
+    text-align: left;
+    height: 30px;
+    line-height: 30px;
+}
+#summaryContainer .summaryBanner .htmlToXls{
+    display: none;
+}
+
+#summaryContainer #summaryPage{
+    display: none;
+}
+#summaryContainer .summaryContent #summaryTable{
+    background-color: white;
+    margin-top: 40px;
+}
+#summaryContainer .summaryContent #summaryTable .title td{
+    font-size: 30px;
+    border: none;
+    height: 80px;
+    line-height: 80px;
+    font-weight: bold;
+    font-family: '宋体';
+}
+#summaryContainer .summaryContent #summaryTable .info td{
+    border: none;
+    font-size: 18px;!important;
+    font-family: '仿宋';
+}
+#summaryContainer .summaryContent tbody th{
+    font-size: 12px;
+    border: 1px solid #333;
+    border-right: none;
+}
+#summaryContainer .summaryContent tbody th:last-child,#summaryContainer .summaryContent tbody td:last-child{
+    border-right: 1px solid #333;
+}
+#summaryContainer .summaryContent tbody th,#summaryContainer .summaryContent tbody td{
+    height: 24px;
+    line-height: 24px;
+    padding: 0 17px 0 17px;
+    border: 1px solid #333;
+    border-right: none;
+    font-size: 14px;
+    white-space: nowrap;
+    user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+

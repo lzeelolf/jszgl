@@ -87,12 +87,11 @@ function displayQueryForm(){
         dataType:'json',
         success:function(data){
             if(data.success === 1){
-                console.log(data);
                 //把使用过的多余属性删除，便于处理数据
                 delete data['success'];
                 displayQueryTable(data,document.getElementById('queryCardContent'),document.getElementById('cardPageContent'),'pageMode',obj,'queryCardContentTable');
                 //生成EXCEL按钮出现
-                $(".htmlToXls").css("visibility",'visible');
+                $("#queryCardBanner .htmlToXls").css("visibility",'visible');
             }else{
                 alert('您查询的信息不存在');
             }
@@ -150,9 +149,9 @@ function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj,tabl
 }
 
 //生成excel函数
-function htmlToXls(data){
+function htmlToXls(data,name,filterArray,headerArray){
     var option={};
-    option.fileName = '机车驾驶证统计信息表';
+    option.fileName = name;
     var arr =[];
     var j =0;
     for(var i in data){
@@ -164,10 +163,8 @@ function htmlToXls(data){
             //sheetData要求是数组类型
             sheetData:arr,
             sheetName:'sheet',
-            sheetFilter:['PayId','ArchivesId','UName','BirthDate','Txrq','Department','fsjDate','fsjRemark','fsjDriveCode',
-                'fsjDriveType','sjDate','sjRemark','sjDriveCode','sjDriveType','deadline','status'],
-            sheetHeader:['工资号','档案号','姓名','出生日期','退休日期','部门','副司机初次领证日期','批准文号','准驾类型代码','准驾类型',
-                '司机初次领证日期','批准文号','准驾类型代码','准驾类型','证件有效截止日期','驾驶证状态']
+            sheetFilter:filterArray,
+            sheetHeader:headerArray
         }
     ];
     var toExcel=new ExportJsonExcel(option);
@@ -448,9 +445,13 @@ function boundPageEvent(data,max,cur,total,countPerPage,pagePosition,dataPositio
         showPagingList(data,total,countPerPage,pagePosition,cur,dataPosition);
     })
     //生成excel文件
-    $("#htmlToXls").off('click').on('click',function(){
+    $("#queryCardBanner .htmlToXls").off('click').on('click',function(){
         if(confirm('是否要将查询结果生成Excel文件？')){
-            htmlToXls(data)
+            var filterArray = ['PayId','ArchivesId','UName','BirthDate','Txrq','Department','fsjDate','fsjRemark','fsjDriveCode',
+                'fsjDriveType','sjDate','sjRemark','sjDriveCode','sjDriveType','deadline','status'];
+            var headerArray =['工资号','档案号','姓名','出生日期','退休日期','部门','副司机初次领证日期','批准文号','准驾类型代码','准驾类型',
+                '司机初次领证日期','批准文号','准驾类型代码','准驾类型','证件有效截止日期','驾驶证状态']
+            htmlToXls(data,'机车驾驶证统计信息表',filterArray,headerArray)
         }
     })
 }

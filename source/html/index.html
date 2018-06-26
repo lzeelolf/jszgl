@@ -128,7 +128,7 @@
             </div>
             <div class="jykUse" id="queryCardContainer">
                 <div id="queryCardBanner">
-                    <button id="queryCardButton">查询</button><button id="htmlToXls">生成Excel文件</button>
+                    <button id="queryCardButton">查询</button><button class="htmlToXls">生成Excel文件</button>
                 </div>
                 <div id="moreButtonBanner">
                     <button id="more" class="more">更多...</button>
@@ -340,8 +340,25 @@
                     <select name="" id="logOutReason"></select>
                 </div>
             </div>
-            <div class="jykUse" id="cancelContainer">
-                证件注销
+            <div class="jykUse" id="summaryContainer">
+                <div class="summaryBanner">
+                    <p>请选择您要查看的汇总信息:</p>
+                    <select name="" id="summarySelect"></select>
+                    <button class="htmlToXls">导出EXCEL</button>
+                </div>
+                <div class="summaryContent">
+                    <table cellspacing="0" cellpadding="0" id="summaryTable"></table>
+                </div>
+                <div id="summaryPage">
+                    <span class="prev">上一页</span>
+                    <span>第</span>
+                    <span class="cur"></span>
+                    <span>页&nbsp;/</span>
+                    <span>共</span>
+                    <span class="total"></span>
+                    <span>页</span>
+                    <span class="next">下一页</span>
+                </div>
             </div>
             <div id="informationContainer">
                 <div id="cardPicContent">
