@@ -293,7 +293,7 @@ $(document).ready(function() {
                             var lotNumber = new Date();
                             lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
                             lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
-                            lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
+                            lotNumber =  lotNumber.getFullYear()+ '-' + lotNumber.month + '-' + lotNumber.date;
                             $.ajax({
                                 url: "../../../index.php",
                                 type: "POST",
@@ -312,7 +312,33 @@ $(document).ready(function() {
                                 },
                                 dataType: 'json',
                                 success: function (ret) {
-                                    console.log(ret)
+                                    var date = new Date();
+                                    var year = date.getFullYear()
+                                    var setStr1 = 'decreaseAmount = decreaseAmount + 1,dc=dc+1,yearlyAmount = yearlyAmount-1';
+                                    var where1 =  ' where driveCode = \''+data['sjDriveCode']+'\' AND year = '+year;
+                                    $.ajax({
+                                        url: "../../../index.php",
+                                        type: "POST",
+                                        timeout: 8000,
+                                        data: {
+                                            funcName: 'update',
+                                            serverName: '10.101.62.73',
+                                            uid: 'sa',
+                                            pwd: '2huj15h1',
+                                            Database: 'jszgl',
+                                            tableName: ' tjxx',
+                                            setStr: setStr1,
+                                            where: where1
+                                        },
+                                        dataType: 'json',
+                                        success: function () {
+
+                                        }
+                                    })
+                                    $(".queryInfoContent").css('display','none')
+                                    $(".editButtonBanner").css('display','none')
+                                    $(".textContent").css('display','none')
+                                    $(".logOutContent").css('display','none')
                                     alert('操作成功。该证件的状态目前为：'+csData['zjzt-dc']['nr2']);
                                 }
                             })
@@ -439,6 +465,45 @@ $(document).ready(function() {
                                     },
                                     dataType: 'json',
                                     success: function (ret) {
+                                        var date = new Date();
+                                        var year = date.getFullYear();
+                                        var column=''
+                                        if(reason === csData['zxyy-yxqmwx']['nr2'] || reason === csData['zxyy-tcsq']['nr2']){
+                                            column = 'zx'
+                                        }else if(reason === csData['zxyy-cx']['nr2']){
+                                            column = 'cx'
+                                        }else if(reason === csData['zxyy-sw']['nr2']){
+                                            column = 'sw'
+                                        }else if(reason === csData['zxyy-tx']['nr2']){
+                                            column = 'tx';
+                                        }else if(reason === csData['zxyy-qt']['nr2']){
+                                            column = 'otherDecrease'
+                                        }
+                                        var setStr1 = 'decreaseAmount = decreaseAmount + 1,'+column+'='+column+'+1,yearlyAmount = yearlyAmount-1';
+                                        var where1 =  ' where driveCode = \''+data['sjDriveCode']+'\' AND year = '+year;
+                                        $.ajax({
+                                            url: "../../../index.php",
+                                            type: "POST",
+                                            timeout: 8000,
+                                            data: {
+                                                funcName: 'update',
+                                                serverName: '10.101.62.73',
+                                                uid: 'sa',
+                                                pwd: '2huj15h1',
+                                                Database: 'jszgl',
+                                                tableName: ' tjxx',
+                                                setStr: setStr1,
+                                                where: where1
+                                            },
+                                            dataType: 'json',
+                                            success: function () {
+
+                                            }
+                                        })
+                                        $(".queryInfoContent").css('display','none')
+                                        $(".editButtonBanner").css('display','none')
+                                        $(".textContent").css('display','none')
+                                        $(".logOutContent").css('display','none')
                                         alert('已注销该证件');
                                     }
                                 })
@@ -3038,6 +3103,93 @@ $(document).ready(function() {
                                     alert('网络超时，请检查网络连接');
                                 }
                             }
+                        })
+                    }else if($(this).val() === table5){//聘用统计表
+                        var date = new Date();
+                        var yearArr = ['--请选择年份--', date.getFullYear()-1,date.getFullYear()];
+                        var _html ='<select id=\'yearSelect\'>';
+                        for (var i = 0; i < yearArr.length; i++) {
+                            _html += '<option>' + yearArr[i] + '</option>'
+                        }
+                        _html +='</select>'
+                        $("#summaryContainer .summaryBanner").append(_html)
+                        $('#summaryContainer .summaryBanner #yearSelect').off('change').on('change',function(){
+                            var year = $(this).val()
+                            var ajaxTimeOut4 = $.ajax({
+                                url: "../../../index.php",
+                                type:"POST",
+                                timeout:8000,
+                                //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                                data:{funcName:'select',where:' where year =\''+($(this).val()-1)+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                                    tableName:' tjxx ',column:' driveCode,yearlyAmount',order:' '},
+                                dataType:'json',
+                                success:function(lastYearData){
+                                    $.ajax({
+                                        url: "../../../index.php",
+                                        type: "POST",
+                                        timeout: 8000,
+                                        //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                                        data: {
+                                            funcName: 'select',
+                                            where: ' where year =\'' + year + '\'',
+                                            serverName: '10.101.62.73',
+                                            uid: 'sa',
+                                            pwd: '2huj15h1',
+                                            Database: 'JSZGL',
+                                            tableName: ' tjxx ',
+                                            column: ' *',
+                                            order: ' '
+                                        },
+                                        dataType: 'json',
+                                        success: function (data) {
+                                            delete lastYearData.success
+                                            delete lastYearData.count
+                                            delete data.success
+                                            delete data.count
+                                            console.log(lastYearData)
+                                            console.log(data)
+                                            var _html = '<thead><tr class="title"><td colspan="12">('+year+')年度铁路机车车辆驾驶人员聘用情况统计表</td></tr><tr class="info"><td colspan="12">企业：___________ 审核人：___________ 填报人：___________ 联系电话：___________ 填报日期：        年       月       日</td></tr></thead>'
+                                            var th = '<tr><th rowspan="3">准驾类型代码</th><th rowspan="3">上年度总数</th><th rowspan="3">统计年度总数</th><th rowspan="3">年度比较</th><th colspan="5">统计年度增加情况</th><th colspan="9">统计年度减少情况</th></tr>'
+                                            th+='<tr><th rowspan="2">小计</th><th rowspan="2">考试合格</th><th rowspan="2">调入</th><th rowspan="2">降低准驾机型</th><th rowspan="2">其他</th><th rowspan="2">小计</th><th rowspan="2">撤销</th><th rowspan="2">注销</th><th rowspan="2">退休</th><th rowspan="2">死亡</th><th rowspan="2">调出</th><th rowspan="2">增驾</th><th rowspan="2">降低准驾机型</th><th rowspan="2">其他</th></tr>'
+                                            $("#summaryTable").append(_html).append(th);
+                                            var html=''
+                                            var obj={}
+                                            for(var i in lastYearData){
+                                                for(var j in data){
+                                                    if(lastYearData[i]['driveCode'] === data[j]['driveCode']){
+                                                        obj.driveCode = lastYearData[i]['driveCode'];
+                                                        obj.lastYearAmount = lastYearData[i]['yearlyAmount'];
+                                                        obj.yearAmount = data[j]['yearlyAmount'];
+                                                        obj.sub = data[j]['yearlyAmount']-lastYearData[i]['yearlyAmount'];
+                                                        data[j] = Object.assign({},obj,data[j])
+                                                        delete data[j]['year']
+                                                        delete data[j]['yearlyAmount']
+                                                    }
+                                                }
+                                            }
+                                            for(var m in data){
+                                                html+='<tr></tr>';
+                                                for(var n in data[m]){
+                                                    html+='<td>'+data[m][n]+'</td>'
+                                                }
+                                            }
+                                            $('#summaryTable tbody').append(html)
+                                        }
+                                    })
+                                },
+                                beforeSend:function(){
+                                    loadingPicOpen();
+                                    testSession(userSessionInfo);
+                                },
+                                complete: function (XMLHttpRequest,status) {
+                                    loadingPicClose();
+                                    if(status === 'timeout') {
+                                        ajaxTimeOut4.abort();    // 超时后中断请求
+                                        alert('网络超时，请检查网络连接');
+                                    }
+                                }
+                            })
+
                         })
                     }
                 }
