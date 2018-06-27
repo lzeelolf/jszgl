@@ -670,7 +670,7 @@ a,a:hover,a:active,a:visited{
     margin: 50px 0 0 5px;
 }
 #bigContent #rightContent #checkContainer #checkContent th,#bigContent #rightContent #checkContainer #checkContent td{
-    padding: 3px 18px 3px 18px;
+    padding: 3px 15px 3px 15px;
     border: 1px solid #333;
     border-right: none;
 }
