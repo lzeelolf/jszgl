@@ -189,7 +189,15 @@ $(document).ready(function() {
     }
 
     //证件调整
+    $('#editBanner .queryInput').keyup(function(event){
+        if(event.keyCode === 13){
+            displayEdit()
+        }
+    })
     $("#editBanner .queryButton").off('click').on('click',function(){
+        displayEdit()
+    })
+    function displayEdit(){
         if(sessionGet('power') === 'V'){
             if($("#editBanner .queryInput").val().match(/^[0-9]{5}$/)){
                 var payid = $("#editBanner .queryInput").val();
@@ -243,7 +251,8 @@ $(document).ready(function() {
                 $("#editBanner .queryInput").focus().css('backgroundColor','#ffcccc');
             }
         }
-    })
+    }
+
     //证件调整的按钮事件
     function boundEditEvent(data){
         var payId = $('.queryInput').val();
@@ -589,7 +598,7 @@ $(document).ready(function() {
                                     for(var m=0;m<count;m++){
                                         html+='<tr>';
                                         for(var n=0;n<columns;n++){
-                                            html+="<td></td>";
+                                            html+="<td>&nbsp</td>";
                                         }
                                         html+="</tr>";
                                     }
@@ -651,7 +660,7 @@ $(document).ready(function() {
                                             for(var m=0;m<count;m++){
                                                 html+='<tr>';
                                                 for(var n=0;n<columns;n++){
-                                                    html+="<td></td>";
+                                                    html+="<td>&nbsp</td>";
                                                 }
                                                 html+="</tr>";
                                             }
@@ -769,7 +778,7 @@ $(document).ready(function() {
                                     for(var m=0;m<count;m++){
                                         html+='<tr>';
                                         for(var n=0;n<columns;n++){
-                                            html+="<td></td>";
+                                            html+="<td>&nbsp</td>";
                                         }
                                         html+="</tr>";
                                     }
@@ -831,7 +840,7 @@ $(document).ready(function() {
                                             for(var m=0;m<count;m++){
                                                 html+='<tr>';
                                                 for(var n=0;n<columns;n++){
-                                                    html+="<td></td>";
+                                                    html+="<td>&nbsp</td>";
                                                 }
                                                 html+="</tr>";
                                             }
@@ -1186,7 +1195,7 @@ $(document).ready(function() {
                                         for(var m=0;m<count;m++){
                                             html+='<tr>';
                                             for(var n=0;n<columns;n++){
-                                                html+="<td></td>";
+                                                html+="<td>&nbsp</td>";
                                             }
                                             html+="</tr>";
                                         }
@@ -1251,7 +1260,7 @@ $(document).ready(function() {
                                                 for(var m=0;m<count;m++){
                                                     html+='<tr>';
                                                     for(var n=0;n<columns;n++){
-                                                        html+="<td></td>";
+                                                        html+="<td>&nbsp</td>";
                                                     }
                                                     html+="</tr>";
                                                 }
@@ -1392,7 +1401,7 @@ $(document).ready(function() {
                                         for(var m=0;m<count;m++){
                                             html+='<tr>';
                                             for(var n=0;n<columns;n++){
-                                                html+="<td></td>";
+                                                html+="<td>&nbsp</td>";
                                             }
                                             html+="</tr>";
                                         }
@@ -1457,7 +1466,7 @@ $(document).ready(function() {
                                                 for(var m=0;m<count;m++){
                                                     html+='<tr>';
                                                     for(var n=0;n<columns;n++){
-                                                        html+="<td></td>";
+                                                        html+="<td>&nbsp</td>";
                                                     }
                                                     html+="</tr>";
                                                 }
@@ -1574,6 +1583,7 @@ $(document).ready(function() {
                             }
                             var html = '<tr><th>部门</th><th>日期</th><th>审核状态</th><th>工资号</th><th>姓名</th><th>申请类型</th><th>申请原因</th><th>驳回原因</th><th>缺少材料</th><th>车间经办人</th><th>车间审核日期</th><th>教育科经办人</th><th>教育科审核日期</th></tr>';
                             if(count<11){
+                                $("#dataPage").css('display','none')
                                 for(var i in data){
                                     html += '<tr>';
                                     for(var j in data[i]){
@@ -1590,7 +1600,7 @@ $(document).ready(function() {
                                     for(var m=0;m<count;m++){
                                         html+='<tr>';
                                         for(var n=0;n<columns;n++){
-                                            html+="<td></td>";
+                                            html+="<td>&nbsp</td>";
                                         }
                                         html+="</tr>";
                                     }
@@ -1640,7 +1650,7 @@ $(document).ready(function() {
                                             for(var m=0;m<count;m++){
                                                 html+='<tr>';
                                                 for(var n=0;n<columns;n++){
-                                                    html+="<td></td>";
+                                                    html+="<td>&nbsp</td>";
                                                 }
                                                 html+="</tr>";
                                             }
@@ -1712,6 +1722,7 @@ $(document).ready(function() {
                             }
                             var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>车间发放人</th><th>车间发放日期</th><th>教育科发放人</th><th>教育科发放日期</th></tr>';
                             if(count<11){
+                                $("#dataPage").css('display','none')
                                 for(var i in data){
                                     html += '<tr>';
                                     for(var j in data[i]){
@@ -1728,7 +1739,7 @@ $(document).ready(function() {
                                     for(var m=0;m<count;m++){
                                         html+='<tr>';
                                         for(var n=0;n<columns;n++){
-                                            html+="<td></td>";
+                                            html+="<td>&nbsp</td>";
                                         }
                                         html+="</tr>";
                                     }
@@ -1754,6 +1765,7 @@ $(document).ready(function() {
                                 $("#dataPage .cur").text(cur);
                                 $("#dataPage .total").text(total);
                                 $("#dataPage .next").off('click').on('click',function(){
+                                    console.log(data)
                                     if(cur<total){
                                         var j =0;
                                         var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>车间发放人</th><th>车间发放日期</th><th>教育科发放人</th><th>教育科发放日期</th></tr>';
@@ -1778,7 +1790,7 @@ $(document).ready(function() {
                                             for(var m=0;m<count;m++){
                                                 html+='<tr>';
                                                 for(var n=0;n<columns;n++){
-                                                    html+="<td></td>";
+                                                    html+="<td>&nbsp</td>";
                                                 }
                                                 html+="</tr>";
                                             }
@@ -1830,7 +1842,7 @@ $(document).ready(function() {
                 })
             }else if(name === csData['cjtjxx-zxjl']['nr2']){
                 //呈现注销记录表
-                var ajaxTimeOut1 = $.ajax({
+                var ajaxTimeOut2 = $.ajax({
                     url: "../../../index.php",
                     type:"POST",
                     timeout:8000,
@@ -1850,6 +1862,7 @@ $(document).ready(function() {
                             }
                             var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>注销原因</th><th>教育科经办人</th></tr>';
                             if(count<11){
+                                $("#dataPage").css('display','none')
                                 for(var i in data){
                                     html += '<tr>';
                                     for(var j in data[i]){
@@ -1866,7 +1879,7 @@ $(document).ready(function() {
                                     for(var m=0;m<count;m++){
                                         html+='<tr>';
                                         for(var n=0;n<columns;n++){
-                                            html+="<td></td>";
+                                            html+="<td>&nbsp</td>";
                                         }
                                         html+="</tr>";
                                     }
@@ -1916,7 +1929,7 @@ $(document).ready(function() {
                                             for(var m=0;m<count;m++){
                                                 html+='<tr>';
                                                 for(var n=0;n<columns;n++){
-                                                    html+="<td></td>";
+                                                    html+="<td>&nbsp</td>";
                                                 }
                                                 html+="</tr>";
                                             }
@@ -1961,14 +1974,14 @@ $(document).ready(function() {
                     complete: function (XMLHttpRequest,status) {
                         loadingPicClose();
                         if(status === 'timeout') {
-                            ajaxTimeOut1.abort();    // 超时后中断请求
+                            ajaxTimeOut2.abort();    // 超时后中断请求
                             alert('网络超时，请检查网络连接');
                         }
                     }
                 })
             }else if(name === csData['cjtjxx-dcjl']['nr2']){
                 //呈现调出记录表
-                var ajaxTimeOut1 = $.ajax({
+                var ajaxTimeOut3 = $.ajax({
                     url: "../../../index.php",
                     type:"POST",
                     timeout:8000,
@@ -1988,6 +2001,7 @@ $(document).ready(function() {
                             }
                             var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>教育科经办人</th></tr>';
                             if(count<11){
+                                $("#dataPage").css('display','none')
                                 for(var i in data){
                                     html += '<tr>';
                                     for(var j in data[i]){
@@ -2004,7 +2018,7 @@ $(document).ready(function() {
                                     for(var m=0;m<count;m++){
                                         html+='<tr>';
                                         for(var n=0;n<columns;n++){
-                                            html+="<td></td>";
+                                            html+="<td>&nbsp</td>";
                                         }
                                         html+="</tr>";
                                     }
@@ -2054,7 +2068,7 @@ $(document).ready(function() {
                                             for(var m=0;m<count;m++){
                                                 html+='<tr>';
                                                 for(var n=0;n<columns;n++){
-                                                    html+="<td></td>";
+                                                    html+="<td>&nbsp</td>";
                                                 }
                                                 html+="</tr>";
                                             }
@@ -2099,14 +2113,14 @@ $(document).ready(function() {
                     complete: function (XMLHttpRequest,status) {
                         loadingPicClose();
                         if(status === 'timeout') {
-                            ajaxTimeOut1.abort();    // 超时后中断请求
+                            ajaxTimeOut3.abort();    // 超时后中断请求
                             alert('网络超时，请检查网络连接');
                         }
                     }
                 })
             }else if(name === csData['cjtjxx-xzjl']['nr2']){
                 //呈现新增记录表
-                var ajaxTimeOut1 = $.ajax({
+                var ajaxTimeOut4 = $.ajax({
                     url: "../../../index.php",
                     type:"POST",
                     timeout:8000,
@@ -2126,6 +2140,7 @@ $(document).ready(function() {
                             }
                             var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>操作类别</th><th>准驾代码</th><th>准驾类型</th><th>教育科经办人</th></tr>';
                             if(count<11){
+                                $("#dataPage").css('display','none')
                                 for(var i in data){
                                     html += '<tr>';
                                     for(var j in data[i]){
@@ -2142,7 +2157,7 @@ $(document).ready(function() {
                                     for(var m=0;m<count;m++){
                                         html+='<tr>';
                                         for(var n=0;n<columns;n++){
-                                            html+="<td></td>";
+                                            html+="<td>&nbsp</td>";
                                         }
                                         html+="</tr>";
                                     }
@@ -2192,7 +2207,7 @@ $(document).ready(function() {
                                             for(var m=0;m<count;m++){
                                                 html+='<tr>';
                                                 for(var n=0;n<columns;n++){
-                                                    html+="<td></td>";
+                                                    html+="<td>&nbsp</td>";
                                                 }
                                                 html+="</tr>";
                                             }
@@ -2237,7 +2252,7 @@ $(document).ready(function() {
                     complete: function (XMLHttpRequest,status) {
                         loadingPicClose();
                         if(status === 'timeout') {
-                            ajaxTimeOut1.abort();    // 超时后中断请求
+                            ajaxTimeOut4.abort();    // 超时后中断请求
                             alert('网络超时，请检查网络连接');
                         }
                     }
@@ -2377,7 +2392,7 @@ $(document).ready(function() {
                                 for(var m=0;m<count;m++){
                                     html+='<tr>';
                                     for(var n=0;n<columns;n++){
-                                        html+="<td></td>";
+                                        html+="<td>&nbsp</td>";
                                     }
                                     html+="</tr>";
                                 }
@@ -2459,7 +2474,7 @@ $(document).ready(function() {
                                         for(var m=0;m<count;m++){
                                             html+='<tr>';
                                             for(var n=0;n<columns;n++){
-                                                html+="<td></td>";
+                                                html+="<td>&nbsp</td>";
                                             }
                                             html+="</tr>";
                                         }
@@ -2646,7 +2661,7 @@ $(document).ready(function() {
                                             else{
                                                 console.log(1)
                                             }
-                                            alert('发放成功');
+                                            alert('发放成功')
                                         }
                                     });
                                 }else if(power==='V'){
@@ -2679,7 +2694,13 @@ $(document).ready(function() {
         if(power === 'V'){
             //再问一下调入人员是不是已经进了全员信息库再加驾驶证还是直接加驾驶证
             $("#checkBoxBand .singleAppend").off('click').on('click',function(){
-                $('.appendContent .singleAppendForm').css('display','block')
+                $('.levelUpContent').css('display','none')
+                $('.appendContent').css('display','block')
+                $('#levelUpPage').css('display','none')
+            })
+            $("#checkBoxBand .levelUp").off('click').on('click',function(){
+                $('.levelUpContent').css('display','block')
+                $('.appendContent').css('display','none')
             })
         }
 

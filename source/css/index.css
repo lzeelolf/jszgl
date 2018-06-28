@@ -907,9 +907,9 @@ a,a:hover,a:active,a:visited{
 #appendContainer .appendContent{
     margin-top: 40px;
     overflow: hidden;
+    display: none;
 }
 #appendContainer .appendContent .singleAppendForm{
-    display: none;
     overflow: hidden;
 }
 #appendContainer .appendContent .singleAppendForm>div{
@@ -938,5 +938,8 @@ a,a:hover,a:active,a:visited{
     border-radius: 4px;
     background-color: #eeeeee;
     cursor: pointer;
+}
+#appendContainer #levelUpPage{
+    display: none;
 }
 
