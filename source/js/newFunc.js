@@ -1550,7 +1550,7 @@ function appendSelection(){
                 __html = '';
                 for(var i in data){
                     if(data[i]['name']!==''){
-                        __html += '<input class=\"marginLeft10px marginTop24px\" type=\"checkbox\" id=\"'+data[i]['name']+'\"/><label for=\"'+data[i]['name']+'\">'+data[i]['name']+'</label>';
+                        __html += '<input class=\"marginLeft10px\" type=\"checkbox\" id=\"'+data[i]['name']+'\"/><label for=\"'+data[i]['name']+'\">'+data[i]['name']+'</label>';
                     }
                 }
                 $("#valueDiv").empty().append(__html)

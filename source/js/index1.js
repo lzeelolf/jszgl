@@ -410,6 +410,8 @@ $(document).ready(function() {
                             dataType: 'json',
                             success: function () {
                                 alert('信息修改成功')
+                                $('.infoFix').text('信息更正').css({'color':'#555','fontWeight':'normal'})
+                                $(".queryInfo input").prop('disabled',true).parent().css('backgroundColor','inherit');
                             },
                             beforeSend: function () {
                                 //在where字段后加入用户选择的车间范围
@@ -1125,7 +1127,7 @@ $(document).ready(function() {
                 type: "POST",
                 data: {
                     funcName: 'select', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'JSZGL',
-                    tableName: ' jbxx ', column: ' department,payId,UName,remainingDays', where: ' where department like \''+department+'%\' AND status = \''+csData['zjzt-yj']['nr2']+'\'', order: ' '
+                    tableName: ' jbxx ', column: ' department,payId,UName,deadline,tzDone', where: ' where department like \''+department+'%\' AND DATEDIFF(day,getdate(),deadline) < '+csData['yjsj-cjyjsj']['nr2']+'', order: ' '
                 },
                 dataType: 'json',
                 success: function (data) {
@@ -1152,19 +1154,35 @@ $(document).ready(function() {
                                 delete data['count'];
                                 delete bgxx['success'];
                                 delete bgxx['count'];
-                                var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>状态</th></tr>';
                                 //处理数据，加入两个属性“是否正在换证”、‘审核状态’
+                                var today = new Date();
+                                today.month = today.getMonth() < 9 ? '0' + (today.getMonth() + 1) : today.getMonth() + 1;
+                                today.date = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
+                                today = today.getFullYear() + '-' + today.month + '-' + today.date;
+                                today = new Date(today)
+                                var deadline='';
                                 for(var i in data){
                                     if(data[i]['department'].split(',').length>1){
                                         data[i]['department'] = data[i]['department'].split(',')[0];
                                     }
+                                    deadline = new Date(data[i]['deadline']);
+                                    data[i]['deadline'] = (deadline - today)/(1000*60*60*24)
                                     for(var j in bgxx){
                                         if(data[i]['payId'] !== bgxx[j]['payId']){
                                             data[i]['checking'] = '否';
-                                            data[i]['checkStatus'] = ' ';
+                                            if(data[i]['tzDone'] === csData['tzDone-swtz']['nr2']){
+                                                data[i]['checkStatus'] = '<span class="tz">短信通知</span>';
+                                                tzEvent(csData,csData['zjzt-yj']['nr2'])
+                                                delete data[i]['tzDone']
+                                            }else if(data[i]['tzDone'] === csData['tzDone-yjtz']['nr2']){
+                                                data[i]['checkStatus'] = csData['tzDone-yjtz']['nr2'];
+                                                delete data[i]['tzDone']
+                                            }
                                         }else{
-                                            data[i]['checkStatus'] = bgxx[j]['checkStatus'];
                                             data[i]['checking'] = '是';
+                                            data[i]['checkStatus'] = bgxx[j]['checkStatus'];
+                                            delete data[i]['tzDone']
                                             break
                                         }
                                     }
@@ -1231,7 +1249,7 @@ $(document).ready(function() {
                                     $("#alertPage .next").off('click').on('click',function(){
                                         if(cur<total){
                                             var j =0;
-                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>状态</th></tr>';
                                             for(var i in data){
                                                 if(j>10*cur-1 && j<10*(cur+1) && i ){
                                                     j++;
@@ -1280,7 +1298,7 @@ $(document).ready(function() {
                                     $("#alertPage .prev").off('click').on('click',function(){
                                         if(cur>1){
                                             var j =0;
-                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>状态</th></tr>';
                                             for(var i in data){
                                                 if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
                                                     j++;
@@ -1331,7 +1349,7 @@ $(document).ready(function() {
                 type: "POST",
                 data: {
                     funcName: 'select', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'JSZGL',
-                    tableName: ' jbxx ', column: ' department,payId,UName,remainingDays', where: ' where status = \''+csData['zjzt-yj']['nr2']+'\'', order: ' order by department'
+                    tableName: ' jbxx ', column: ' department,payId,UName,deadline,tzDone', where: ' where DATEDIFF(day,getdate(),deadline) < '+csData['yjsj-cjyjsj']['nr2']+'', order: ' order by department'
                 },
                 dataType: 'json',
                 success: function (data) {
@@ -1358,19 +1376,35 @@ $(document).ready(function() {
                                 delete data['count'];
                                 delete bgxx['success'];
                                 delete bgxx['count'];
-                                var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>状态</th></tr>';
                                 //处理数据，加入两个属性“是否正在换证”、‘审核状态’
+                                var today = new Date();
+                                today.month = today.getMonth() < 9 ? '0' + (today.getMonth() + 1) : today.getMonth() + 1;
+                                today.date = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
+                                today = today.getFullYear() + '-' + today.month + '-' + today.date;
+                                today = new Date(today)
+                                var deadline='';
                                 for(var i in data){
                                     if(data[i]['department'].split(',').length>1){
                                         data[i]['department'] = data[i]['department'].split(',')[0];
                                     }
+                                    deadline = new Date(data[i]['deadline']);
+                                    data[i]['deadline'] = (deadline - today)/(1000*60*60*24)
                                     for(var j in bgxx){
                                         if(data[i]['payId'] !== bgxx[j]['payId']){
                                             data[i]['checking'] = '否';
-                                            data[i]['checkStatus'] = ' ';
+                                            if(data[i]['tzDone'] === csData['tzDone-swtz']['nr2']){
+                                                data[i]['checkStatus'] = '<span class="tz">短信通知</span>';
+                                                tzEvent(csData,csData['zjzt-yj']['nr2'])
+                                                delete data[i]['tzDone']
+                                            }else if(data[i]['tzDone'] === csData['tzDone-yjtz']['nr2']){
+                                                data[i]['checkStatus'] = csData['tzDone-yjtz']['nr2'];
+                                                delete data[i]['tzDone']
+                                            }
                                         }else{
-                                            data[i]['checkStatus'] = bgxx[j]['checkStatus'];
                                             data[i]['checking'] = '是';
+                                            data[i]['checkStatus'] = bgxx[j]['checkStatus'];
+                                            delete data[i]['tzDone']
                                             break
                                         }
                                     }
@@ -1437,7 +1471,7 @@ $(document).ready(function() {
                                     $("#alertPage .next").off('click').on('click',function(){
                                         if(cur<total){
                                             var j =0;
-                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>状态</th></tr>';
                                             for(var i in data){
                                                 if(j>10*cur-1 && j<10*(cur+1) && i ){
                                                     j++;
@@ -1486,7 +1520,7 @@ $(document).ready(function() {
                                     $("#alertPage .prev").off('click').on('click',function(){
                                         if(cur>1){
                                             var j =0;
-                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>审核状态</th></tr>';
+                                            var html = '<tr><th>所属车间</th><th>工资号</th><th>姓名</th><th>距到期剩余天数</th><th>是否已申请换证</th><th>状态</th></tr>';
                                             for(var i in data){
                                                 if(j>10*(cur-2)-1 && j<10*(cur-1) && i ){
                                                     j++;
@@ -1526,7 +1560,16 @@ $(document).ready(function() {
                 }
             })
         }
+
+        function tzEvent(csData,type){
+            if(type === csData['zjzt-yj']['nr2']){
+                //在这里调用短信接口
+
+            }
+        }
     }
+
+
 
     //添加统计信息
     function appendTJxx(csData){
@@ -2558,6 +2601,7 @@ $(document).ready(function() {
                     var payId = $(this).parent().prev().prev().prev().prev().text();
                     var thisName = $(this).parent().prev().prev().prev().text();
                     if(power === '1'){
+
                         setStr = ' grArriveDate = \''+ arriveDate +'\',finishStatus = \''+csData['finishStatus-ffdgr']['nr2']+'\' ,cjArriveOperator = \''+user+'\'';
                         confirmP = '请确认'+thisName+'师傅的驾驶证已发放到本人手中';
                     }else if(power === 'V'){
@@ -2582,29 +2626,56 @@ $(document).ready(function() {
                             },
                             dataType: 'json',
                             success: function (data) {
+
                                 if(power==='1'){
-                                    $(_this).parent().prev().text(arriveDate)
-                                    $(_this).remove();
-                                    //发放到个人后，证件状态更新为“正常”
                                     $.ajax({
                                         url: "../../../index.php",
                                         type: "POST",
                                         timeout: 8000,
                                         data: {
-                                            funcName: 'update',
+                                            funcName: 'getInfo',
                                             serverName: '10.101.62.73',
                                             uid: 'sa',
                                             pwd: '2huj15h1',
                                             Database: 'jszgl',
-                                            tableName: ' jbxx',
-                                            setStr: ' status = \''+csData['zjzt-zc']['nr2']+'\'',
-                                            where: ' where payid =\'' + payId + '\''
+                                            tableName: ' bgxx',
+                                            column:' changeType',
+                                            where:' where id =\''+id+'\''
                                         },
                                         dataType: 'json',
-                                        success:function(data){
+                                        success:function (changeType){
+                                            changeType = changeType['row']['changeType']
+                                            //发放到个人后，证件状态更新为“正常”
+                                            //如果是有效期满换证，起始和截止要加6年
+                                            //通知状态改为尚未通知
+                                            if(changeType === csData['czlb-yxqmhz']['nr3']){
+                                                var set = ' tzDone = \''+csData['tzDone-swtz']['nr2']+'\', status = \''+csData['zjzt-zc']['nr2']+'\',deadline = cast(substring(deadline,0,5) + 6 AS varchar(4)) + substring(deadline,5,11),startDate = cast(substring(startDate,0,5) + 6 AS varchar(4)) + substring(startDate,5,11)'
+                                            }else{
+                                                var set = ' tzDone = \''+csData['tzDone-swtz']['nr2']+'\',status = \''+csData['zjzt-zc']['nr2']+'\''
+                                            }
+                                            $.ajax({
+                                                url: "../../../index.php",
+                                                type: "POST",
+                                                timeout: 8000,
+                                                data: {
+                                                    funcName: 'update',
+                                                    serverName: '10.101.62.73',
+                                                    uid: 'sa',
+                                                    pwd: '2huj15h1',
+                                                    Database: 'jszgl',
+                                                    tableName: ' jbxx',
+                                                    setStr: set,
+                                                    where: ' where payid =\'' + payId + '\''
+                                                },
+                                                dataType: 'json',
+                                                success:function(data){
 
+                                                }
+                                            })
                                         }
                                     })
+                                    $(_this).parent().prev().text(arriveDate)
+                                    $(_this).remove();
                                     //判断准驾类型是否将发生变化，如果是，要存在tjxx表中
                                     $.ajax({
                                         url: "../../../index.php",
@@ -2688,20 +2759,11 @@ $(document).ready(function() {
         }
     }
 
-    //添加新增证件功能
+    //添加新增证件功能(人员提升标签)
     function appendAppend(csData){
         var power = sessionGet('power');
         if(power === 'V'){
-            //再问一下调入人员是不是已经进了全员信息库再加驾驶证还是直接加驾驶证
-            $("#checkBoxBand .singleAppend").off('click').on('click',function(){
-                $('.levelUpContent').css('display','none')
-                $('.appendContent').css('display','block')
-                $('#levelUpPage').css('display','none')
-            })
-            $("#checkBoxBand .levelUp").off('click').on('click',function(){
-                $('.levelUpContent').css('display','block')
-                $('.appendContent').css('display','none')
-            })
+
         }
 
     }
@@ -2728,12 +2790,15 @@ $(document).ready(function() {
                 } else {
                     $("#summaryContainer .summaryBanner .htmlToXls").css('display', 'block')
                     if ($(this).val() === table2){//有效期满
+                        if($('#yearSelect')){
+                            $('#yearSelect').remove()
+                        }
                         var ajaxTimeOut1 = $.ajax({
                             url: "../../../index.php",
                             type:"POST",
                             timeout:8000,
                             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-                            data:{funcName:'select',where:' where checkstatus = \''+csData['checkStatus-shtg']['nr2']+'\' AND changeType =\''+csData['czlb-yxqmhz']['nr3']+'\' AND finishStatus !=\''+csData['finishStatus-ffdcj']['nr2']+'\' AND finishStatus !=\''+csData['finishStatus-ffdgr']['nr2']+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                            data:{funcName:'select',where:' where checkstatus = \''+csData['checkStatus-shtg']['nr2']+'\' AND changeType =\''+csData['czlb-yxqmhz']['nr3']+'\' AND (finishStatus =\''+csData['finishStatus-ffdcj']['nr2']+'\' OR finishStatus =\''+csData['finishStatus-ffdgr']['nr2']+'\')',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
                                 tableName:' bgxx ',column:' UName,sex,cardId,birthDate,applyDriveCode,driveCode,startDate,deadline,sjRemark,phyTest',order:' order by UName'},
                             dataType:'json',
                             success:function(data){
@@ -2881,12 +2946,15 @@ $(document).ready(function() {
                             }
                         })
                     }else if($(this).val() === table3){//非有效期满
+                        if($('#yearSelect')){
+                            $('#yearSelect').remove()
+                        }
                         var ajaxTimeOut2 = $.ajax({
                             url: "../../../index.php",
                             type:"POST",
                             timeout:8000,
                             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-                            data:{funcName:'select',where:' where checkstatus = \''+csData['checkStatus-shtg']['nr2']+'\' AND changeType =\''+csData['czlb-fyxqmhz']['nr3']+'\' AND finishStatus !=\''+csData['finishStatus-ffdcj']['nr2']+'\' AND finishStatus !=\''+csData['finishStatus-ffdgr']['nr2']+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                            data:{funcName:'select',where:' where checkstatus = \''+csData['checkStatus-shtg']['nr2']+'\' AND changeType =\''+csData['czlb-fyxqmhz']['nr3']+'\' AND (finishStatus =\''+csData['finishStatus-ffdcj']['nr2']+'\' OR finishStatus =\''+csData['finishStatus-ffdgr']['nr2']+'\')',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
                                 tableName:' bgxx ',column:' UName,sex,cardId,birthDate,applyDriveCode,driveCode,startDate,sjRemark,phyTest,changeReason',order:' order by UName'},
                             dataType:'json',
                             success:function(data){
@@ -3033,12 +3101,15 @@ $(document).ready(function() {
                             }
                         })
                     }else if($(this).val() === table4){//补证
+                        if($('#yearSelect')){
+                            $('#yearSelect').remove()
+                        }
                         var ajaxTimeOut3 = $.ajax({
                             url: "../../../index.php",
                             type:"POST",
                             timeout:8000,
                             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-                            data:{funcName:'select',where:' where checkstatus = \''+csData['checkStatus-shtg']['nr2']+'\' AND changeType =\''+csData['czlb-bz']['nr3']+'\' AND finishStatus !=\''+csData['finishStatus-ffdcj']['nr2']+'\' AND finishStatus !=\''+csData['finishStatus-ffdgr']['nr2']+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                            data:{funcName:'select',where:' where checkstatus = \''+csData['checkStatus-shtg']['nr2']+'\' AND changeType =\''+csData['czlb-bz']['nr3']+'\' AND (finishStatus =\''+csData['finishStatus-ffdcj']['nr2']+'\' OR finishStatus =\''+csData['finishStatus-ffdgr']['nr2']+'\')',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
                                 tableName:' bgxx ',column:' UName,sex,cardId,birthDate,applyDriveCode,driveCode,startDate,deadline,sjRemark',order:' order by UName'},
                             dataType:'json',
                             success:function(data){
@@ -3193,6 +3264,9 @@ $(document).ready(function() {
                             _html += '<option>' + yearArr[i] + '</option>'
                         }
                         _html +='</select>'
+                        if($('#yearSelect')){
+                            $('#yearSelect').remove()
+                        }
                         $("#summaryContainer .summaryBanner").append(_html)
                         $('#summaryContainer .summaryBanner #yearSelect').off('change').on('change',function(){
                             var year = $(this).val()
@@ -3248,6 +3322,117 @@ $(document).ready(function() {
                                                         }
                                                     }
                                                 }
+                                                console.log(data)
+                                                var newData = {};
+                                                newData.J1 = data['row1'];
+                                                newData.J2 = data['row2'];
+                                                newData.J3 = data['row3'];
+                                                var crh = {};
+                                                crh['driveCode'] = 'CRH系列';
+                                                crh.lastYearAmount = parseInt(newData.J1['lastYearAmount'])+ parseInt(newData.J2['lastYearAmount'])+ parseInt(newData.J3['lastYearAmount']);
+                                                crh.yearAmount = parseInt(newData.J1['yearAmount'])+ parseInt(newData.J2['yearAmount'])+ parseInt(newData.J3['yearAmount']);
+                                                crh.sub = parseInt(newData.J1['sub'])+ parseInt(newData.J2['sub'])+ parseInt(newData.J3['sub']);
+                                                crh.increaseAmount = parseInt(newData.J1['increaseAmount'])+ parseInt(newData.J2['increaseAmount'])+ parseInt(newData.J3['increaseAmount']);
+                                                crh.kshg = parseInt(newData.J1['kshg'])+ parseInt(newData.J2['kshg'])+ parseInt(newData.J3['kshg']);
+                                                crh.dr = parseInt(newData.J1['dr'])+ parseInt(newData.J2['dr'])+ parseInt(newData.J3['dr']);
+                                                crh.jdzjjxIncrease = parseInt(newData.J1['jdzjjxIncrease'])+ parseInt(newData.J2['jdzjjxIncrease'])+ parseInt(newData.J3['jdzjjxIncrease']);
+                                                crh.otherIncrease = parseInt(newData.J1['otherIncrease'])+ parseInt(newData.J2['otherIncrease'])+ parseInt(newData.J3['otherIncrease']);
+                                                crh.decreaseAmount = parseInt(newData.J1['decreaseAmount'])+ parseInt(newData.J2['decreaseAmount'])+ parseInt(newData.J3['decreaseAmount']);
+                                                crh.cx = parseInt(newData.J1['cx'])+ parseInt(newData.J2['cx'])+ parseInt(newData.J3['cx']);
+                                                crh.zx = parseInt(newData.J1['zx'])+ parseInt(newData.J2['zx'])+ parseInt(newData.J3['zx']);
+                                                crh.tx = parseInt(newData.J1['tx'])+ parseInt(newData.J2['tx'])+ parseInt(newData.J3['tx']);
+                                                crh.sw = parseInt(newData.J1['sw'])+ parseInt(newData.J2['sw'])+ parseInt(newData.J3['sw']);
+                                                crh.dc = parseInt(newData.J1['dc'])+ parseInt(newData.J2['dc'])+ parseInt(newData.J3['dc']);
+                                                crh.zj = parseInt(newData.J1['zj'])+ parseInt(newData.J2['zj'])+ parseInt(newData.J3['zj']);
+                                                crh.jdzjjxDecrease = parseInt(newData.J1['jdzjjxDecrease'])+ parseInt(newData.J2['jdzjjxDecrease'])+ parseInt(newData.J3['jdzjjxDecrease']);
+                                                crh.otherDecrease = parseInt(newData.J1['otherDecrease'])+ parseInt(newData.J2['otherDecrease'])+ parseInt(newData.J3['otherDecrease']);
+
+                                                newData.crh = crh;
+                                                newData.J4 = data['row4'];
+                                                newData.A = $.extend(newData.A,data['row4']);
+                                                newData.A.driveCode = 'A';
+                                                newData.J5 = data['row5'];
+                                                newData.B = $.extend(newData.B,data['row5']);
+                                                newData.B.driveCode = 'B';
+                                                newData.J6 = data['row6'];
+                                                newData.C = $.extend(newData.C,data['row6']);
+                                                newData.C.driveCode = 'C';
+                                                var Jall = {};
+                                                Jall['driveCode'] = 'J类总计';
+                                                Jall.lastYearAmount = parseInt(newData.crh['lastYearAmount'])+ parseInt(newData.J4['lastYearAmount'])+ parseInt(newData.J5['lastYearAmount'])+ parseInt(newData.J6['lastYearAmount']);
+                                                Jall.yearAmount = parseInt(newData.crh['yearAmount'])+ parseInt(newData.J4['yearAmount'])+ parseInt(newData.J5['yearAmount'])+ parseInt(newData.J6['yearAmount']);
+                                                Jall.sub = parseInt(newData.crh['sub'])+ parseInt(newData.J4['sub'])+ parseInt(newData.J5['sub'])+ parseInt(newData.J6['sub']);
+                                                Jall.increaseAmount = parseInt(newData.crh['increaseAmount'])+ parseInt(newData.J4['increaseAmount'])+ parseInt(newData.J5['increaseAmount'])+ parseInt(newData.J6['increaseAmount']);
+                                                Jall.kshg = parseInt(newData.crh['kshg'])+ parseInt(newData.J4['kshg'])+ parseInt(newData.J5['kshg'])+ parseInt(newData.J6['kshg']);
+                                                Jall.dr = parseInt(newData.crh['dr'])+ parseInt(newData.J4['dr'])+ parseInt(newData.J5['dr'])+ parseInt(newData.J6['dr']);
+                                                Jall.jdzjjxIncrease = parseInt(newData.crh['jdzjjxIncrease'])+ parseInt(newData.J4['jdzjjxIncrease'])+ parseInt(newData.J5['jdzjjxIncrease'])+ parseInt(newData.J6['jdzjjxIncrease']);
+                                                Jall.otherIncrease = parseInt(newData.crh['otherIncrease'])+ parseInt(newData.J4['otherIncrease'])+ parseInt(newData.J5['otherIncrease'])+ parseInt(newData.J6['otherIncrease']);
+                                                Jall.decreaseAmount = parseInt(newData.crh['decreaseAmount'])+ parseInt(newData.J4['decreaseAmount'])+ parseInt(newData.J5['decreaseAmount'])+ parseInt(newData.J6['decreaseAmount']);
+                                                Jall.cx = parseInt(newData.crh['cx'])+ parseInt(newData.J4['cx'])+ parseInt(newData.J5['cx'])+ parseInt(newData.J6['cx']);
+                                                Jall.zx = parseInt(newData.crh['zx'])+ parseInt(newData.J4['zx'])+ parseInt(newData.J5['zx'])+ parseInt(newData.J6['zx']);
+                                                Jall.tx = parseInt(newData.crh['tx'])+ parseInt(newData.J4['tx'])+ parseInt(newData.J5['tx'])+ parseInt(newData.J6['tx']);
+                                                Jall.sw = parseInt(newData.crh['sw'])+ parseInt(newData.J4['sw'])+ parseInt(newData.J5['sw'])+ parseInt(newData.J6['sw']);
+                                                Jall.dc = parseInt(newData.crh['dc'])+ parseInt(newData.J4['dc'])+ parseInt(newData.J5['dc'])+ parseInt(newData.J6['dc']);
+                                                Jall.zj = parseInt(newData.crh['zj'])+ parseInt(newData.J4['zj'])+ parseInt(newData.J5['zj'])+ parseInt(newData.J6['zj']);
+                                                Jall.jdzjjxDecrease = parseInt(newData.crh['jdzjjxDecrease'])+ parseInt(newData.J4['jdzjjxDecrease'])+ parseInt(newData.J5['jdzjjxDecrease'])+ parseInt(newData.J6['jdzjjxDecrease']);
+                                                Jall.otherDecrease = parseInt(newData.crh['otherDecrease'])+ parseInt(newData.J4['otherDecrease'])+ parseInt(newData.J5['otherDecrease'])+ parseInt(newData.J6['otherDecrease']);
+                                                newData.Jall = Jall;
+                                                newData.L1 = data['row7'];
+                                                newData.L2 = data['row8'];
+                                                newData.D = $.extend(newData.D,data['row8']);
+                                                newData.D['driveCode'] = 'D';
+                                                newData.L3 = data['row9'];
+                                                newData.E = $.extend(newData.E,data['row9']);
+                                                newData.E.driveCode = 'E';
+                                                newData.E1 = $.extend(newData.E1,data['row9']);
+                                                newData.E1.driveCode = 'E1';
+                                                newData.E2 = $.extend(newData.E2,data['row9']);
+                                                newData.E2.driveCode = 'E2';
+
+                                                var Lall = {};
+                                                Lall['driveCode'] = 'L类总计';
+                                                Lall.lastYearAmount = parseInt(newData.L1['lastYearAmount'])+ parseInt(newData.L2['lastYearAmount'])+ parseInt(newData.L3['lastYearAmount']);
+                                                Lall.yearAmount = parseInt(newData.L1['yearAmount'])+ parseInt(newData.L2['yearAmount'])+ parseInt(newData.L3['yearAmount']);
+                                                Lall.sub = parseInt(newData.L1['sub'])+ parseInt(newData.L2['sub'])+ parseInt(newData.L3['sub']);
+                                                Lall.increaseAmount = parseInt(newData.L1['increaseAmount'])+ parseInt(newData.L2['increaseAmount'])+ parseInt(newData.L3['increaseAmount']);
+                                                Lall.kshg = parseInt(newData.L1['kshg'])+ parseInt(newData.L2['kshg'])+ parseInt(newData.L3['kshg']);
+                                                Lall.dr = parseInt(newData.L1['dr'])+ parseInt(newData.L2['dr'])+ parseInt(newData.L3['dr']);
+                                                Lall.jdzjjxIncrease = parseInt(newData.L1['jdzjjxIncrease'])+ parseInt(newData.L2['jdzjjxIncrease'])+ parseInt(newData.L3['jdzjjxIncrease']);
+                                                Lall.otherIncrease = parseInt(newData.L1['otherIncrease'])+ parseInt(newData.L2['otherIncrease'])+ parseInt(newData.L3['otherIncrease']);
+                                                Lall.decreaseAmount = parseInt(newData.L1['decreaseAmount'])+ parseInt(newData.L2['decreaseAmount'])+ parseInt(newData.L3['decreaseAmount']);
+                                                Lall.cx = parseInt(newData.L1['cx'])+ parseInt(newData.L2['cx'])+ parseInt(newData.L3['cx']);
+                                                Lall.zx = parseInt(newData.L1['zx'])+ parseInt(newData.L2['zx'])+ parseInt(newData.L3['zx']);
+                                                Lall.tx = parseInt(newData.L1['tx'])+ parseInt(newData.L2['tx'])+ parseInt(newData.L3['tx']);
+                                                Lall.sw = parseInt(newData.L1['sw'])+ parseInt(newData.L2['sw'])+ parseInt(newData.L3['sw']);
+                                                Lall.dc = parseInt(newData.L1['dc'])+ parseInt(newData.L2['dc'])+ parseInt(newData.L3['dc']);
+                                                Lall.zj = parseInt(newData.L1['zj'])+ parseInt(newData.L2['zj'])+ parseInt(newData.L3['zj']);
+                                                Lall.jdzjjxDecrease = parseInt(newData.L1['jdzjjxDecrease'])+ parseInt(newData.L2['jdzjjxDecrease'])+ parseInt(newData.L3['jdzjjxDecrease']);
+                                                Lall.otherDecrease = parseInt(newData.L1['otherDecrease'])+ parseInt(newData.L2['otherDecrease'])+ parseInt(newData.L3['otherDecrease']);
+                                                newData.Lall = Lall;
+
+                                                var all ={};
+                                                all['driveCode'] = '总计';
+                                                all.lastYearAmount = parseInt(newData.Jall['lastYearAmount'])+ parseInt(newData.Lall['lastYearAmount']);
+                                                all.yearAmount = parseInt(newData.Jall['yearAmount'])+ parseInt(newData.Lall['yearAmount']);
+                                                all.sub = parseInt(newData.Jall['sub'])+ parseInt(newData.Lall['sub']);
+                                                all.increaseAmount = parseInt(newData.Jall['increaseAmount'])+ parseInt(newData.Lall['increaseAmount']);
+                                                all.kshg = parseInt(newData.Jall['kshg'])+ parseInt(newData.Lall['kshg']);
+                                                all.dr = parseInt(newData.Jall['dr'])+ parseInt(newData.Lall['dr']);
+                                                all.jdzjjxIncrease = parseInt(newData.Jall['jdzjjxIncrease'])+ parseInt(newData.Lall['jdzjjxIncrease']);
+                                                all.otherIncrease = parseInt(newData.Jall['otherIncrease'])+ parseInt(newData.Lall['otherIncrease']);
+                                                all.decreaseAmount = parseInt(newData.Jall['decreaseAmount'])+ parseInt(newData.Lall['decreaseAmount']);
+                                                all.cx = parseInt(newData.Jall['cx'])+ parseInt(newData.Lall['cx']);
+                                                all.zx = parseInt(newData.Jall['zx'])+ parseInt(newData.Lall['zx']);
+                                                all.tx = parseInt(newData.Jall['tx'])+ parseInt(newData.Lall['tx']);
+                                                all.sw = parseInt(newData.Jall['sw'])+ parseInt(newData.Lall['sw']);
+                                                all.dc = parseInt(newData.Jall['dc'])+ parseInt(newData.Lall['dc']);
+                                                all.zj = parseInt(newData.Jall['zj'])+ parseInt(newData.Lall['zj']);
+                                                all.jdzjjxDecrease = parseInt(newData.Jall['jdzjjxDecrease'])+ parseInt(newData.Lall['jdzjjxDecrease']);
+                                                all.otherDecrease = parseInt(newData.Jall['otherDecrease'])+ parseInt(newData.Lall['otherDecrease']);
+                                                newData.all = all;
+                                                console.log(data['row1'])
+                                                console.log(newData)
+                                                data = newData
                                                 for(var m in data){
                                                     html+='<tr></tr>';
                                                     for(var n in data[m]){
@@ -3343,6 +3528,9 @@ $(document).ready(function() {
                         })
                     }
                     else if($(this).val() === table6){//聘用汇总表
+                        if($('#yearSelect')){
+                            $('#yearSelect').remove()
+                        }
                         var date1 = new Date();
                         var year = date1.getFullYear()
                         var ajaxTimeOut5 = $.ajax({
@@ -3365,13 +3553,13 @@ $(document).ready(function() {
                                         obj.num = k;
                                         k++;
                                         obj.company =company;
-                                        obj2.hireDate = '2000-01-01';
+                                        obj2.hireDate = ' ';
                                         obj2.ifHire = '是';
                                         data[x] = Object.assign({},obj,data[x]);
                                         data[x] = Object.assign({},data[x],obj2);
                                     }
                                     var _html = '<thead><tr class="title"><td colspan="12">('+year+')年度铁路机车车辆驾驶人员聘用情况汇总表</td></tr><tr class="info"><td colspan="12">企业：___________ 审核人：___________ 填报人：___________ 联系电话：___________ 填报日期：        年       月       日</td></tr></thead>'
-                                    var th = '<tr><th rowspan="3">序号</th><th rowspan="3">单位</th><th rowspan="3">姓名</th><th rowspan="3">性别</th><th rowspan="3">公民身份号码</th><th rowspan="3">出生日期</th><th rowspan="3">准驾类型代码</th><th rowspan="3">初次领驾\u000d驶证日期</th><th rowspan="3">聘用日期</th><th rowspan="3">是否续聘</th><th rowspan="3">备注</th></tr>'
+                                    var th = '<tr><th>序号</th><th>单位</th><th>姓名</th><th>性别</th><th>公民身份号码</th><th>出生日期</th><th>准驾类型代码</th><th>初次领驾\u000d驶证日期</th><th>聘用日期</th><th>是否续聘</th><th>备注</th></tr>'
                                     $("#summaryTable").empty().append(_html).append(th);
                                     var html = ''
                                     if(count<11){
