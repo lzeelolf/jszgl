@@ -849,6 +849,9 @@ a,a:hover,a:active,a:visited{
     background-color: #eee;
     margin-right: 50px;
 }
+#bigContent #rightContent #editContainer .editButtonBanner .cjEdit{
+    display: none;
+}
 #bigContent #rightContent #editContainer .textContent{
     width: 100%;
     height: 40px;
@@ -910,10 +913,100 @@ a,a:hover,a:active,a:visited{
     -moz-user-select: text;
     -ms-user-select: text;
 }
+#bigContent #rightContent #appendContainer #appendBanner{
+    height: 40px;
+    border-bottom: 1px solid #333333;
+}
+#bigContent #rightContent #appendContainer #appendBanner>div{
+    height: 40px;
+    border: 1px solid #333;
+    border-bottom: none;
+    font-size: 14px;
+    line-height: 40px;
+    border-radius: 10px 15px 0 0;
+    cursor: pointer;
+    width: 80px;
+}
 #appendContainer .appendContent{
+    background-color: white;
     margin-top: 40px;
     overflow: hidden;
     display: none;
+    position: relative;
+}
+#appendInfoContent{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    opacity: 0;
+    background-color: #aaa;
+    z-index: 999;
+    visibility: hidden;
+}
+#appendInfoContent .appendInfo{
+    position: absolute;
+    left: 350px;
+    top: 200px;
+    background-color: white;
+    opacity: 1;
+    z-index: 10;
+}
+#appendInfoContent .appendInfo>div{
+    height: 40px;
+}
+#appendInfoContent .appendInfo>div .submit,#appendInfoContent .appendInfo>div .exit{
+    width: 50px;
+    height: 30px;
+    line-height: 30px;
+    margin-top: 5px;
+    margin-left: 90px;
+    font-size: 14px;
+    background: url("../images/pass.png") no-repeat 7px -4px;
+}
+#appendInfoContent .appendInfo>div .exit{
+    background: url("../images/reject.png") no-repeat 15px 5px;
+}
+#appendInfoContent .appendInfo>div>p,#appendInfoContent .appendInfo>div>div{
+    float: left;
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+#appendInfoContent .appendInfo>div>div>input{
+    border: none;
+    width: 90px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+}
+#appendContainer #appendPage{
+    display: none;
+}
+#appendContainer .appendContent #appendDRTable{
+    margin-left: 40px;
+}
+#appendContainer .appendContent #appendDRTable th ,#appendContainer .appendContent #appendDRTable td {
+    border: 1px solid #333;
+    border-right: none;
+    padding: 3px 8px;
+    font-size: 14px;
+}
+#appendContainer .appendContent #appendDRTable th:last-child ,#appendContainer .appendContent #appendDRTable td:last-child{
+    border-right: 1px solid #333;
+}
+#appendContainer .appendContent #appendDRTable .dr{
+    text-decoration: underline;
+    color: cornflowerblue;
+    cursor: pointer;
+    font-size: 12px;
+}
+#appendContainer .appendContent #appendDRTable .tz{
+    text-decoration: underline;
+    color: cornflowerblue;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 4px;
 }
 #appendContainer .appendContent .singleAppendForm{
     overflow: hidden;
@@ -944,6 +1037,9 @@ a,a:hover,a:active,a:visited{
     border-radius: 4px;
     background-color: #eeeeee;
     cursor: pointer;
+}
+#appendContainer .levelUpContent{
+    display: none;
 }
 #appendContainer #levelUpPage{
     display: none;

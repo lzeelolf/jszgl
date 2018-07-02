@@ -110,6 +110,36 @@
 <div id="displayApplyContainer">
 
 </div>
+<div id="appendInfoContent">
+    <div class="appendInfo">
+        <div>
+            <p>工资号：</p><div class="payId"></div>
+            <p>档案号：</p><div class="archivesId"></div>
+            <p>姓名：</p><div class="name"></div>
+        </div>
+        <div>
+            <p>性别：</p><div class="sex"></div>
+            <p>部门：</p><div class="department"></div>
+            <p>身份证号：</p><div class="cardId"></div>
+        </div>
+        <div>
+            <p>出生日期：</p><div class="birthDate"></div>
+            <p>退休日期：</p><div class="txrq"></div>
+        </div>
+        <div>
+            <p>初次领证日期：</p><div><input type="text" class="sjDateInput date"></div>
+            <p>准驾类型代码：</p><div><input type="text" class="sjDriveCodeInput"></div>
+        </div>
+        <div>
+            <p>有效起始日期：</p><div><input type="text" class="startDateInput date"></div>
+            <p>有效截止日期：</p><div><input type="text" class="deadlineInput date"></div>
+        </div>
+        <div>
+            <button class="submit"></button>
+            <button class="exit"></button>
+        </div>
+    </div>
+</div>
 <div id="bigContent">
     <div id="leftContent">
         <p class="welcome">欢迎</p>
@@ -121,45 +151,19 @@
         <h1 id="title">洛阳机务段机车驾驶证管理系统</h1>
         <div class="operateContent">
             <div class="jykUse" id="appendContainer">
-                <div id="checkBoxBand">
-                    <input type="button" value="人员调入" class="singleAppend">
-                    <input type="button" value="人员提升" class="levelUp">
+                <div id="appendBanner">
+                    <div id="dr" class="float">人员调入</div>
+                    <div id="ts" class="float">人员提升</div>
                 </div>
                 <div class="appendContent">
-                    <div class="singleAppendForm">
-                        <div>
-                            <p class="float">档案号：</p><input type="text" class="float archievesIdInput width68">
-                            <p class="float">工资号：</p><input type="text" class="float payIdInput width68">
-                            <p class="float">姓名：</p><input type="text" class="float UNameInput width68">
-                        </div>
-                        <div>
-                            <p class="float">性别：</p><input type="text" class="float sexInput width24">
-                            <p class="float">出生日期：</p><input type="text" class="float birthDateInput date width99">
-                            <p class="float">退休日期：</p><input type="text" class="float txrqInput date width99">
-                        </div>
-                        <div>
-                            <p class="float">年鉴日期：</p><input type="text" class="float yearlyCheckDateInput date width99">
-                            <p class="float">所属部门：</p><input type="text" class="float departmentInput width149">
-                        </div>
-                        <div>
-                            <p class="float">有效起始日期：</p><input type="text" class="float startDateInput date width99">
-                            <p class="float">有效截止日期：</p><input type="text" class="float deadlineInput date width99">
-                        </div>
-                        <div>
-                            <p class="float">准驾代码：</p><input type="text" class="float sjDriveCodeInput date width24">
-                            <p class="float">准驾类型：</p><input type="text" class="float sjDriveTypeInput date width149">
-                        </div>
-                        <div>
-                            <p class="float">领证日期：</p><input type="text" class="float sjDateInput date width99">
-                            <p class="float">批准文号：</p><input type="text" class="float sjRemarkInput date width149">
-                        </div>
-                        <button id="submitAppend">提交</button>
-                    </div>
+
+
+                    <table cellspacing="0" cellpadding="0" id="appendDRTable"></table>
                 </div>
                 <div class="levelUpContent">
                     <table cellpadding="0" cellspacing="0" id="levelUpTable"></table>
                 </div>
-                <div id="levelUpPage">
+                <div id="appendPage">
                     <span class="prev">上一页</span>
                     <span>第</span>
                     <span class="cur"></span>
