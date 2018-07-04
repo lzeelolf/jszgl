@@ -2701,7 +2701,7 @@ $(document).ready(function() {
                                                         pwd: '2huj15h1',
                                                         Database: 'jszgl',
                                                         tableName: ' tjxx',
-                                                        setStr: ' jdzjjxDecrease = jdzjjxDecrease +1 , decreaseAmount = decreaseAmount +1',
+                                                        setStr: ' jdzjjxDecrease = jdzjjxDecrease +1 , decreaseAmount = decreaseAmount +1 ,yearlyAmount = yearlyAmount - 1',
                                                         where: ' where driveCode =\''+testData['row']['driveCode']+'\' AND year =\''+year+'\''
                                                     },
                                                     dataType: 'json',
@@ -2720,7 +2720,7 @@ $(document).ready(function() {
                                                         pwd: '2huj15h1',
                                                         Database: 'jszgl',
                                                         tableName: ' tjxx',
-                                                        setStr: ' jdzjjxIncrease = jdzjjxIncrease +1 , IncreaseAmount = IncreaseAmount +1',
+                                                        setStr: ' jdzjjxIncrease = jdzjjxIncrease +1 , IncreaseAmount = IncreaseAmount +1,yearlyAmount = yearlyAmount +1',
                                                         where: ' where driveCode =\''+testData['row']['applyDriveCode']+'\' AND year =\''+year+'\''
                                                     },
                                                     dataType: 'json',
@@ -2764,7 +2764,8 @@ $(document).ready(function() {
         var power = sessionGet('power');
         if(power === 'V') {
             $("#dr").off('click').on('click',function(){
-                //有效期满换证
+                //调入页签
+                $("#appendPage").css('display','none')
                 $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
                 $(".appendContent").css('display','block').siblings('.levelUpContent').css('display','none');
                 $.ajax({
@@ -2918,14 +2919,171 @@ $(document).ready(function() {
                             }
                         }
                         else {
-                            $("#appendContent").empty().text('暂无发放信息');
+                            $("#appendContent").empty().text('暂无待办信息');
                         }
                     }
                 })
             });
             $("#ts").off('click').on('click',function(){
+                //人员提升页签
+                $("#appendPage").css('display','none')
                 $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
                 $(".levelUpContent").css('display','block').siblings('.appendContent').css('display','none');
+                $.ajax({
+                    url: "../../../index.php",
+                    type: "POST",
+                    timeout: 8000,
+                    //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                    data: {
+                        funcName: 'select',
+                        where: ' where type =\''+csData['czlb-levelup2']['nr2']+'\'',
+                        serverName: '10.101.62.73',
+                        uid: 'sa',
+                        pwd: '2huj15h1',
+                        Database: 'JSZGL',
+                        tableName: ' dbsx ',
+                        column: ' *',
+                        order: ' order by payId'
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data['success'] === 1) {
+                            delete data['success'];
+                            var count = data['count'];
+                            delete data['count'];
+                            var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th><th>操作</th></tr>';
+                            for (var y in data) {
+                                if (data[y]['Department'].split(',').length > 1) {
+                                    data[y]['Department'] = data[y]['Department'].split(',')[0];
+                                }
+                            }
+                            var use = {};
+                            use = $.extend(true,use,data);
+                            for(var u in use){
+                                delete use[u]['phone']
+                                delete use[u]['sjDate']
+                                delete use[u]['sjDriveCode']
+                                delete use[u]['sjRemark']
+                                delete use[u]['sjDrive']
+                                delete use[u]['sex']
+                                delete use[u]['birthDate']
+                                delete use[u]['txrq']
+                            }
+                            if (count < 11) {
+                                for (var i in use) {
+                                    html += '<tr>';
+                                    for (var j in use[i]) {
+                                        html += '<td>' + use[i][j] + '</td>';
+                                    }
+                                    html += '<td><span class="ts">提升完成</span></td>';
+                                    html += '</tr>'
+                                }
+                                $("#appendTSTable").empty().append(html);
+
+                                boundAppendEvent(data);
+                                //空白tr补齐表格
+                                if ($("#appendTSTable tbody tr").length < 11) {
+                                    html = '';
+                                    var count = 11 - $("#appendTSTable tbody tr").length;
+                                    var columns = $("#appendTSTable tbody tr:first-child th").length;
+                                    for (var m = 0; m < count; m++) {
+                                        html += '<tr>';
+                                        for (var n = 0; n < columns; n++) {
+                                            html += "<td>&nbsp</td>";
+                                        }
+                                        html += "</tr>";
+                                    }
+                                    $("#appendTSTable tbody").append(html);
+                                }
+                            } else {
+                                var q = 0;
+                                var cur = 1;
+                                var total = Math.ceil(count / 10);
+                                $("#appendPage").css("display", 'block');
+                                for (var i in use) {
+                                    html += '<tr>';
+                                    for (var j in use[i]) {
+                                        html += '<td>' + use[i][j] + '</td>';
+                                    }
+                                    html += '<td><span class="ts">提升完成</span></td>';
+                                    html += '</tr>'
+                                    q += 1;
+                                    if (q > 9) {
+                                        break
+                                    }
+                                }
+                                $("#appendTSTable").empty().append(html);
+                                boundAppendEvent(data);
+                                $("#appendPage .cur").text(cur);
+                                $("#appendPage .total").text(total);
+                                $("#appendPage .next").off('click').on('click', function () {
+                                    if (cur < total) {
+                                        var j = 0;
+                                        var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th><th>操作</th></tr>';
+                                        for (var i in use) {
+                                            if (j > 10 * cur - 1 && j < 10 * (cur + 1) && i) {
+                                                j++;
+                                                html += '<tr>';
+                                                for (var m in use[i]) {
+                                                    html += '<td>' + use[i][m] + '</td>';
+                                                }
+                                                html += '<td><span class="ts">提升完成</span></td>';
+                                                html += '</tr>'
+                                            } else {
+                                                j++;
+                                            }
+                                        }
+                                        $("#appendTSTable").empty().append(html);
+                                        boundAppendEvent(data);
+                                        //空白tr补齐表格
+                                        if ($("#appendTSTable tbody tr").length < 11) {
+                                            html = '';
+                                            var count = 11 - $("#appendTSTable tbody tr").length;
+                                            var columns = $("#appendTSTable tbody tr:first-child th").length;
+                                            for (var m = 0; m < count; m++) {
+                                                html += '<tr>';
+                                                for (var n = 0; n < columns; n++) {
+                                                    html += "<td>&nbsp</td>";
+                                                }
+                                                html += "</tr>";
+                                            }
+                                            $("#appendTSTable tbody").append(html);
+                                        }
+                                        cur += 1;
+                                        $("#appendPage .cur").text(cur);
+                                    }
+
+                                })
+                                $("#appendPage .prev").off('click').on('click', function () {
+                                    if (cur > 1) {
+                                        var j = 0;
+                                        var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th><th>操作</th></tr>';
+                                        for (var i in use) {
+                                            if (j > 10 * (cur - 2) - 1 && j < 10 * (cur - 1) && i) {
+                                                j++;
+                                                html += '<tr>';
+                                                for (var m in use[i]) {
+                                                    html += '<td>' + use[i][m] + '</td>';
+                                                }
+                                                html += '<td><span class="ts">提升完成</span></td>';
+                                                html += '</tr>'
+                                            } else {
+                                                j++;
+                                            }
+                                        }
+                                        $("#appendTSTable").empty().append(html);
+                                        boundAppendEvent(data);
+                                        cur -= 1;
+                                        $("#appendPage .cur").text(cur);
+                                    }
+                                })
+                            }
+                        }
+                        else {
+                            $("#appendContent").empty().text('暂无待办信息');
+                        }
+                    }
+                })
             });
             function boundAppendEvent(data){
                 //data是原始数据
@@ -2957,69 +3115,285 @@ $(document).ready(function() {
                                 j++;
                             }
                         }
-                        $('.queryInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)
-                        if($('.appendInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
-                            if(checkIfInArray($('.appendInfo .sjDriveCodeInput').val(),arr)){
-                                if($('.appendInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
-                                    if($('.appendInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
-                                        if(confirm('请确认信息无误，确定后将把该驾驶证插入数据库')){
-                                            $('.appendInfo input').css('backgroundColor','white');
-                                            var sjDriveType = csData['zjlx-'+$('.appendInfo .sjDriveCodeInput').val()]['nr1']
-                                            var i = index;
-                                            var ajaxTimeOut = $.ajax({
-                                                url: "../../../index.php",
-                                                type: "POST",
-                                                timeout: 8000,
-                                                data: {
-                                                    funcName: 'insert',
-                                                    serverName: '10.101.62.73',
-                                                    uid: 'sa',
-                                                    pwd: '2huj15h1',
-                                                    Database: 'jszgl',
-                                                    tableName: ' jbxx',
-                                                    column: ' (PayId,ArchivesId,UName,BirthDate,Txrq,Department,sjDate,' +
-                                                    'sjDriveCode,sjDriveType,status,deadline,startDate,sex,cardId,tzDone)',
-                                                    values: '(\''+data[i]['payId']+'\',\'' + data[i]['archivesId'] + '\',\'' + data[i]['UName'] + '\',\'' + data[i]['birthDate'] + '\',\'' + data[i]['txrq'] + '\',\'' + data[i]['department'] + '\',\'' + $('.appendInfo .sjDateInput').val() + '\',\'' + $('.appendInfo .sjDriveCodeInput').val() + '\',\''
-                                                    + sjDriveType + '\',\'' + csData['zjzt-zc']['nr2'] + '\',\'' + $('.appendInfo .deadlineInput').val() + '\',\'' + $('.appendInfo .startDateInput').val() + '\',\'' + data[i]['sex'] + '\',\'' + data[i]['cardId'] + '\',\''+csData['tzDone-swtz']['nr2']+'\')'
-                                                },
-                                                dataType: 'json',
-                                                success: function () {
-                                                    console.log(1)
-                                                },
-                                                beforeSend: function () {
-                                                    //在where字段后加入用户选择的车间范围
-                                                    testSession(userSessionInfo);
-                                                    loadingPicOpen();
-                                                },
-                                                complete: function (XMLHttpRequest, status) {
-                                                    loadingPicClose();
-                                                    if (status === 'timeout') {
-                                                        ajaxTimeOut.abort();    // 超时后中断请求
-                                                        alert('网络超时，请检查网络连接');
+                        $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            timeout: 8000,
+                            data: {
+                                funcName: 'checkIfExist',
+                                serverName: '10.101.62.73',
+                                uid: 'sa',
+                                pwd: '2huj15h1',
+                                Database: 'JSZGL',
+                                tableName: 'JBxx',
+                                column: ' *',
+                                where: ' where archivesId = \'' + $('.appendInfo .archivesId').text() + '\'',
+                                order: ' '
+                            },
+                            dataType: 'json',
+                            success:function(ret){
+                                if(ret['success'] === 1){
+                                    alert('档案号重复，请不要重复操作')
+                                }else{
+                                    if($('.appendInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                                        if(checkIfInArray($('.appendInfo .sjDriveCodeInput').val(),arr)){
+                                            if($('.appendInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                                                if($('.appendInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                                                    if(confirm('请确认信息无误，确定后将把该驾驶证插入数据库')){
+                                                        $('.appendInfo input').css('backgroundColor','white');
+                                                        var sjDriveType = csData['zjlx-'+$('.appendInfo .sjDriveCodeInput').val()]['nr1']
+                                                        var i = index;
+                                                        var ajaxTimeOut = $.ajax({
+                                                            url: "../../../index.php",
+                                                            type: "POST",
+                                                            timeout: 8000,
+                                                            data: {
+                                                                funcName: 'insert',
+                                                                serverName: '10.101.62.73',
+                                                                uid: 'sa',
+                                                                pwd: '2huj15h1',
+                                                                Database: 'jszgl',
+                                                                tableName: ' jbxx',
+                                                                column: ' (PayId,ArchivesId,UName,BirthDate,Txrq,Department,sjDate,' +
+                                                                'sjDriveCode,sjDriveType,status,deadline,startDate,sex,cardId,tzDone)',
+                                                                values: '(\''+data[i]['payId']+'\',\'' + data[i]['archivesId'] + '\',\'' + data[i]['UName'] + '\',\'' + data[i]['birthDate'] + '\',\'' + data[i]['txrq'] + '\',\'' + data[i]['department'] + '\',\'' + $('.appendInfo .sjDateInput').val() + '\',\'' + $('.appendInfo .sjDriveCodeInput').val() + '\',\''
+                                                                + sjDriveType + '\',\'' + csData['zjzt-zc']['nr2'] + '\',\'' + $('.appendInfo .deadlineInput').val() + '\',\'' + $('.appendInfo .startDateInput').val() + '\',\'' + data[i]['sex'] + '\',\'' + data[i]['cardId'] + '\',\''+csData['tzDone-swtz']['nr2']+'\')'
+                                                            },
+                                                            dataType: 'json',
+                                                            success: function () {
+                                                                alert('添加信息成功');
+                                                                var date = new Date();
+                                                                var year = date.getFullYear()
+                                                                $.ajax({
+                                                                    url: "../../../index.php",
+                                                                    type: "POST",
+                                                                    timeout: 8000,
+                                                                    data: {
+                                                                        funcName: 'update',
+                                                                        serverName: '10.101.62.73',
+                                                                        uid: 'sa',
+                                                                        pwd: '2huj15h1',
+                                                                        Database: 'jszgl',
+                                                                        tableName: ' tjxx',
+                                                                        setStr: ' dr = dr +1 , IncreaseAmount = IncreaseAmount +1,yearlyAmount = yearlyAmount +1',
+                                                                        where: ' where driveCode =\''+$('.appendInfo .sjDriveCodeInput').val()+'\' AND year =\''+year+'\''
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success:function(data){
+
+                                                                    }
+                                                                })
+                                                                $('#appendInfoContent').dequeue().animate({
+                                                                    'opacity':0
+                                                                },500,function(){
+                                                                    $('#appendInfoContent').css(
+                                                                        'visibility','hidden')
+                                                                })
+                                                            },
+                                                            beforeSend: function () {
+                                                                //在where字段后加入用户选择的车间范围
+                                                                testSession(userSessionInfo);
+                                                                loadingPicOpen();
+                                                            },
+                                                            complete: function (XMLHttpRequest, status) {
+                                                                loadingPicClose();
+                                                                if (status === 'timeout') {
+                                                                    ajaxTimeOut.abort();    // 超时后中断请求
+                                                                    alert('网络超时，请检查网络连接');
+                                                                }
+                                                            }
+                                                        })
                                                     }
+                                                }else{
+                                                    alert('有效截止日期格式不正确，应为"xxxx-xx-xx"');
+                                                    $('.appendInfo input').css('backgroundColor','white')
+                                                    $('.appendInfo .deadlineInput').css('backgroundColor','#ffcccc').focus()
                                                 }
-                                            })
+                                            }else{
+                                                alert('有效起始日期格式不正确，应为"xxxx-xx-xx"');
+                                                $('.appendInfo input').css('backgroundColor','white')
+                                                $('.appendInfo .startDateInput').css('backgroundColor','#ffcccc').focus()
+                                            }
+                                        }else{
+                                            alert('准驾类型代码输入不正确');
+                                            $('.appendInfo input').css('backgroundColor','white')
+                                            $('.appendInfo .sjDriveCodeInput').css('backgroundColor','#ffcccc').focus()
                                         }
                                     }else{
-                                        alert('有效截止日期格式不正确，应为"xxxx-xx-xx"');
+                                        alert('初次领证日期格式不正确，应为"xxxx-xx-xx"')
                                         $('.appendInfo input').css('backgroundColor','white')
-                                        $('.appendInfo .deadlineInput').css('backgroundColor','#ffcccc').focus()
+                                        $('.appendInfo .sjDateInput').css('backgroundColor','#ffcccc').focus()
                                     }
-                                }else{
-                                    alert('有效起始日期格式不正确，应为"xxxx-xx-xx"');
-                                    $('.appendInfo input').css('backgroundColor','white')
-                                    $('.appendInfo .startDateInput').css('backgroundColor','#ffcccc').focus()
                                 }
-                            }else{
-                                alert('准驾类型代码输入不正确');
-                                $('.appendInfo input').css('backgroundColor','white')
-                                $('.appendInfo .sjDriveCodeInput').css('backgroundColor','#ffcccc').focus()
                             }
-                        }else{
-                            alert('初次领证日期格式不正确，应为"xxxx-xx-xx"')
-                            $('.appendInfo input').css('backgroundColor','white')
-                            $('.appendInfo .sjDateInput').css('backgroundColor','#ffcccc').focus()
+                        })
+
+                    })
+                    $('.appendInfo .exit').off('click').on('click',function(){
+                        $('#appendInfoContent').dequeue().animate({
+                            'opacity':0
+                        },500,function(){
+                            $('#appendInfoContent').css(
+                                'visibility','hidden')
+                        })
+                    })
+                    $(document).keyup(function(event){
+                        switch(event.keyCode) {
+                            case 27:
+                                $("#appendInfoContent").dequeue().animate({'opacity':0},500,function(){
+                                    $("#appendInfoContent").css('visibility','hidden')
+                                });
+                            case 96:
+                                $("#appendInfoContent").dequeue().animate({'opacity':0},500,function(){
+                                    $("#appendInfoContent").css('visibility','hidden')
+                                });
                         }
+                    });
+                    $('#appendInfoContent').css(
+                        'visibility','visible').dequeue().animate({
+                        'opacity':0.9
+                    },500)
+                })
+                $('#appendTSTable .ts').off('click').on('click',function(){
+                    var index = ''
+                    for(var i in data){
+                        if(data[i]['archivesId'] === $(this).parent().prev().prev().prev().prev().prev().text()){
+                            index = i;
+                            $('.appendInfo .payId').text(data[i]['payId'])
+                            $('.appendInfo .archivesId').text(data[i]['archivesId'])
+                            $('.appendInfo .name').text(data[i]['UName'])
+                            $('.appendInfo .sex').text(data[i]['sex'])
+                            $('.appendInfo .department').text(data[i]['department'])
+                            $('.appendInfo .cardId').text(data[i]['cardId'])
+                            $('.appendInfo .birthDate').text(data[i]['birthDate'])
+                            $('.appendInfo .txrq').text(data[i]['txrq'])
+                            $('.appendInfo .payId').text(data[i]['payId'])
+                            $('.appendInfo input').val('').css('backgroundColor','white')
+                        }
+
+                    }
+                    $('.appendInfo .submit').off('click').on('click',function(){
+                        var arr = [];
+                        var j =0;
+                        for(var i in csData){
+                            if(csData[i]['lb'] === 'zjlx'){
+                                arr[j] = csData[i]['name'];
+                                j++;
+                            }
+                        }
+                        $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            timeout: 8000,
+                            data: {
+                                funcName: 'checkIfExist',
+                                serverName: '10.101.62.73',
+                                uid: 'sa',
+                                pwd: '2huj15h1',
+                                Database: 'JSZGL',
+                                tableName: 'JBxx',
+                                column: ' *',
+                                where: ' where archivesId = \'' + $('.appendInfo .archivesId').text() + '\'',
+                                order: ' '
+                            },
+                            dataType: 'json',
+                            success:function(ret){
+                                if(ret['success'] === 1){
+                                    alert('档案号重复，请不要重复操作');
+                                }else{
+                                    if($('.appendInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                                        if(checkIfInArray($('.appendInfo .sjDriveCodeInput').val(),arr)){
+                                            if($('.appendInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                                                if($('.appendInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                                                    if(confirm('请确认信息无误，确定后将把该驾驶证插入数据库')){
+                                                        $('.appendInfo input').css('backgroundColor','white');
+                                                        var sjDriveType = csData['zjlx-'+$('.appendInfo .sjDriveCodeInput').val()]['nr1']
+                                                        var i = index;
+                                                        var ajaxTimeOut = $.ajax({
+                                                            url: "../../../index.php",
+                                                            type: "POST",
+                                                            timeout: 8000,
+                                                            data: {
+                                                                funcName: 'insert',
+                                                                serverName: '10.101.62.73',
+                                                                uid: 'sa',
+                                                                pwd: '2huj15h1',
+                                                                Database: 'jszgl',
+                                                                tableName: ' jbxx',
+                                                                column: ' (PayId,ArchivesId,UName,BirthDate,Txrq,Department,sjDate,' +
+                                                                'sjDriveCode,sjDriveType,status,deadline,startDate,sex,cardId,tzDone)',
+                                                                values: '(\''+data[i]['payId']+'\',\'' + data[i]['archivesId'] + '\',\'' + data[i]['UName'] + '\',\'' + data[i]['birthDate'] + '\',\'' + data[i]['txrq'] + '\',\'' + data[i]['department'] + '\',\'' + $('.appendInfo .sjDateInput').val() + '\',\'' + $('.appendInfo .sjDriveCodeInput').val() + '\',\''
+                                                                + sjDriveType + '\',\'' + csData['zjzt-zc']['nr2'] + '\',\'' + $('.appendInfo .deadlineInput').val() + '\',\'' + $('.appendInfo .startDateInput').val() + '\',\'' + data[i]['sex'] + '\',\'' + data[i]['cardId'] + '\',\''+csData['tzDone-swtz']['nr2']+'\')'
+                                                            },
+                                                            dataType: 'json',
+                                                            success: function () {
+                                                                alert('添加信息成功');
+                                                                var date = new Date();
+                                                                var year = date.getFullYear()
+                                                                $.ajax({
+                                                                    url: "../../../index.php",
+                                                                    type: "POST",
+                                                                    timeout: 8000,
+                                                                    data: {
+                                                                        funcName: 'update',
+                                                                        serverName: '10.101.62.73',
+                                                                        uid: 'sa',
+                                                                        pwd: '2huj15h1',
+                                                                        Database: 'jszgl',
+                                                                        tableName: ' tjxx',
+                                                                        setStr: ' kshg = kshg +1 , IncreaseAmount = IncreaseAmount +1,yearlyAmount = yearlyAmount +1',
+                                                                        where: ' where driveCode =\''+$('.appendInfo .sjDriveCodeInput').val()+'\' AND year =\''+year+'\''
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success:function(data){
+
+                                                                    }
+                                                                })
+                                                                $('#appendInfoContent').dequeue().animate({
+                                                                    'opacity':0
+                                                                },500,function(){
+                                                                    $('#appendInfoContent').css(
+                                                                        'visibility','hidden')
+                                                                })
+                                                            },
+                                                            beforeSend: function () {
+                                                                //在where字段后加入用户选择的车间范围
+                                                                testSession(userSessionInfo);
+                                                                loadingPicOpen();
+                                                            },
+                                                            complete: function (XMLHttpRequest, status) {
+                                                                loadingPicClose();
+                                                                if (status === 'timeout') {
+                                                                    ajaxTimeOut.abort();    // 超时后中断请求
+                                                                    alert('网络超时，请检查网络连接');
+                                                                }
+                                                            }
+                                                        })
+                                                    }
+                                                }else{
+                                                    alert('有效截止日期格式不正确，应为"xxxx-xx-xx"');
+                                                    $('.appendInfo input').css('backgroundColor','white')
+                                                    $('.appendInfo .deadlineInput').css('backgroundColor','#ffcccc').focus()
+                                                }
+                                            }else{
+                                                alert('有效起始日期格式不正确，应为"xxxx-xx-xx"');
+                                                $('.appendInfo input').css('backgroundColor','white')
+                                                $('.appendInfo .startDateInput').css('backgroundColor','#ffcccc').focus()
+                                            }
+                                        }else{
+                                            alert('准驾类型代码输入不正确');
+                                            $('.appendInfo input').css('backgroundColor','white')
+                                            $('.appendInfo .sjDriveCodeInput').css('backgroundColor','#ffcccc').focus()
+                                        }
+                                    }else{
+                                        alert('初次领证日期格式不正确，应为"xxxx-xx-xx"')
+                                        $('.appendInfo input').css('backgroundColor','white')
+                                        $('.appendInfo .sjDateInput').css('backgroundColor','#ffcccc').focus()
+                                    }
+                                }
+                            }
+                        })
+
                     })
                     $('.appendInfo .exit').off('click').on('click',function(){
                         $('#appendInfoContent').dequeue().animate({

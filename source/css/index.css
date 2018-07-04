@@ -927,7 +927,7 @@ a,a:hover,a:active,a:visited{
     cursor: pointer;
     width: 80px;
 }
-#appendContainer .appendContent{
+#appendContainer .appendContent,.levelUpContent{
     background-color: white;
     margin-top: 40px;
     overflow: hidden;
@@ -983,25 +983,25 @@ a,a:hover,a:active,a:visited{
 #appendContainer #appendPage{
     display: none;
 }
-#appendContainer .appendContent #appendDRTable{
+#appendContainer  .table{
     margin-left: 40px;
 }
-#appendContainer .appendContent #appendDRTable th ,#appendContainer .appendContent #appendDRTable td {
+#appendContainer  .table th ,#appendContainer  .table td {
     border: 1px solid #333;
     border-right: none;
     padding: 3px 8px;
     font-size: 14px;
 }
-#appendContainer .appendContent #appendDRTable th:last-child ,#appendContainer .appendContent #appendDRTable td:last-child{
+#appendContainer  .table th:last-child ,#appendContainer  .table td:last-child{
     border-right: 1px solid #333;
 }
-#appendContainer .appendContent #appendDRTable .dr{
+#appendContainer  .table .dr,#appendContainer  .table .ts{
     text-decoration: underline;
     color: cornflowerblue;
     cursor: pointer;
     font-size: 12px;
 }
-#appendContainer .appendContent #appendDRTable .tz{
+#appendContainer  .table .tz{
     text-decoration: underline;
     color: cornflowerblue;
     cursor: pointer;
