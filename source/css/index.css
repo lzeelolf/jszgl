@@ -365,6 +365,8 @@ a,a:hover,a:active,a:visited{
     width:52%;
 }
 #bigContent #rightContent .operateContent #informationContainer #cardInfoContent p{
+    height: 30px;
+    line-height: 30px;
     padding: 0;
     float: left;
     width: 70px;
@@ -372,6 +374,8 @@ a,a:hover,a:active,a:visited{
     margin-top: 20px;
 }
 #bigContent #rightContent .operateContent #informationContainer #cardInfoContent div{
+    height: 30px;
+    line-height: 30px;
     padding: 0;
     font-size: 14px;
     float: left;
@@ -976,8 +980,10 @@ a,a:hover,a:active,a:visited{
 #appendInfoContent .appendInfo>div>div>input{
     border: none;
     width: 90px;
-    height: 40px;
-    line-height: 40px;
+    margin-top: 5px;
+    text-indent: 0.4em;
+    height: 30px;
+    line-height: 30px;
     font-size: 14px;
 }
 #appendContainer #appendPage{
