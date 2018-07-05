@@ -227,6 +227,7 @@ $(document).ready(function() {
                     dataType:'json',
                     success:function(data) {
                         if(data['success'] ===1){
+                            $('.infoFix').text('信息更正').css({'color':'#555','fontWeight':'normal'})
                             $('.queryInfo>div>div').css('backgroundColor','inherit')
                             $('#editContainer .queryInfoContent').css('display','block')
                             console.log(data['row1'])
@@ -237,11 +238,12 @@ $(document).ready(function() {
                             $('.queryInfoContent .queryInfo .birth').text(data['row1']['birthDate']);
                             $('.queryInfoContent .queryInfo .sjDateInput').val(data['row1']['sjDate']);
                             $('.queryInfoContent .queryInfo .sjRemarkInput').val(data['row1']['sjRemark']);
-                            $('.queryInfoContent .queryInfo .yearlyCheckInput').val(data['row1']['yearlyCheckDate']);
+                            $('.queryInfoContent .queryInfo .yearlyCheckDateInput').val(data['row1']['yearlyCheckDate']);
                             $('.queryInfoContent .queryInfo .driveCodeInput').val(data['row1']['sjDriveCode']);
                             $('.queryInfoContent .queryInfo .driveTypeInput').val(data['row1']['sjDriveType']);
                             $('.queryInfoContent .queryInfo .startDateInput').val(data['row1']['startdate']);
                             $('.queryInfoContent .queryInfo .deadlineInput').val(data['row1']['deadline']);
+                            $('.queryInfoContent .queryInfo .phyTest').text(data['row1']['phyTest']);
                             $(".queryInfoContent .queryInfo input").prop('disabled',true)
                             $(".editButtonBanner").css('display','block')
                             boundEditEvent(data['row1'])
@@ -411,7 +413,7 @@ $(document).ready(function() {
             }else if($(this).text() === '确认更改'){
                 checkIfInArray($(".queryInfo .driveCodeInput").val(),arr)
                 //提交
-                if($(".queryInfo .payIdInput").val().match(/^[0-9]{5}$/) && $('.queryInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .yearlyCheckInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && flag){
+                if($(".queryInfo .payIdInput").val().match(/^[0-9]{5}$/) && $('.queryInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .yearlyCheckDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && flag){
                     if(confirm('确认要进行更改吗？')){
                         var setStr ='payid =\''+$(".queryInfo .payIdInput").val()+'\',sjDate =\''+$(".queryInfo .sjDateInput").val()+'\',yearlyCheckDate =\''+$(".queryInfo .yearlyCheckInput").val()+'\',sjDriveCode =\''+$(".queryInfo .driveCodeInput").val()+'\',sjDriveType =\''+$(".queryInfo .driveTypeInput").val()+'\',startDate =\''+$(".queryInfo .startDateInput").val()+'\',deadline = \''+$(".queryInfo .deadlineInput").val()+'\',sjRemark =\''+$(".queryInfo .sjRemarkInput").val()+'\'';
                         var where = ' where payid =\''+payId+'\'';
@@ -442,6 +444,9 @@ $(document).ready(function() {
                                 }
                             }
                         })
+                    }
+                    else{
+                        displayEdit()
                     }
                 }else{
                     alert('请检查输入格式！(工资号为5位数字，日期格式为"xxxx-xx-xx")')
@@ -542,6 +547,44 @@ $(document).ready(function() {
                 }
 
             })
+        })
+        $('.phyTestOk').off('click').on('click',function(){
+            if(confirm(data['UName']+'师傅的体检结论合格，确定？')){
+                $.ajax({
+                    url: "../../../index.php",
+                    type: "POST",
+                    timeout: 8000,
+                    data: {
+                        funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                        tableName: ' jbxx', setStr: 'phyTest = \''+csData['tjjl-hg']['nr2']+'\'', where: ' where payId = \''+data['payId']+'\''
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data['success'] === 1){
+                            $('#editContainer .queryInfoContent .phyTest').text(csData['tjjl-hg']['nr2'])
+                        }
+                    }
+                })
+            }
+        })
+        $('.phyTestNo').off('click').on('click',function(){
+            if(confirm(data['UName']+'师傅的体检结论不合格，确定？')){
+                $.ajax({
+                    url: "../../../index.php",
+                    type: "POST",
+                    timeout: 8000,
+                    data: {
+                        funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                        tableName: ' jbxx', setStr: 'phyTest = \''+csData['tjjl-bhg']['nr2']+'\'', where: ' where payId = \''+data['payId']+'\''
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data['success'] === 1){
+                            $('#editContainer .queryInfoContent .phyTest').text(csData['tjjl-bhg']['nr2'])
+                        }
+                    }
+                })
+            }
         })
     }
     //检查arr数组中是否含有值为字符串str的元素，
@@ -1132,7 +1175,7 @@ $(document).ready(function() {
                 type: "POST",
                 data: {
                     funcName: 'select', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'JSZGL',
-                    tableName: ' jbxx ', column: ' department,payId,UName,deadline,tzDone', where: ' where department like \''+department+'%\' AND DATEDIFF(day,getdate(),deadline) < '+csData['yjsj-cjyjsj']['nr2']+' AND deadline !=\'\'', order: ' '
+                    tableName: ' jbxx ', column: ' department,payId,UName,deadline,tzDone', where: ' where department like \''+department+'%\' AND DATEDIFF(day,getdate(),deadline) < '+csData['yjsj-cjyjsj']['nr2']+' AND deadline !=\'\'', order: ' order by DATEDIFF(day,getdate(),deadline)'
                 },
                 dataType: 'json',
                 success: function (data) {
@@ -1354,7 +1397,7 @@ $(document).ready(function() {
                 type: "POST",
                 data: {
                     funcName: 'select', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'JSZGL',
-                    tableName: ' jbxx ', column: ' department,payId,UName,deadline,tzDone', where: ' where DATEDIFF(day,getdate(),deadline) < '+csData['yjsj-cjyjsj']['nr2']+' AND deadline !=\'\'', order: ' order by department'
+                    tableName: ' jbxx ', column: ' department,payId,UName,deadline,tzDone', where: ' where DATEDIFF(day,getdate(),deadline) < '+csData['yjsj-cjyjsj']['nr2']+' AND deadline !=\'\'', order: ' order by DATEDIFF(day,getdate(),deadline)'
                 },
                 dataType: 'json',
                 success: function (data) {
@@ -4760,9 +4803,12 @@ $(document).ready(function() {
                     dataType:'json',
                     success:function(data) {
                         if(data['success'] ===1){
+                            $('.yearlyCheck').text('年鉴').css({
+                                'color':'#555',
+                                'fontWeight':'normal'
+                            })
                             $('.queryInfo>div>div').css('backgroundColor','inherit')
                             $('#yearlyContainer .queryInfoContent').css('display','block')
-                            console.log(data['row1'])
                             $('#yearlyContainer .queryInfoContent .queryPicInfo img').prop('src',data['row1']['cardPath']);
                             $('#yearlyContainer .queryInfoContent .queryInfo .payId').text(data['row1']['payId']);
                             $('#yearlyContainer .queryInfoContent .queryInfo .name').text(data['row1']['UName']);
@@ -4770,9 +4816,11 @@ $(document).ready(function() {
                             $('#yearlyContainer .queryInfoContent .queryInfo .yearlyCheckDateInput').val(data['row1']['yearlyCheckDate']);
                             $('#yearlyContainer .queryInfoContent .queryInfo .startDate').text(data['row1']['startDate']);
                             $('#yearlyContainer .queryInfoContent .queryInfo .deadline').text(data['row1']['deadline']);
-                            $("#yearlyContainer .queryInfoContent .queryInfo input").prop('disabled',true)
+                            $('#yearlyContainer .queryInfoContent .queryInfo .phyTest').text(data['row1']['phyTest']);
+                            $('#yearlyContainer .queryInfoContent .queryInfo .yearlyCheckDateInput').val(data['row1']['yearlyCheckDate']);
+                            $("#yearlyContainer .queryInfoContent .queryInfo input").prop('disabled',true).css('backgroundColor','inherit')
                             $(".yearlyButtonBanner").css('display','block')
-                            boundEditEvent(data['row1'])
+                            boundYearEvent(data['row1'])
                         }else{
                             alert('您查询的信息不存在')
                         }
@@ -4792,11 +4840,97 @@ $(document).ready(function() {
                 })
             }else{
                 alert('请输入正确的工资号')
-                $("#editBanner .queryInput").focus().css('backgroundColor','#ffcccc');
+                $(".yearlyBanner .queryInput").focus().css('backgroundColor','#ffcccc');
             }
         }
     }
 
+    function boundYearEvent(data){
+        $('.yearlyButtonBanner .phyTestOk').off('click').on('click',function(){
+            if(confirm(data['UName']+'师傅的体检结论合格，确定？')){
+                $.ajax({
+                    url: "../../../index.php",
+                    type: "POST",
+                    timeout: 8000,
+                    data: {
+                        funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                        tableName: ' jbxx', setStr: 'phyTest = \''+csData['tjjl-hg']['nr2']+'\'', where: ' where payId = \''+data['payId']+'\''
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data['success'] === 1){
+                            $('#yearlyContainer .queryInfoContent .phyTest').text(csData['tjjl-hg']['nr2'])
+                        }
+                    }
+                })
+            }
+        })
+        $('.yearlyButtonBanner .phyTestNo').off('click').on('click',function(){
+            if(confirm(data['UName']+'师傅的体检结论不合格，确定？')){
+                $.ajax({
+                    url: "../../../index.php",
+                    type: "POST",
+                    timeout: 8000,
+                    data: {
+                        funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                        tableName: ' jbxx', setStr: 'phyTest = \''+csData['tjjl-bhg']['nr2']+'\'', where: ' where payId = \''+data['payId']+'\''
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data['success'] === 1){
+                            $('#yearlyContainer .queryInfoContent .phyTest').text(csData['tjjl-bhg']['nr2'])
+                        }
+                    }
+                })
+            }
+        })
+        $('.yearlyButtonBanner .yearlyCheck').off('click').on('click',function(){
+            if($(this).text() === '年鉴'){
+                $(this).text('确定').css({
+                    'color':'green',
+                    'fontWeight':'bold'
+                })
+                var lotNumber = new Date();
+                lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
+                lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
+                lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
+                $('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').prop('disabled',false).val(lotNumber).css('backgroundColor','white')
+            }else if(confirm(data['UName']+'师傅的最近一次年鉴时间为'+$('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').val()+'，确定？')){
+                if($('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
+                    var setDate = $('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').val();
+                    $.ajax({
+                        url: "../../../index.php",
+                        type: "POST",
+                        timeout: 8000,
+                        data: {
+                            funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                            tableName: ' jbxx', setStr: 'yearlyCheckDate = \''+setDate+'\'', where: ' where payId = \''+data['payId']+'\''
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if(data['success'] === 1){
+                                $('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').val(setDate).prop('disabled',true).css('backgroundColor','inherit')
+                                $('.yearlyButtonBanner .yearlyCheck').text('年鉴').css({
+                                    'color':'#555',
+                                    'fontWeight':'normal'
+                                })
+                                alert('年鉴成功')
+                            }
+                        }
+                    })
+                }else{
+                    alert('日期格式不正确');
+                    $('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').focus().css('backgroundColor','#ffcccc')
+                }
+            }else{
+                $('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').val(data['yearlyCheckDate']).prop('disabled',true).css('backgroundColor','inherit')
+                $('.yearlyButtonBanner .yearlyCheck').text('年鉴').css({
+                    'color':'#555',
+                    'fontWeight':'normal'
+                })
+            }
+        })
+    }
 
 
     //从全员信息库中取申请表要用的信息

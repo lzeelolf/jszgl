@@ -798,13 +798,13 @@ a,a:hover,a:active,a:visited{
     margin-top: 50px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryPicInfo,#yearlyContainer .queryInfoContent .queryPicInfo{
-    width: 30%;
-    height: 200px;
+    width: 40%;
+    height: 250px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo,#yearlyContainer .queryInfo{
-    width: 65%;
+    width: 55%;
     padding-left: 5%;
-    height: 200px;
+    height: 250px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo .date,#yearlyContainer .queryInfo .date{
     width: 100px;
@@ -819,10 +819,11 @@ a,a:hover,a:active,a:visited{
     height: 29px;
     line-height: 30px;
     margin-right: 10px;
+    font-size: 14px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>div,#yearlyContainer .queryInfo>div>div{
     border-bottom: 1px solid #333;
-    padding: 0 10px;
+    padding: 0;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo input,#yearlyContainer .queryInfo input{
     border:none;
@@ -832,9 +833,10 @@ a,a:hover,a:active,a:visited{
     text-align: center;
     user-select: initial;
     -webkit-user-select: unset;
+    font-size: 14px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo .payId,#yearlyContainer .queryInfo .payId{
-    width: 100px;
+    width: 70px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo .driveCodeInput{
     width: 40px;
@@ -844,7 +846,7 @@ a,a:hover,a:active,a:visited{
     height: 40px;
     margin-top: 50px;
 }
-#bigContent #rightContent #editContainer .editButtonBanner .rydc,.cjEdit,.infoFix,.logout{
+#bigContent #rightContent #editContainer .editButtonBanner .rydc,.cjEdit,.infoFix,.logout,.phyTestOk,.phyTestNo,.yearlyCheck{
     width: 90px;
     height: 40px;
     line-height: 40px;
