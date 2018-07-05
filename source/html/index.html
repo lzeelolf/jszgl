@@ -174,7 +174,7 @@
                     <span class="next">下一页</span>
                 </div>
             </div>
-            <div class="jykUse" id="queryCardContainer">
+            <div class="jykUse cjUse" id="queryCardContainer">
                 <div id="queryCardBanner">
                     <button id="queryCardButton">查询</button><button class="htmlToXls">生成Excel文件</button>
                 </div>
@@ -234,7 +234,7 @@
                     <span>页</span>
                 </div>
             </div>
-            <div class="jykUse" id="dataContainer">
+            <div class="jykUse cjUse" id="dataContainer">
                 <div id="dataBanner"></div>
                 <div id="dataContent">
                     <table id="dataTable" cellpadding="0" cellspacing="0"></table>
@@ -250,7 +250,7 @@
                     <span class="next">下一页</span>
                 </div>
             </div>
-            <div class="jykUse" id="checkContainer">
+            <div class="jykUse cjUse" id="checkContainer">
 
                 <div id="checkBanner">
                     <div class="float" id="exchangeApplyCheck">换证申请</div>
@@ -293,7 +293,7 @@
                     </div>
                 </div>
             </div>
-            <div class="jykUse" id="alertContainer">
+            <div class="jykUse cjUse" id="alertContainer">
                 <div id="alertBanner">
                     <p class="p1">以下为</p>
                     <div class="selectArea"></div>
@@ -317,7 +317,37 @@
                         </div>
                 </div>
             </div>
-            <div class="jykUse" id="giveOutContainer">
+            <div class="cjUse" id="yearlyContainer">
+                <div class="yearlyBanner">
+                    <p class="tip float">请输入乘务员工资号：</p>
+                    <input type="text" class="float queryInput">
+                    <button class="queryButton float">查询</button>
+                </div>
+                <div class="queryInfoContent">
+                    <div class="float queryPicInfo"><img src="" alt="" style="width: 100%;height: 200px"></div>
+                    <div class="float queryInfo">
+                        <div>
+                            <p>工资号</p><div class="payId"></div>
+                            <p>姓名</p><div class="name"></div>
+                            <p>部门</p><div class="department"></div>
+                        </div>
+                        <div>
+                            <p>有效起始</p><div class="startDate"></div>
+                            <p>有效截止</p><div class="deadline"></div>
+                        </div>
+                        <div>
+                            <p>体检结论</p><div class="phyTest"></div>
+                            <p>年鉴时间</p><div class="yearlyCheckDate"><input type="text" class="yearlyCheckDateInput date"></div>
+                        </div>
+                    </div>
+                    <div class="yearlyButtonBanner">
+                        <button class="phyTestOk">体检合格</button>
+                        <button class="phyTestNo">体检不合格</button>
+                        <button class="yearlyCheck">年鉴</button>
+                    </div>
+                </div>
+            </div>
+            <div class="jykUse cjUse" id="giveOutContainer">
                 <div id="giveOutBanner"></div>
                 <div id="giveOutContent">
                     <table id="giveOutTable" cellpadding="0" cellspacing="0"></table>
@@ -335,7 +365,7 @@
             </div>
             <div class="jykUse" id="editContainer">
                 <div id="editBanner">
-                    <p class="tip float">请首先输入您要调整信息的乘务员的工资号：</p>
+                    <p class="tip float">请输入您要编辑信息的乘务员的工资号：</p>
                     <input type="text" class="float queryInput">
                     <button class="queryButton float">查询</button>
                 </div>
@@ -404,7 +434,7 @@
                     <span class="next">下一页</span>
                 </div>
             </div>
-            <div id="informationContainer">
+            <div class="sjUse" id="informationContainer">
                 <div id="cardPicContent">
                     <img src="" alt="" style="width: 100%;height: 200px">
                 </div>
@@ -416,7 +446,7 @@
                     <p>初次领证日期</p><div class="sjDate">xxxx-xx-xx</div><p>年鉴时间</p><div class="yearlyCheckDate">xxxx-xx-xx</div>
                 </div>
             </div>
-            <div id="applyContainer">
+            <div class="sjUse" id="applyContainer">
                 <button id="fixButton">驾驶证不慎遗失，申请补证</button>
                 <button id="yxqmButton">驾驶证有效期将满，申请换证</button>
                 <button id="fyxqmButton">其他原因需要换证</button>
@@ -610,7 +640,7 @@
                 <button id="applySubmit">提交</button>
                 <button id="print">打印</button>
             </div>
-            <div id="statusContainer" style="padding-top: 50px">
+            <div class="sjUse" id="statusContainer" style="padding-top: 50px">
                 <span id="firstName"></span><span>师傅，您的驾驶证状态为：</span>
                 <span id="cardStatus" style="text-decoration: underline"></span>
                 <div id="alert"></div>
@@ -621,7 +651,7 @@
                     <span id="needed"></span>
                 </div>
             </div>
-            <div id="improveContainer">
+            <div class="sjUse" id="improveContainer">
                 <div id="picContent" class="float">
                     驾驶证扫描件
                     <div id="cardPic">

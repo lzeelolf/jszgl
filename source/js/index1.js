@@ -57,13 +57,12 @@ $(document).ready(function() {
     //主页面单击左边li显示右边内容的函数，注销功能也在这里实现
     function displayContainer(){
         var power = sessionGet('power');
-        if(power === 'V' || power==='1'){
+        var index = $(this).index();
+        if(power === 'V'){
             //教育科管理人员或车间管理人员
-            var index = $(this).index();
-            if($(this).next().length>0){
-                $("#rightContent .operateContent>div:eq("+index+")").css('display','block').siblings().css('display','none');
-
-                switch ($(this).text()){
+            if($(this).next().length>0) {
+                $("#rightContent .operateContent>.jykUse:eq(" + index + ")").css('display', 'block').siblings().css('display', 'none');
+                switch ($(this).text()) {
                     case '预警信息':
                         appendAlert(csData);
                         $('.redPoint').remove()
@@ -72,7 +71,6 @@ $(document).ready(function() {
                     case '证件发放':
                         appendGiveOut(csData);
                 }
-
             }else{
                 //最后一个按钮退出系统
                 if(confirm("确定要退出系统？")){
@@ -80,12 +78,29 @@ $(document).ready(function() {
                     window.location.href = '../html/login.html'
                 }
             }
+            }else if( power==='1'){
+            if($(this).next().length>0) {
+                $("#rightContent .operateContent>.cjUse:eq(" + index + ")").css('display', 'block').siblings().css('display', 'none');
+                switch ($(this).text()) {
+                    case '预警信息':
+                        appendAlert(csData);
+                        $('.redPoint').remove()
+                    case '数据统计':
+                        appendTJxx(csData);
+                    case '证件发放':
+                        appendGiveOut(csData);
+                }
+            }else{
+                //最后一个按钮退出系统
+                if(confirm("确定要退出系统？")){
+                    sessionClear();
+                    window.location.href = '../html/login.html'
+                }
+            }
+
         }else if(power === '0'){
-            //把页面中前7个教育科人员使用的div跳过
-            var jykUse = $('.jykUse').length;
-            var index_plus = $(this).index()+jykUse;
             if($(this).next().length>0){
-                $("#rightContent .operateContent>div:eq("+index_plus+")").css('display','block').siblings().css('display','none');
+                $("#rightContent .operateContent>.sjUse:eq("+index+")").css('display','block').siblings().css('display','none');
             }else{
                 //最后一个按钮退出系统
                 if(confirm("确定要退出系统？")){
@@ -107,7 +122,7 @@ $(document).ready(function() {
             appendApplyCheck(power,csData);
         } else if (power === '1') {//这里填车间管理人员的权限
             html = '<li class=\"queryButton\">证件查询</li><li class=\"dataButton\">数据统计</li><li class=\"checkButton\">申请审核</li>' +
-                '<li class="alertButton">预警信息<span class="redPoint"></span></li><li class="giveOutButton">证件发放</li><li class="logOutButton">退出系统</li>';
+                '<li class="alertButton">预警信息<span class="redPoint"></span></li><li class="yearlyButton">年鉴体检</li><li class="giveOutButton">证件发放</li><li class="logOutButton">退出系统</li>';
             $("#buttonList").append(html);
             //车间管理人员没有添加和注销功能，移除相应区域
             $("#appendContainer").remove();
@@ -4721,6 +4736,69 @@ $(document).ready(function() {
     })
 
 
+    //车间年鉴体检
+    $('.yearlyBanner .queryInput').keyup(function(event){
+        if(event.keyCode === 13){
+            displayYearly()
+        }
+    })
+    $(".yearlyBanner .queryButton").off('click').on('click',function(){
+        displayYearly()
+    })
+    function displayYearly(){
+        if(sessionGet('power') === '1'){
+            if($(".yearlyBanner .queryInput").val().match(/^[0-9]{5}$/)){
+                var payid = $(".yearlyBanner .queryInput").val();
+                var column = ' payId,UName,department,startDate,deadline,phyTest,yearlyCheckDate';
+                var ajaxTimeOut = $.ajax({
+                    url: "../../../index.php",
+                    type:"POST",
+                    timeout:8000,
+                    //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                    data:{funcName:'select',where:' where payid =\''+payid+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                        tableName:' jbxx ',column:column,order:' '},
+                    dataType:'json',
+                    success:function(data) {
+                        if(data['success'] ===1){
+                            $('.queryInfo>div>div').css('backgroundColor','inherit')
+                            $('#yearlyContainer .queryInfoContent').css('display','block')
+                            console.log(data['row1'])
+                            $('#yearlyContainer .queryInfoContent .queryPicInfo img').prop('src',data['row1']['cardPath']);
+                            $('#yearlyContainer .queryInfoContent .queryInfo .payId').text(data['row1']['payId']);
+                            $('#yearlyContainer .queryInfoContent .queryInfo .name').text(data['row1']['UName']);
+                            $('#yearlyContainer .queryInfoContent .queryInfo .department').text(data['row1']['department']);
+                            $('#yearlyContainer .queryInfoContent .queryInfo .yearlyCheckDateInput').val(data['row1']['yearlyCheckDate']);
+                            $('#yearlyContainer .queryInfoContent .queryInfo .startDate').text(data['row1']['startDate']);
+                            $('#yearlyContainer .queryInfoContent .queryInfo .deadline').text(data['row1']['deadline']);
+                            $("#yearlyContainer .queryInfoContent .queryInfo input").prop('disabled',true)
+                            $(".yearlyButtonBanner").css('display','block')
+                            boundEditEvent(data['row1'])
+                        }else{
+                            alert('您查询的信息不存在')
+                        }
+
+                    },
+                    beforeSend:function(){
+                        loadingPicOpen();
+                        testSession(userSessionInfo);
+                    },
+                    complete: function (XMLHttpRequest,status) {
+                        loadingPicClose();
+                        if(status === 'timeout') {
+                            ajaxTimeOut.abort();    // 超时后中断请求
+                            alert('网络超时，请检查网络连接');
+                        }
+                    }
+                })
+            }else{
+                alert('请输入正确的工资号')
+                $("#editBanner .queryInput").focus().css('backgroundColor','#ffcccc');
+            }
+        }
+    }
+
+
+
     //从全员信息库中取申请表要用的信息
     function getUserinfo(payId,changeType) {
         var ajaxTimeOut = $.ajax({
@@ -5183,7 +5261,7 @@ $(document).ready(function() {
                                         }
                                     }
                                     //新增，执行以下
-                                } else if (data['row']['changeType'] === csData['czlb-diaoru']['nr2'] || data['row']['changeType'] === csData['czlb-levelup1']['nr2'] || data['row']['changeType'] === csData['czlb-levelup2']['nr2']) {
+                                } else if (data['row']['changeType'] === csData['czlb-dr']['nr2'] || data['row']['changeType'] === csData['czlb-levelup2']['nr2']) {
                                     $("#applyInfo").prepend('您需新发驾驶证');
                                     $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
                                     $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])

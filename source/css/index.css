@@ -777,54 +777,54 @@ a,a:hover,a:active,a:visited{
     text-decoration: underline;
     cursor: pointer;
 }
-#bigContent #rightContent #editContainer #editBanner{
+#bigContent #rightContent #editContainer #editBanner,#yearlyContainer .yearlyBanner{
     overflow: hidden;
 }
-#bigContent #rightContent #editContainer #tip{
+#bigContent #rightContent #editContainer .tip,#yearlyContainer .tip{
     text-align: left;
     text-indent: 2em;
 }
-#bigContent #rightContent #editContainer .queryInput{
+#bigContent #rightContent #editContainer .queryInput,#yearlyContainer .queryInput{
     width: 70px;
     margin-right: 40px;
 }
-#bigContent #rightContent #editContainer .queryButton{
+#bigContent #rightContent #editContainer .queryButton,#yearlyContainer .queryButton{
     width: 40px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent{
+#bigContent #rightContent #editContainer .queryInfoContent,#yearlyContainer .queryInfoContent{
     width: 100%;
     overflow: hidden;
     display: none;
     margin-top: 50px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryPicInfo{
+#bigContent #rightContent #editContainer .queryInfoContent .queryPicInfo,#yearlyContainer .queryInfoContent .queryPicInfo{
     width: 30%;
     height: 200px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo,#yearlyContainer .queryInfo{
     width: 65%;
     padding-left: 5%;
     height: 200px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .date{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .date,#yearlyContainer .queryInfo .date{
     width: 100px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div,#yearlyContainer .queryInfo>div{
     margin-top: 8px;
     height: 30px;
     white-space: nowrap;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>*{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>*,#yearlyContainer .queryInfo>div>*{
     float: left;
     height: 29px;
     line-height: 30px;
     margin-right: 10px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>div{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>div,#yearlyContainer .queryInfo>div>div{
     border-bottom: 1px solid #333;
     padding: 0 10px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo input{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo input,#yearlyContainer .queryInfo input{
     border:none;
     background-color: inherit;
     width: 100%;
@@ -833,7 +833,7 @@ a,a:hover,a:active,a:visited{
     user-select: initial;
     -webkit-user-select: unset;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .payId{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .payId,#yearlyContainer .queryInfo .payId{
     width: 100px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo .driveCodeInput{
