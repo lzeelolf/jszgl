@@ -1613,6 +1613,13 @@ $(document).ready(function() {
             if(type === csData['zjzt-yj']['nr2']){
                 //在这里调用短信接口
 
+
+
+
+
+
+
+
             }
         }
     }
