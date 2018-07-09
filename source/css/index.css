@@ -736,7 +736,7 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent #alertContainer #alertContent #alertTable th:first-child,#bigContent #rightContent #alertContainer #alertContent #alertTable td:first-child{
     border-left: 1px solid #333;
 }
-#bigContent #rightContent #alertContainer #alertContent #alertTable .tz{
+#bigContent #rightContent #alertContainer #alertContent #alertTable .tz,#giveOutTable .tz{
     font-size: 12px;
     text-decoration: underline;
     color: cornflowerblue;

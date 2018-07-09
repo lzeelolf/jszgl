@@ -6,8 +6,8 @@ $(document).ready(function() {
     userSessionInfo = rememberSession('token', 'user', 'power', 'department','payId');
     //证件查询按钮的事件,调用displayQueryForm函数
     eventBound(queryCardButton, 'click', displayQueryForm);
-
-
+    //以下这些部门人员较少，直接面向教育科，由教育科负责审核
+    var straightJYK = ['安全生产指挥中心','技术科','综合分析室','安全科','职工教育科','统计信息科'];
 
     //取公用参数信息
     var csData = $.ajax({
@@ -978,10 +978,10 @@ $(document).ready(function() {
         today = today.getFullYear() + '-' + today.month + '-' + today.date;
         if(power === '1'){
             //在这里面定义一些变量用来存放数据库字段，节省代码
-            setStr = 'checkStatus = \''+csData['checkStatus-jykshz']['nr2']+'\', cjOperator = \''+sessionGet('user')+'\', cjCheckDate = \''+today+'\' ';
+            setStr = 'checkStatus = \''+csData['checkStatus-jykshz']['nr2']+'\', cjOperator = \''+sessionGet('user')+'\', cjCheckDate = \''+today+'\', tzDone = \''+csData['tzDone-swtz']+'\'';
             rejectSetStr = ' ,cjOperator = \''+sessionGet('user')+'\', cjCheckDate = \''+today+'\' ';
         }else if(power === 'V'){
-            setStr = 'checkStatus = \''+csData['checkStatus-shtg']['nr2']+'\', jykOperator = \''+sessionGet('user')+'\', jykCheckDate = \''+today+'\' ';
+            setStr = 'checkStatus = \''+csData['checkStatus-shtg']['nr2']+'\', jykOperator = \''+sessionGet('user')+'\', jykCheckDate = \''+today+'\',tzDone = \''+csData['tzDone-swtz']+'\'';
             rejectSetStr = ' ,jykOperator = \''+sessionGet('user')+'\', jykCheckDate = \''+today+'\' ';
         }
         $("#fixCheckTable .seeInfo").off('click').on('click',displayTable);
@@ -1221,7 +1221,6 @@ $(document).ready(function() {
                                             data[i]['checking'] = '否';
                                             if(data[i]['tzDone'] === csData['tzDone-swtz']['nr2']){
                                                 data[i]['checkStatus'] = '<span class="tz">短信通知</span>';
-                                                tzEvent(csData,csData['zjzt-yj']['nr2'])
                                                 delete data[i]['tzDone']
                                             }else if(data[i]['tzDone'] === csData['tzDone-yjtz']['nr2']){
                                                 data[i]['checkStatus'] = csData['tzDone-yjtz']['nr2'];
@@ -1244,7 +1243,9 @@ $(document).ready(function() {
                                         html += '</tr>'
                                     }
                                     $("#alertTable").empty().append(html);
-
+                                    $('#alertTable .tz').off('click').on('click',function(){
+                                        tzEvent(csData,csData['zjzt-yj']['nr2'],$(this).parent().prev().prev().prev().prev().text())
+                                    })
                                     for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
                                         if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
                                             $('.redPoint').css('display','block')
@@ -1284,6 +1285,9 @@ $(document).ready(function() {
                                         }
                                     }
                                     $("#alertTable").empty().append(html);
+                                    $('#alertTable .tz').off('click').on('click',function(){
+                                        tzEvent(csData,csData['zjzt-yj']['nr2'],$(this).parent().prev().prev().prev().prev().text())
+                                    })
                                     for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
                                         if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
                                             $('.redPoint').css('display','block')
@@ -1311,6 +1315,9 @@ $(document).ready(function() {
                                                 }
                                             }
                                             $("#alertTable").empty().append(html);
+                                            $('#alertTable .tz').off('click').on('click',function(){
+                                                tzEvent(csData,csData['zjzt-yj']['nr2'],$(this).parent().prev().prev().prev().prev().text())
+                                            })
                                             for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
                                                 if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
                                                     $("#alertTable tbody tr td:nth-child(5):eq("+m+")").css('color','red')
@@ -1360,6 +1367,9 @@ $(document).ready(function() {
                                                 }
                                             }
                                             $("#alertTable").empty().append(html);
+                                            $('#alertTable .tz').off('click').on('click',function(){
+                                                tzEvent(csData,csData['zjzt-yj']['nr2'],$(this).parent().prev().prev().prev().prev().text())
+                                            })
                                             for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
                                                 if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
                                                     $("#alertTable tbody tr td:nth-child(5):eq("+m+")").css('color','red')
@@ -1443,7 +1453,6 @@ $(document).ready(function() {
                                             data[i]['checking'] = '否';
                                             if(data[i]['tzDone'] === csData['tzDone-swtz']['nr2']){
                                                 data[i]['checkStatus'] = '<span class="tz">短信通知</span>';
-                                                tzEvent(csData,csData['zjzt-yj']['nr2'])
                                                 delete data[i]['tzDone']
                                             }else if(data[i]['tzDone'] === csData['tzDone-yjtz']['nr2']){
                                                 data[i]['checkStatus'] = csData['tzDone-yjtz']['nr2'];
@@ -1467,6 +1476,9 @@ $(document).ready(function() {
                                     }
                                     $("#alertTable").empty().append(html);
 
+                                    $('#alertTable .tz').off('click').on('click',function(){
+                                        tzEvent(csData,csData['zjzt-yj']['nr2'],$(this).parent().prev().prev().prev().prev().text())
+                                    })
                                     for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
                                         if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
                                             $('.redPoint').css('display','block')
@@ -1506,6 +1518,9 @@ $(document).ready(function() {
                                         }
                                     }
                                     $("#alertTable").empty().append(html);
+                                    $('#alertTable .tz').off('click').on('click',function(){
+                                        tzEvent(csData,csData['zjzt-yj']['nr2'],$(this).parent().prev().prev().prev().prev().text())
+                                    })
                                     for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
                                         if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
                                             $('.redPoint').css('display','block')
@@ -1533,6 +1548,9 @@ $(document).ready(function() {
                                                 }
                                             }
                                             $("#alertTable").empty().append(html);
+                                            $('#alertTable .tz').off('click').on('click',function(){
+                                                tzEvent(csData,csData['zjzt-yj']['nr2'],$(this).parent().prev().prev().prev().prev().text())
+                                            })
                                             for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
                                                 if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
                                                     $("#alertTable tbody tr td:nth-child(5):eq("+m+")").css('color','red')
@@ -1582,6 +1600,9 @@ $(document).ready(function() {
                                                 }
                                             }
                                             $("#alertTable").empty().append(html);
+                                            $('#alertTable .tz').off('click').on('click',function(){
+                                                tzEvent(csData,csData['zjzt-yj']['nr2'],$(this).parent().prev().prev().prev().prev().text())
+                                            })
                                             for(var m=0;m<$("#alertTable tbody tr td:nth-child(5)").length;m++){
                                                 if($("#alertTable tbody tr td:nth-child(5):eq("+m+")").text() === '否'){
                                                     $("#alertTable tbody tr td:nth-child(5):eq("+m+")").css('color','red')
@@ -1609,21 +1630,26 @@ $(document).ready(function() {
             })
         }
 
-        function tzEvent(csData,type){
-            if(type === csData['zjzt-yj']['nr2']){
-                //在这里调用短信接口
-
-
-
-
-
-
-
-
-            }
-        }
     }
 
+    function tzEvent(csData,type,payId){
+        if(type === csData['zjzt-yj']['nr2']){
+            //在这里调用短信接口
+            console.log(payId)
+
+
+        }else if(type === csData['finishStatus-ffdgr']['nr2']){
+            console.log(payId)
+        }else if(type === '提醒取证'){
+            console.log(payId)
+        }else if(type === csData['czlb-bz']['nr2']){
+            console.log(payId)
+        }else if(type === csData['czlb-yxqmhz']['nr2'] || type === csData['czlb-fyxqmhz']['nr2']){
+            console.log(payId)
+        }else if(type === csData['czlb-dr']['nr2']){
+            console.log(payId)
+        }
+    }
     function getSqInfo(_this,payId,changeType){
         $.ajax({
             url: "../../../index.php",
@@ -2462,7 +2488,7 @@ $(document).ready(function() {
     function appendGiveOut(csData){
         var power = sessionGet('power');
         var obj = {};
-        obj.column = ' id,department,payId,UName,cjArriveDate,grArriveDate ';
+        obj.column = ' id,department,payId,UName,cjArriveDate,grArriveDate,checkStatus,finishStatus';
         obj.order = ' order by department,payId ';
         if(power === '1'){
             var department = sessionGet('department').split(',')[0];
@@ -2493,25 +2519,32 @@ $(document).ready(function() {
                 dataType:'json',
                 success:function(data){
                     if(data['success'] === 1){
+
+                        console.log(data)
                         delete data['success'];
                         var count = data['count'];
                         delete data['count'];
                         var html = '<tr><th>部门</th><th>工资号</th><th>姓名</th><th>发到车间日期</th><th>发到个人日期</th><th>操作</th></tr>';
+                        var span = '<td><span class="giveOut"></span></td>';
                         for(var y in data){
                             if(data[y]['department'].split(',').length>1){
                                 data[y]['department'] = data[y]['department'].split(',')[0];
+                            }
+                            if(checkIfInArray(data[y]['department'],straightJYK)){
+                                text = '发放到个人';
+                                span = '<td><span class="giveOut"></span>&nbsp;<span class="tz">短信通知</span></td>';
                             }
                         }
                         if(count<11){
                             for(var i in data){
                                 html += '<tr>';
                                 for(var j in data[i]){
-                                    if(j==='id'){
+                                    if(j==='id' || j === 'checkStatus'|| j === 'finishStatus'){
                                         continue
                                     }
                                     html += '<td class="'+data[i]['id']['date']+'">'+data[i][j]+'</td>';
                                 }
-                                html += '<td><span class="giveOut"></span></td>';
+                                html += span;
                                 html += '</tr>'
                             }
                             $("#giveOutTable").empty().append(html);
@@ -2527,6 +2560,9 @@ $(document).ready(function() {
                                 }
                             }
                             boundGiveOutEvent();
+                            $('#giveOutTable .tz').off('click').on('click',function(){
+                                tzEvent(csData,'提醒取证',$(this).parent().prev().prev().prev().prev().text())
+                            })
                             //空白tr补齐表格
                             if($("#fixCheckTable tbody tr").length<11){
                                 html = '';
@@ -2554,7 +2590,7 @@ $(document).ready(function() {
                                     }
                                     html += '<td class="'+data[i]['id']['date']+'">'+data[i][j]+'</td>';
                                 }
-                                html += '<td><span class="giveOut"></span></td>';
+                                html += span;
                                 html += '</tr>'
                                 q+=1;
                                 if(q>9){
@@ -2574,6 +2610,9 @@ $(document).ready(function() {
                                 }
                             }
                             boundGiveOutEvent();
+                            $('#giveOutTable .tz').off('click').on('click',function(){
+                                tzEvent(csData,'提醒取证',$(this).parent().prev().prev().prev().prev().text())
+                            })
                             $("#giveOutPage .cur").text(cur);
                             $("#giveOutPage .total").text(total);
                             $("#giveOutPage .next").off('click').on('click',function(){
@@ -2590,7 +2629,7 @@ $(document).ready(function() {
                                                 }
                                                 html += '<td class="'+data[i]['id']['date']+'">'+data[i][m]+'</td>';
                                             }
-                                            html += '<td><span class="giveOut"></span></td>';
+                                            html += span;
                                             html += '</tr>'
                                         }else{
                                             j++;
@@ -2609,6 +2648,9 @@ $(document).ready(function() {
                                         }
                                     }
                                     boundGiveOutEvent();
+                                    $('#giveOutTable .tz').off('click').on('click',function(){
+                                        tzEvent(csData,'提醒取证',$(this).parent().prev().prev().prev().prev().text())
+                                    })
                                     //空白tr补齐表格
                                     if($("#giveOutTable tbody tr").length<11){
                                         html = '';
@@ -2642,7 +2684,7 @@ $(document).ready(function() {
                                                 }
                                                 html += '<td class="'+data[i]['id']['date']+'">'+data[i][m]+'</td>';
                                             }
-                                            html += '<td><span class="giveOut"></span></td>';
+                                            html += span;
                                             html += '</tr>'
                                         }else{
                                             j++;
@@ -2661,6 +2703,9 @@ $(document).ready(function() {
                                         }
                                     }
                                     boundGiveOutEvent();
+                                    $('#giveOutTable .tz').off('click').on('click',function(){
+                                        tzEvent(csData,'提醒取证',$(this).parent().prev().prev().prev().prev().text())
+                                    })
                                     cur-=1;
                                     $("#giveOutPage .cur").text(cur);
                                 }
@@ -2701,12 +2746,14 @@ $(document).ready(function() {
                     var payId = $(this).parent().prev().prev().prev().prev().text();
                     var thisName = $(this).parent().prev().prev().prev().text();
                     if(power === '1'){
-
                         setStr = ' grArriveDate = \''+ arriveDate +'\',finishStatus = \''+csData['finishStatus-ffdgr']['nr2']+'\' ,cjArriveOperator = \''+user+'\'';
                         confirmP = '请确认'+thisName+'师傅的驾驶证已发放到本人手中';
-                    }else if(power === 'V'){
+                    }else if(power === 'V' && $(this).text() === '发放到车间'){
                         setStr = ' cjArriveDate = \''+ arriveDate +'\',finishStatus = \''+csData['finishStatus-ffdcj']['nr2']+'\' ,jykArriveOperator = \''+user+'\'';
                         confirmP = '请确认'+thisName+'师傅的驾驶证已发放到其所属车间';
+                    }else if(power === 'V' && $(this).text() === '发放到个人'){
+                        setStr = ' grArriveDate = \''+ arriveDate +'\',finishStatus = \''+csData['finishStatus-ffdgr']['nr2']+'\' ,jykArriveOperator = \''+user+'\'';
+                        confirmP = '请确认'+thisName+'师傅的驾驶证已发放到其本人';
                     }
                     id=$(this).parent().prev().prop('className').substring(0,$(this).parent().prev().prop('className').length-3);
                     if(confirm(confirmP)){
@@ -2728,6 +2775,7 @@ $(document).ready(function() {
                             success: function (data) {
 
                                 if(power==='1'){
+                                    tzEvent(csData,csData['finishStatus-ffdgr']['nr2'],payId)
                                     $.ajax({
                                         url: "../../../index.php",
                                         type: "POST",
@@ -2792,8 +2840,6 @@ $(document).ready(function() {
                                             })
                                         }
                                     })
-                                    $(_this).parent().prev().text(arriveDate)
-                                    $(_this).remove();
                                     //判断准驾类型是否将发生变化，如果是，要存在tjxx表中
                                     $.ajax({
                                         url: "../../../index.php",
@@ -2909,9 +2955,194 @@ $(document).ready(function() {
                                             }
                                         }
                                     });
-                                }else if(power==='V'){
+                                    $(_this).parent().prev().text(arriveDate)
+                                    $(_this).remove();
+                                }else if(power==='V' && $(_this).text() === '发放到车间'){
                                     $(_this).parent().prev().prev().text(arriveDate)
                                     $(_this).remove()
+                                }else if(power==='V' && $(_this).text() === '发放到个人'){
+                                    tzEvent(csData,csData['finishStatus-ffdgr']['nr2'],payId)
+                                    $(_this).parent().prev().text(arriveDate)
+                                    $(_this).remove()
+                                    $.ajax({
+                                        url: "../../../index.php",
+                                        type: "POST",
+                                        timeout: 8000,
+                                        data: {
+                                            funcName: 'getInfo',
+                                            serverName: '10.101.62.73',
+                                            uid: 'sa',
+                                            pwd: '2huj15h1',
+                                            Database: 'jszgl',
+                                            tableName: ' bgxx',
+                                            column:' changeType',
+                                            where:' where id =\''+id+'\''
+                                        },
+                                        dataType: 'json',
+                                        success:function (changeType){
+                                            changeType = changeType['row']['changeType']
+                                            //发放到个人后，证件状态更新为“正常”
+                                            //如果是有效期满换证，起始和截止要加6年
+                                            //通知状态改为尚未通知
+                                            if(changeType === csData['czlb-yxqmhz']['nr3']){
+                                                var set = ' tzDone = \''+csData['tzDone-swtz']['nr2']+'\', status = \''+csData['zjzt-zc']['nr2']+'\',deadline = cast(substring(deadline,0,5) + 6 AS varchar(4)) + substring(deadline,5,11),startDate = cast(substring(startDate,0,5) + 6 AS varchar(4)) + substring(startDate,5,11)'
+                                            }else{
+                                                var set = ' tzDone = \''+csData['tzDone-swtz']['nr2']+'\',status = \''+csData['zjzt-zc']['nr2']+'\''
+                                            }
+                                            $.ajax({
+                                                url: "../../../index.php",
+                                                type: "POST",
+                                                timeout: 8000,
+                                                data: {
+                                                    funcName: 'update',
+                                                    serverName: '10.101.62.73',
+                                                    uid: 'sa',
+                                                    pwd: '2huj15h1',
+                                                    Database: 'jszgl',
+                                                    tableName: ' jbxx',
+                                                    setStr: set,
+                                                    where: ' where payid =\'' + payId + '\''
+                                                },
+                                                dataType: 'json',
+                                                success:function(data){
+
+                                                }
+                                            })
+                                            $.ajax({
+                                                url: "../../../index.php",
+                                                type: "POST",
+                                                timeout: 8000,
+                                                data: {
+                                                    funcName: 'delete',
+                                                    serverName: '10.101.62.73',
+                                                    uid: 'sa',
+                                                    pwd: '2huj15h1',
+                                                    Database: 'jszgl',
+                                                    tableName: ' sqxx',
+                                                    where: ' where payid =\'' + payId + '\''
+                                                },
+                                                dataType: 'json',
+                                                success:function(data){
+
+                                                }
+                                            })
+                                        }
+                                    })
+                                    //判断准驾类型是否将发生变化，如果是，要存在tjxx表中
+                                    $.ajax({
+                                        url: "../../../index.php",
+                                        type: "POST",
+                                        timeout: 8000,
+                                        data: {
+                                            funcName: 'getInfo', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                                            tableName: 'bgxx', column: ' changeReason,driveCode,applyDriveCode ', where: ' where id = \'' + id + '\'', order: ' '
+                                        },
+                                        dataType: 'json',
+                                        success: function (testData) {
+
+                                            if(csData['zjlx-'+testData['row']['driveCode']]['nr2'] > csData['zjlx-'+testData['row']['applyDriveCode']]['nr2']){
+                                                //原代码的权重大于申请代码的权重，说明是降低准驾机型操作
+                                                var date = new Date();
+                                                var year = date.getFullYear()
+                                                if(testData['row']['driveCode'] === csData['zjlx-A']['name']){
+                                                    testData['row']['driveCode'] = csData['zjlx-J4']['name']
+                                                }else if(testData['row']['driveCode'] === csData['zjlx-B']['name']){
+                                                    testData['row']['driveCode'] = csData['zjlx-J5']['name']
+                                                }else if(testData['row']['driveCode'] === csData['zjlx-C']['name']){
+                                                    testData['row']['driveCode'] = csData['zjlx-J6']['name']
+                                                }
+                                                $.ajax({
+                                                    url: "../../../index.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'update',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' tjxx',
+                                                        setStr: ' jdzjjxDecrease = jdzjjxDecrease +1 , decreaseAmount = decreaseAmount +1 ,yearlyAmount = yearlyAmount - 1',
+                                                        where: ' where driveCode =\''+testData['row']['driveCode']+'\' AND year =\''+year+'\''
+                                                    },
+                                                    dataType: 'json',
+                                                    success:function(data){
+
+                                                    }
+                                                })
+                                                $.ajax({
+                                                    url: "../../../index.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'update',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' tjxx',
+                                                        setStr: ' jdzjjxIncrease = jdzjjxIncrease +1 , IncreaseAmount = IncreaseAmount +1,yearlyAmount = yearlyAmount +1',
+                                                        where: ' where driveCode =\''+testData['row']['applyDriveCode']+'\' AND year =\''+year+'\''
+                                                    },
+                                                    dataType: 'json',
+                                                    success:function(data){
+
+                                                    }
+                                                })
+                                            }else if(csData['zjlx-'+testData['row']['driveCode']]['nr2'] < csData['zjlx-'+testData['row']['applyDriveCode']]['nr2']){
+                                                //原代码的权重小于申请代码的权重，说明是增驾操作
+                                                var date = new Date();
+                                                var year = date.getFullYear()
+                                                if(testData['row']['driveCode'] === csData['zjlx-A']['name']){
+                                                    testData['row']['driveCode'] = csData['zjlx-J4']['name']
+                                                }else if(testData['row']['driveCode'] === csData['zjlx-B']['name']){
+                                                    testData['row']['driveCode'] = csData['zjlx-J5']['name']
+                                                }else if(testData['row']['driveCode'] === csData['zjlx-C']['name']){
+                                                    testData['row']['driveCode'] = csData['zjlx-J6']['name']
+                                                }
+                                                $.ajax({
+                                                    url: "../../../index.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'update',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' tjxx',
+                                                        setStr: ' zj = zj +1 , decreaseAmount = decreaseAmount +1 ,yearlyAmount = yearlyAmount - 1',
+                                                        where: ' where driveCode =\''+testData['row']['driveCode']+'\' AND year =\''+year+'\''
+                                                    },
+                                                    dataType: 'json',
+                                                    success:function(data){
+
+                                                    }
+                                                })
+                                                $.ajax({
+                                                    url: "../../../index.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'update',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' tjxx',
+                                                        setStr: ' kshg = kshg +1 , IncreaseAmount = IncreaseAmount +1,yearlyAmount = yearlyAmount +1',
+                                                        where: ' where driveCode =\''+testData['row']['applyDriveCode']+'\' AND year =\''+year+'\''
+                                                    },
+                                                    dataType: 'json',
+                                                    success:function(data){
+
+                                                    }
+                                                })
+                                            }else{
+
+                                            }
+                                        }
+                                    });
                                 }
                             },
                             beforeSend: function () {
@@ -3336,6 +3567,7 @@ $(document).ready(function() {
                                                             dataType: 'json',
                                                             success: function () {
                                                                 alert('添加信息成功');
+                                                                tzEvent(csData,csData['czlb-dr']['nr2'],data[i]['payId'])
                                                                 var date = new Date();
                                                                 var year = date.getFullYear()
                                                                 var lotNumber = new Date();
@@ -4685,53 +4917,16 @@ $(document).ready(function() {
 
     //有效期满换证
     $("#yxqmButton").off('click').on('click', function () {
-        if (confirm('是否确定要申请换发驾驶证？\u000d请注意，发出申请不可修改，请谨慎操作！')) {
             var payId = sessionGet('payId');
-            var ajaxTimeOut = $.ajax({
-                url: "../../../index.php",
-                type: "POST",
-                timeout: 8000,
-                data: {
-                    funcName: 'checkIfExist',
-                    serverName: '10.101.62.73',
-                    uid: 'sa',
-                    pwd: '2huj15h1',
-                    Database: 'JSZGL',
-                    tableName: 'bgxx',
-                    column: 'payId,finishStatus,changeType',
-                    where: ' where payId = \'' + payId + '\' AND (finishStatus != \''+csData['finishStatus-ffdgr']['nr2']+'\' AND checkStatus != \''+csData['checkStatus-shwtg']['nr2']+'\')',
-                    order: ' '
-                },
-                dataType: 'json',
-                success: function (data) {
-                    //说明此人有待办的申请，不予新增请求
-                    if (data['success'] === 1) {
-                        alert('您还有尚未完结的' + data['changeType'] + '申请,不允许重复提交')
-                    } else {
-                        $("#fixButton").css('display', 'none');
-                        $("#yxqmButton").css('display', 'none');
-                        $("#fyxqmButton").css('display', 'none');
-                        $("#fixTable").css('visibility', 'visible');
-                        $("#print").css('visibility', 'visible');
-                        $("#applySubmit").css('visibility', 'visible');
-                        $("#rightContent").css('width', '84%');
-                        $(".operateContent").css('margin', 0);
-                        getUserinfo(payId,csData['czlb-yxqmhz']['name']);
-                    }
-                },
-                beforeSend: function () {
-                    testSession(userSessionInfo);
-                    loadingPicOpen();
-                },
-                complete: function (XMLHttpRequest, status) {
-                    loadingPicClose();
-                    if (status === 'timeout') {
-                        ajaxTimeOut.abort();    // 超时后中断请求
-                        alert('网络超时，请检查网络连接');
-                    }
-                }
-            })
-        }
+            $("#fixButton").css('display', 'none');
+            $("#yxqmButton").css('display', 'none');
+            $("#fyxqmButton").css('display', 'none');
+            $("#fixTable").css('visibility', 'visible');
+            $("#print").css('visibility', 'visible');
+            //$("#applySubmit").css('visibility', 'visible');
+            $("#rightContent").css('width', '84%');
+            $(".operateContent").css('margin', 0);
+            getUserinfo(payId,csData['czlb-yxqmhz']['name']);
     })
 
     //非有效期满换证
@@ -5211,7 +5406,12 @@ $(document).ready(function() {
             var drive = csData['zjlx-' + driveCode]['nr1'];
             var applyDriveCode = $(".apply input:checked").next('label').text();
             var phyTest = $(".phyCheck input:checked").next('label').text();
-            var checkStatus = csData['checkStatus-cjshz']['nr2'];
+            var checkStatus ='';
+            if(checkIfInArray(department,straightJYK)){
+                checkStatus = csData['checkStatus-jykshz']['nr2'];
+            }else{
+                checkStatus = csData['checkStatus-cjshz']['nr2'];
+            }
             var lotNumber = new Date();
             lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
             lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
@@ -5237,8 +5437,10 @@ $(document).ready(function() {
                     $("#applySubmit").css('display', 'none');
                     if(changeType === csData['czlb-bz']['nr3']){
                         alert('您的补证申请提交成功，请联系车间开具《驾驶证丢失证明》')
+                        tzEvent(csData,csData['czlb-bz']['nr2'],payId)
                     }else{
                         alert('您的换证申请提交成功，请留意审核状态');
+                        tzEvent(csData,csData['czlb-yxqmhz']['nr2'],payId)
                     }
                 },
                 beforeSend: function () {
