@@ -3165,6 +3165,7 @@ $(document).ready(function() {
     }
 
     //添加新增证件功能(人员提升标签)
+
     function appendAppend(csData){
         var power = sessionGet('power');
         if(power === 'V') {
@@ -3907,6 +3908,7 @@ $(document).ready(function() {
             }
         }
     }
+
 
     //添加汇总信息
     function appendSummary(csData) {

@@ -1049,6 +1049,26 @@ a,a:hover,a:active,a:visited{
 #appendContainer .levelUpContent{
     display: none;
 }
+#appendContainer .levelUpContent .buttonBanner{
+    overflow: hidden;
+}
+#appendContainer .levelUpContent .buttonBanner>div{
+    overflow: hidden;
+    width: 180px;
+    height: 50px;
+    border: #999999 1px solid;
+    border-radius: 5px;
+}
+#appendContainer .levelUpContent .buttonBanner p{
+    font-size: 14px;
+}
+#appendContainer .levelUpContent .buttonBanner .question{
+    font-size: 12px;
+}
+#appendContainer .levelUpContent .buttonBanner .tips{
+    display: none;
+    font-size: 12px;
+}
 #appendContainer #levelUpPage{
     display: none;
 }
