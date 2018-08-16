@@ -936,9 +936,9 @@ a,a:hover,a:active,a:visited{
 #appendContainer .appendContent,.levelUpContent{
     background-color: white;
     margin-top: 40px;
-    overflow: hidden;
     display: none;
     position: relative;
+    overflow: hidden;
 }
 #appendInfoContent{
     width: 100%;
@@ -1046,28 +1046,60 @@ a,a:hover,a:active,a:visited{
     background-color: #eeeeee;
     cursor: pointer;
 }
-#appendContainer .levelUpContent{
-    display: none;
-}
 #appendContainer .levelUpContent .buttonBanner{
-    overflow: hidden;
+    overflow: visible;
+    height: 115px;
 }
 #appendContainer .levelUpContent .buttonBanner>div{
-    overflow: hidden;
+    overflow: visible;
     width: 180px;
-    height: 50px;
+    height: 70px;
     border: #999999 1px solid;
     border-radius: 5px;
+    margin-left: 70px;
+    position: relative;
+    cursor: pointer;
+}
+#appendContainer .levelUpContent .buttonBanner>span{
+    float: left;
+    margin-left: 70px;
+    margin-top: 19px;
 }
 #appendContainer .levelUpContent .buttonBanner p{
     font-size: 14px;
+    height: 40px;
+    line-height: 40px;
+    width: 100%;
+    color: inherit;
+    font-weight: inherit;
 }
 #appendContainer .levelUpContent .buttonBanner .question{
     font-size: 12px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 50%;
+    background-color: yellow;
+    font-weight: bold;
 }
 #appendContainer .levelUpContent .buttonBanner .tips{
     display: none;
+    width: 150px;
+    height: 68px;
     font-size: 12px;
+    position: absolute;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background-color: #fff76e;
+    top: 2px;
+    left: 105px;
+}
+#appendContainer .levelUpContent .uploadExcelContent{
+    display: none;
+}
+#appendContainer .levelUpContent .levelUpTableContent{
+    display: none;
 }
 #appendContainer #levelUpPage{
     display: none;

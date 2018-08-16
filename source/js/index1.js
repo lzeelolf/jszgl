@@ -3169,6 +3169,9 @@ $(document).ready(function() {
     function appendAppend(csData){
         var power = sessionGet('power');
         if(power === 'V') {
+            function initialize(){
+
+            }
             $("#dr").off('click').on('click',function(){
                 //调入页签
                 $("#appendPage").css('display','none')
@@ -3335,6 +3338,12 @@ $(document).ready(function() {
                 $("#appendPage").css('display','none')
                 $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
                 $(".levelUpContent").css('display','block').siblings('.appendContent').css('display','none');
+                $('.question').off('mouseover').on('mouseover',function(){
+                    $(this).next('.tips').css('display','block')
+                })
+                $('.question').off('mouseleave').on('mouseleave',function(){
+                    $(this).next('.tips').css('display','none')
+                })
                 $.ajax({
                     url: "../../../index.php",
                     type: "POST",
@@ -3354,6 +3363,8 @@ $(document).ready(function() {
                     dataType: 'json',
                     success: function (data) {
                         if (data['success'] === 1) {
+                            $('#appendContainer .levelUpTableContent').css('display','block')
+                            $('.buttonBanner .float:eq(1)').css({'background':'green','color':'white','fontWeight':'bold'})
                             delete data['success'];
                             var count = data['count'];
                             delete data['count'];
@@ -3486,13 +3497,28 @@ $(document).ready(function() {
                             }
                         }
                         else {
-                            $("#appendContent").empty().text('暂无待办信息');
+                            $("#appendContainer .uploadExcelContent").css('display','block')
+                            $('.buttonBanner .float:eq(0)').css({'background':'green','color':'white','fontWeight':'bold'})
                         }
                     }
                 })
             });
             function boundAppendEvent(data){
                 //data是原始数据
+                $('.buttonBanner .float:eq(0)').off('click').on('click',function(){
+                    $('.uploadExcelContent').css('display','block').siblings('.levelUpTableContent').css('display','none')
+                    $('.buttonBanner .float:eq(0)').css({'background':'green','color':'white','fontWeight':'bold'})
+                    $('.buttonBanner .float:eq(1)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
+                    $("#appendPage").css('visibility','hidden')
+                    console.log(1)
+                })
+                $('.buttonBanner .float:eq(1)').off('click').on('click',function(){
+                    $('.levelUpTableContent').css('display','block').siblings('.uploadExcelContent').css('display','none')
+                    $('.buttonBanner .float:eq(1)').css({'background':'green','color':'white','fontWeight':'bold'})
+                    $('.buttonBanner .float:eq(0)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
+                    $("#appendPage").css('visibility','visible')
+                    console.log(2)
+                })
                 //调入：填写驾驶证信息，添加入系统
                 $('#appendDRTable .dr').off('click').on('click',function(){
                     var index = ''
