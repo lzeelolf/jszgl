@@ -1104,4 +1104,18 @@ a,a:hover,a:active,a:visited{
 #appendContainer #levelUpPage{
     display: none;
 }
-
+#appendContainer #uploadContent{
+    overflow: auto;
+}
+#appendContainer #uploadContent table td{
+    overflow: auto;
+    font-size: 12px;
+}
+#appendContainer .uploadExcelContent .confirmUpload{
+    width: 70px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    margin-top: 20px;
+    display: none;
+}

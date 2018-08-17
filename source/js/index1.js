@@ -3169,9 +3169,6 @@ $(document).ready(function() {
     function appendAppend(csData){
         var power = sessionGet('power');
         if(power === 'V') {
-            function initialize(){
-
-            }
             $("#dr").off('click').on('click',function(){
                 //调入页签
                 $("#appendPage").css('display','none')
