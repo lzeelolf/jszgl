@@ -762,7 +762,7 @@
                         dataCsv=csv;
                     }
                 });
-                /*$.each(dataFormulae,function (j,head) {
+                $.each(dataFormulae,function (j,head) {
                     var headlist=head.split("='")
                     if(/^[A-Z]1$/.test(headlist[0])){
                         headItem.push(headlist[1])
@@ -774,7 +774,7 @@
                         val[head]!=undefined?data.push(val[head]):data.push("")
                     })
                     dataItem.push(data)
-                })*/
+                })
                 $.each(dataCsv,function (j,head) {
                     var headlist=head.split("='")
                     rowNum=/^[A-Z]+(\d+)$/.exec(headlist[0])[1];
@@ -793,10 +793,10 @@
                 }
                 $.each(dataCsv,function (j,head) {
                     var headlist=head.split("='")
-                    var code= /^([A-Z]+)\d+$/.exec(headlist[0])[1];
+                     var code= /^([A-Z]+)\d+$/.exec(headlist[0])[1];
                     var row= /^[A-Z]+(\d+)$/.exec(headlist[0])[1];
                     if(row==1){
-                        headItem[code]=headlist[1]
+                        headItem[j]=headlist[1]
                     }else{
                         dataItem[row-2][code]=headlist[1];
                     }
@@ -815,6 +815,7 @@
                 })
                 var table='<table style="border: 1px solid #cccccc;border-collapse: collapse;"><thead><tr style="font-weight: bold">'+headstr+'</tr></thead><tbody>'+datastr+ '</tbody></table>'
                 $('#uploadContent').empty().html( $('#uploadContent').html()+table);
+                alert('请检查信息是否有误，确认无误后请点击表格末尾的“上传”按钮')
                 $('.confirmUpload').css('display','inline-block')
             };
             reader.readAsBinaryString(f);
