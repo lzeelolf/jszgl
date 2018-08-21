@@ -808,8 +808,36 @@
                 })
                 $.each(dataItem,function (i,data) {
                     datastr=datastr+'<tr >';
+                    var clasS = '';
                     $.each(data,function (j,val) {
-                        datastr=datastr+'<td style="border: 1px solid #cccccc">'+'<input style="font-size:13px" type="text" value="'+val+'"></td>'
+                        switch (j){
+                            //
+                            //按照劳人科给的《具提升资格人员名单》，把每一列和类名意义对应
+                            //需要和劳人科约定规则，不能随意更改
+                            case 'A':clasS = 'number';
+                                break;
+                            case 'B':clasS = 'department';
+                                break;
+                            case 'C':clasS = 'archivesId';
+                                break;
+                            case 'D':clasS = 'uName';
+                                break;
+                            case 'E':clasS = 'payId';
+                                break;
+                            case 'F':clasS = 'birthDate';
+                                break;
+                            case 'G':clasS = 'funName';
+                                break;
+                            case 'H':clasS = 'workDate';
+                                break;
+                            case 'I':clasS = 'fsjDate';
+                                break;
+                            case 'J':clasS = 'fsjDate';
+                                break;
+                            case 'K':clasS = 'cardId';
+                                break;
+                        }
+                        datastr=datastr+'<td style="border: 1px solid #cccccc">'+'<input class="'+clasS+'" style="font-size:13px" type="text" value="'+val+'"></td>'
                     })
                     datastr=datastr+'</tr>';
                 })

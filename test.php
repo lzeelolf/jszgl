@@ -163,7 +163,7 @@ function checkIfExist($where,$serverName,$uid,$pwd,$Database,$tableName,$column,
             $ret['sql'] = "select ".$column." from ".$tableName.$where.$order;
             while($row= sqlsrv_fetch_array($query,SQLSRV_FETCH_ASSOC)){
                 //$ret['sql'] = "select ".$column." from ".$tableName." where ".$departmentSelected.$order;
-                $ret['changeType'] = $row['changeType'];
+                $ret['changeType'] = $row['changeType']?$row['changeType']:$row['type'];
             }
             echo json_encode($ret);
         }

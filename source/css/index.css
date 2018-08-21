@@ -1105,6 +1105,7 @@ a,a:hover,a:active,a:visited{
     display: none;
 }
 #appendContainer #uploadContent{
+    max-height: 500px;
     overflow: auto;
 }
 #appendContainer #uploadContent table td{

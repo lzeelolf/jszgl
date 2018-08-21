@@ -3361,7 +3361,10 @@ $(document).ready(function() {
                     success: function (data) {
                         if (data['success'] === 1) {
                             $('#appendContainer .levelUpTableContent').css('display','block')
+                            $("#appendContainer .uploadExcelContent").css('display','none')
+                            $('.buttonBanner .float:eq(0)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
                             $('.buttonBanner .float:eq(1)').css({'background':'green','color':'white','fontWeight':'bold'})
+                            $("#appendPage").css('visibility','visible')
                             delete data['success'];
                             var count = data['count'];
                             delete data['count'];
@@ -3495,7 +3498,11 @@ $(document).ready(function() {
                         }
                         else {
                             $("#appendContainer .uploadExcelContent").css('display','block')
+                            $('#appendContainer .levelUpTableContent').css('display','none')
                             $('.buttonBanner .float:eq(0)').css({'background':'green','color':'white','fontWeight':'bold'})
+                            $('.buttonBanner .float:eq(1)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
+                            $("#appendPage").css('visibility','hidden')
+                            boundAppendEvent(data)
                         }
                     }
                 })
@@ -3507,14 +3514,12 @@ $(document).ready(function() {
                     $('.buttonBanner .float:eq(0)').css({'background':'green','color':'white','fontWeight':'bold'})
                     $('.buttonBanner .float:eq(1)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
                     $("#appendPage").css('visibility','hidden')
-                    console.log(1)
                 })
                 $('.buttonBanner .float:eq(1)').off('click').on('click',function(){
                     $('.levelUpTableContent').css('display','block').siblings('.uploadExcelContent').css('display','none')
                     $('.buttonBanner .float:eq(1)').css({'background':'green','color':'white','fontWeight':'bold'})
                     $('.buttonBanner .float:eq(0)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
                     $("#appendPage").css('visibility','visible')
-                    console.log(2)
                 })
                 //调入：填写驾驶证信息，添加入系统
                 $('#appendDRTable .dr').off('click').on('click',function(){
@@ -3722,6 +3727,83 @@ $(document).ready(function() {
                         'visibility','visible').dequeue().animate({
                         'opacity':0.9
                     },500)
+                })
+                //上传按钮
+                $(".uploadExcelContent .confirmUpload").off('click').on('click',function(){
+                    var uploadArr = [];
+                    $.each($('#uploadContent table tbody tr'),function(i,val){
+                        var obj = {}
+                        obj.payId = $(val).find('.payId').val()
+                        obj.archivesId = $(val).find('.archivesId').val()
+                        obj.uName = $(val).find('.uName').val()
+                        obj.department = $(val).find('.department').val()
+                        obj.cardId = $(val).find('.cardId').val()
+                        obj.birthDate = $(val).find('.birthDate').val()
+                        uploadArr[i] = Object.assign(obj);
+                        $.ajax({
+                            url: "../../../index.php",
+                            type: "POST",
+                            timeout: 8000,
+                            data: {
+                                funcName: 'checkIfExist',
+                                serverName: '10.101.62.73',
+                                uid: 'sa',
+                                pwd: '2huj15h1',
+                                Database: 'JSZGL',
+                                tableName: ' dbsx',
+                                column: ' *',
+                                where: ' where archivesId = \'' + obj.archivesId + '\'',
+                                order: ' '
+                            },
+                            dataType: 'json',
+                            success:function(data){
+                                if(data['success'] === 0){
+
+                                    //未重复，插入
+                                    $.ajax({
+                                        url: "../../../index.php",
+                                        type: "POST",
+                                        timeout: 8000,
+                                        data: {
+                                            funcName: 'insert',
+                                            serverName: '10.101.62.73',
+                                            uid: 'sa',
+                                            pwd: '2huj15h1',
+                                            Database: 'jszgl',
+                                            tableName: ' dbsx',
+                                            column: ' (payId,archivesId,uname,department,cardId,type,birthDate)',
+                                            values: '(\''+obj.payId+'\',\'' + obj.archivesId + '\',\'' + obj.uName + '\',\'' + obj.department + '\',\'' + obj.cardId + '\',\'' + csData['czlb-levelup2']['nr2'] + '\',\'' +obj.birthDate  + '\')'
+                                        },
+                                        dataType: 'json',
+                                        success: function (ret) {
+
+                                        }
+                                    })
+                                }else if(data['success'] === 1){
+                                    //重复，更新
+                                    $.ajax({
+                                        url: "../../../index.php",
+                                        type: "POST",
+                                        timeout: 8000,
+                                        data: {
+                                            funcName: 'update',
+                                            serverName: '10.101.62.73',
+                                            uid: 'sa',
+                                            pwd: '2huj15h1',
+                                            Database: 'jszgl',
+                                            tableName: ' dbsx',
+                                            setStr: ' uname = \''+ obj.uName+'\',payId = \''+ obj.payId+'\',department = \''+obj.department+'\',cardId = \''+ obj.cardId +'\',birthDate = \''+obj.birthDate +'\',type = \''+csData['czlb-levelup2']['nr2']+'\'',
+                                            where: ' where archivesId = \'' + obj.archivesId + '\''
+                                        },
+                                        dataType: 'json',
+                                        success:function(data){
+
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    })
                 })
                 $('#appendTSTable .ts').off('click').on('click',function(){
                     var index = ''
