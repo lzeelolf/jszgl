@@ -1120,3 +1120,33 @@ a,a:hover,a:active,a:visited{
     margin-top: 20px;
     display: none;
 }
+#appendContainer .uploadExcelContent .progressBar{
+    position: absolute;
+    bottom: 0;
+    height: 30px;
+    width: 325px;
+    background: inherit;
+    display: none;
+}
+#appendContainer .uploadExcelContent .progressBar .progress{
+    width: 234px;
+    border: 1px solid #bbbbbb;
+    border-radius: 5px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 12px;
+    background-color: inherit;
+}
+#appendContainer .uploadExcelContent .progressBar .progress .doneProgress {
+    height: 16px;
+    margin-top: 2px;
+    display: block;
+    width: 0;
+    max-width: 228px;
+    margin-left: 3px;
+    background: #fff76e;
+}
+#appendContainer .uploadExcelContent .progressBar .floatR span{
+    font-size: 12px;
+    margin-top: 3px;
+}

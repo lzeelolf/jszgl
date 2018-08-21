@@ -3728,9 +3728,12 @@ $(document).ready(function() {
                         'opacity':0.9
                     },500)
                 })
-                //上传按钮
+                //上传按钮事件，上传具提升司机资格名单
                 $(".uploadExcelContent .confirmUpload").off('click').on('click',function(){
+                    $('.progressBar').css('display','block')
+                    $('.progressBar .doneProgress').css('width',0)
                     var uploadArr = [];
+                    var done = 0;
                     $.each($('#uploadContent table tbody tr'),function(i,val){
                         var obj = {}
                         obj.payId = $(val).find('.payId').val()
@@ -3758,7 +3761,6 @@ $(document).ready(function() {
                             dataType: 'json',
                             success:function(data){
                                 if(data['success'] === 0){
-
                                     //未重复，插入
                                     $.ajax({
                                         url: "../../../index.php",
@@ -3776,7 +3778,17 @@ $(document).ready(function() {
                                         },
                                         dataType: 'json',
                                         success: function (ret) {
-
+                                            if(ret['success'] === 1){
+                                                $(".progressBar .total").html(uploadArr.length)
+                                                done+=1;
+                                                var width = 228*done/uploadArr.length;
+                                                $(".doneProgress").css({'width':width+'px'})
+                                                $(".progressBar .done").html(done)
+                                                if(done === uploadArr.length){
+                                                    alert('上传成功')
+                                                    location.reload()
+                                                }
+                                            }
                                         }
                                     })
                                 }else if(data['success'] === 1){
@@ -3797,13 +3809,28 @@ $(document).ready(function() {
                                         },
                                         dataType: 'json',
                                         success:function(data){
-
+                                            $(".progressBar .total").html(uploadArr.length)
+                                            done+=1;
+                                            var width = 228*done/uploadArr.length;
+                                            $(".doneProgress").css({'width':width+'px'})
+                                            $(".progressBar .done").html(done)
                                         }
                                     })
                                 }
                             }
                         })
                     })
+                    var time = window.setTimeout(test,6000)
+                    function test(){
+                        if($('.progressBar .done').html() === $('.progressBar .total').html()){
+                            alert('上传成功')
+                            location.reload()
+                        }else{
+                            alert('由于网络原因，上传未全部成功，请再次点击上传')
+                        }
+                        window.clearTimeout(time)
+                    }
+
                 })
                 $('#appendTSTable .ts').off('click').on('click',function(){
                     var index = ''
