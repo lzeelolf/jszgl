@@ -78,7 +78,7 @@ function displayQueryForm(){
         return false
     }
     var ajaxTimeOut = $.ajax({
-        url: "../../../index.php",
+        url: "../../../ways.php",
         type:"POST",
         timeout:8000,
         //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -299,7 +299,7 @@ function showTableHead(data,pagePosition,dataPosition,headEvent,tableName,obj,to
 //参数：要按哪列排序、排序方式、当前是第几页、sql语句对象
 function orderAjaxRequest(orderColumn,orderWay,current,obj,total,countPerPage,dataPosition,pagePosition){
     var ajaxTimeOut = $.ajax({
-        url: "../../../index.php",
+        url: "../../../ways.php",
         type:"POST",
         timeout:8000,
         //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -1223,7 +1223,7 @@ function checkQueryRequest(){
 function appendElement(){
     var html ='';
     $.ajax({
-        url: "../../../index.php",
+        url: "../../../ways.php",
         type:"POST",
         timeout:8000,
         //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -1330,7 +1330,7 @@ function appendSelection(){
     }else if(column === 'sjRemark'){
         _html = '等于';
         $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type:"POST",
             timeout:8000,
             data:{funcName:'select',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
@@ -1353,7 +1353,7 @@ function appendSelection(){
     }else if(column ==='sjDriveCode'){
         _html = '属于';
         $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type:"POST",
             timeout:8000,
             data:{funcName:'select',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
@@ -1374,7 +1374,7 @@ function appendSelection(){
     }else if(column==='sjDriveType'){
         _html = '属于';
         $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type:"POST",
             timeout:8000,
             data:{funcName:'select',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
@@ -1397,7 +1397,7 @@ function appendSelection(){
     }else{
         _html = '为';
         $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type:"POST",
             timeout:8000,
             data:{funcName:'select',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',

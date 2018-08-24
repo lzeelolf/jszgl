@@ -11,7 +11,7 @@ $(document).ready(function() {
 
     //取公用参数信息
     var csData = $.ajax({
-        url: "../../../index.php",
+        url: "../../../ways.php",
         type: "POST",
         timeout: 8000,
         data: {
@@ -144,7 +144,7 @@ $(document).ready(function() {
             var ajaxTimeOut = $.ajax({
                 //取参数表的车间部门名补全部门选项
                 //6.13   实现根据权限来渲染不同页面元素。获取车间人员的所属车间，把检索范围规定住。找几个权限不同的测试用户
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 timeout: 8000,
                 data: {
@@ -179,7 +179,7 @@ $(document).ready(function() {
         } else if (power === '1') {
             var department = sessionGet('department').split(',')[0];
             $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 timeout: 8000,
                 data: {
@@ -218,7 +218,7 @@ $(document).ready(function() {
                 var payid = $("#editBanner .queryInput").val();
                 var column = ' *';
                 var ajaxTimeOut = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -285,7 +285,7 @@ $(document).ready(function() {
                     var setStr =' department =\''+$(this).val()+'\' ';
                     var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
                     $.ajax({
-                        url: "../../../index.php",
+                        url: "../../../ways.php",
                         type: "POST",
                         timeout: 8000,
                         data: {
@@ -308,7 +308,7 @@ $(document).ready(function() {
                     var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
                     var setStr = 'status =\''+csData['zjzt-dc']['nr2']+'\''
                     $.ajax({
-                        url: "../../../index.php",
+                        url: "../../../ways.php",
                         type: "POST",
                         timeout: 8000,
                         data: {
@@ -322,7 +322,7 @@ $(document).ready(function() {
                             lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
                             lotNumber =  lotNumber.getFullYear()+ '-' + lotNumber.month + '-' + lotNumber.date;
                             $.ajax({
-                                url: "../../../index.php",
+                                url: "../../../ways.php",
                                 type: "POST",
                                 timeout: 8000,
                                 data: {
@@ -344,7 +344,7 @@ $(document).ready(function() {
                                     var setStr1 = 'decreaseAmount = decreaseAmount + 1,dc=dc+1,yearlyAmount = yearlyAmount-1';
                                     var where1 =  ' where driveCode = \''+data['sjDriveCode']+'\' AND year = '+year;
                                     $.ajax({
-                                        url: "../../../index.php",
+                                        url: "../../../ways.php",
                                         type: "POST",
                                         timeout: 8000,
                                         data: {
@@ -418,7 +418,7 @@ $(document).ready(function() {
                         var setStr ='payid =\''+$(".queryInfo .payIdInput").val()+'\',sjDate =\''+$(".queryInfo .sjDateInput").val()+'\',yearlyCheckDate =\''+$(".queryInfo .yearlyCheckInput").val()+'\',sjDriveCode =\''+$(".queryInfo .driveCodeInput").val()+'\',sjDriveType =\''+$(".queryInfo .driveTypeInput").val()+'\',startDate =\''+$(".queryInfo .startDateInput").val()+'\',deadline = \''+$(".queryInfo .deadlineInput").val()+'\',sjRemark =\''+$(".queryInfo .sjRemarkInput").val()+'\'';
                         var where = ' where payid =\''+payId+'\'';
                         var ajaxTimeOut = $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             timeout: 8000,
                             data: {
@@ -466,7 +466,7 @@ $(document).ready(function() {
                         var setStr =' status=\''+csData['zjzt-zx']['nr2']+'\'';
                         var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
                         $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             timeout: 8000,
                             data: {
@@ -480,7 +480,7 @@ $(document).ready(function() {
                                 lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
                                 lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
                                 $.ajax({
-                                    url: "../../../index.php",
+                                    url: "../../../ways.php",
                                     type: "POST",
                                     timeout: 8000,
                                     data: {
@@ -514,7 +514,7 @@ $(document).ready(function() {
                                         var setStr1 = 'decreaseAmount = decreaseAmount + 1,'+column+'='+column+'+1,yearlyAmount = yearlyAmount-1';
                                         var where1 =  ' where driveCode = \''+data['sjDriveCode']+'\' AND year = '+year;
                                         $.ajax({
-                                            url: "../../../index.php",
+                                            url: "../../../ways.php",
                                             type: "POST",
                                             timeout: 8000,
                                             data: {
@@ -551,7 +551,7 @@ $(document).ready(function() {
         $('.phyTestOk').off('click').on('click',function(){
             if(confirm(data['UName']+'师傅的体检结论合格，确定？')){
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     data: {
@@ -570,7 +570,7 @@ $(document).ready(function() {
         $('.phyTestNo').off('click').on('click',function(){
             if(confirm(data['UName']+'师傅的体检结论不合格，确定？')){
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     data: {
@@ -618,7 +618,7 @@ $(document).ready(function() {
             }
             function exchangeApplyAjax(obj){
                 var ajaxTimeOut = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -798,7 +798,7 @@ $(document).ready(function() {
             //这个函数是请求换补证申请，然后添加入页面的函数,传入obj是sql对象，内涵where,column,order三个字段
             function fixApplyAjax(obj){
                 var ajaxTimeOut = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -1034,7 +1034,7 @@ $(document).ready(function() {
                 var _this = $(this);
                 where = ' where id=\''+id+'\'';
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     data: {
@@ -1086,7 +1086,7 @@ $(document).ready(function() {
                         rejectSetStr = ' checkStatus = \''+csData['checkStatus-shwtg']['nr2']+'\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\'' + rejectSetStr;
                         where = ' where id=\''+id+'\'';
                         $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             timeout: 8000,
                             data: {
@@ -1115,7 +1115,7 @@ $(document).ready(function() {
                         rejectSetStr = ' checkStatus = \''+csData['checkStatus-shwtg']['nr2']+'\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\''+rejectSetStr;
                         where = ' where id=\''+id+'\'';
                         $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             timeout: 8000,
                             data: {
@@ -1171,7 +1171,7 @@ $(document).ready(function() {
                 $("#alertBanner .selectArea").text(p)
             }
             $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 data: {
                     funcName: 'select', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'JSZGL',
@@ -1181,7 +1181,7 @@ $(document).ready(function() {
                 success: function (data) {
                     if(data['success'] === 1){
                         $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             data: {
                                 funcName: 'select',
@@ -1403,7 +1403,7 @@ $(document).ready(function() {
             $("#alertBanner .selectArea").empty().append(html);
 
             $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 data: {
                     funcName: 'select', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'JSZGL',
@@ -1413,7 +1413,7 @@ $(document).ready(function() {
                 success: function (data) {
                     if(data['success'] === 1){
                         $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             data: {
                                 funcName: 'select',
@@ -1652,7 +1652,7 @@ $(document).ready(function() {
     }
     function getSqInfo(_this,payId,changeType){
         $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type: "POST",
             timeout: 8000,
             data: {
@@ -1669,7 +1669,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function (data) {
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     data: {
@@ -1733,7 +1733,7 @@ $(document).ready(function() {
             }else if(name === csData['cjtjxx-shjl']['nr2']){
                 //呈现审核记录表
                 var ajaxTimeOut = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -1872,7 +1872,7 @@ $(document).ready(function() {
             }else if(name === csData['cjtjxx-ffjl']['nr2']){
                 //呈现发放记录表
                 var ajaxTimeOut1 = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -2012,7 +2012,7 @@ $(document).ready(function() {
             }else if(name === csData['cjtjxx-zxjl']['nr2']){
                 //呈现注销记录表
                 var ajaxTimeOut2 = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -2151,7 +2151,7 @@ $(document).ready(function() {
             }else if(name === csData['cjtjxx-dcjl']['nr2']){
                 //呈现调出记录表
                 var ajaxTimeOut3 = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -2290,7 +2290,7 @@ $(document).ready(function() {
             }else if(name === csData['cjtjxx-xzjl']['nr2']){
                 //呈现新增记录表
                 var ajaxTimeOut4 = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -2510,7 +2510,7 @@ $(document).ready(function() {
                 text = '发放到车间';
             }
             var ajaxTimeOut = $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type:"POST",
                 timeout:8000,
                 //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -2758,7 +2758,7 @@ $(document).ready(function() {
                     id=$(this).parent().prev().prop('className').substring(0,$(this).parent().prev().prop('className').length-3);
                     if(confirm(confirmP)){
                         var ajaxTimeOut = $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             timeout: 8000,
                             data: {
@@ -2777,7 +2777,7 @@ $(document).ready(function() {
                                 if(power==='1'){
                                     tzEvent(csData,csData['finishStatus-ffdgr']['nr2'],payId)
                                     $.ajax({
-                                        url: "../../../index.php",
+                                        url: "../../../ways.php",
                                         type: "POST",
                                         timeout: 8000,
                                         data: {
@@ -2802,7 +2802,7 @@ $(document).ready(function() {
                                                 var set = ' tzDone = \''+csData['tzDone-swtz']['nr2']+'\',status = \''+csData['zjzt-zc']['nr2']+'\''
                                             }
                                             $.ajax({
-                                                url: "../../../index.php",
+                                                url: "../../../ways.php",
                                                 type: "POST",
                                                 timeout: 8000,
                                                 data: {
@@ -2821,7 +2821,7 @@ $(document).ready(function() {
                                                 }
                                             })
                                             $.ajax({
-                                                url: "../../../index.php",
+                                                url: "../../../ways.php",
                                                 type: "POST",
                                                 timeout: 8000,
                                                 data: {
@@ -2842,7 +2842,7 @@ $(document).ready(function() {
                                     })
                                     //判断准驾类型是否将发生变化，如果是，要存在tjxx表中
                                     $.ajax({
-                                        url: "../../../index.php",
+                                        url: "../../../ways.php",
                                         type: "POST",
                                         timeout: 8000,
                                         data: {
@@ -2864,7 +2864,7 @@ $(document).ready(function() {
                                                     testData['row']['driveCode'] = csData['zjlx-J6']['name']
                                                 }
                                                 $.ajax({
-                                                    url: "../../../index.php",
+                                                    url: "../../../ways.php",
                                                     type: "POST",
                                                     timeout: 8000,
                                                     data: {
@@ -2883,7 +2883,7 @@ $(document).ready(function() {
                                                     }
                                                 })
                                                 $.ajax({
-                                                    url: "../../../index.php",
+                                                    url: "../../../ways.php",
                                                     type: "POST",
                                                     timeout: 8000,
                                                     data: {
@@ -2913,7 +2913,7 @@ $(document).ready(function() {
                                                     testData['row']['driveCode'] = csData['zjlx-J6']['name']
                                                 }
                                                 $.ajax({
-                                                    url: "../../../index.php",
+                                                    url: "../../../ways.php",
                                                     type: "POST",
                                                     timeout: 8000,
                                                     data: {
@@ -2932,7 +2932,7 @@ $(document).ready(function() {
                                                     }
                                                 })
                                                 $.ajax({
-                                                    url: "../../../index.php",
+                                                    url: "../../../ways.php",
                                                     type: "POST",
                                                     timeout: 8000,
                                                     data: {
@@ -2965,7 +2965,7 @@ $(document).ready(function() {
                                     $(_this).parent().prev().text(arriveDate)
                                     $(_this).remove()
                                     $.ajax({
-                                        url: "../../../index.php",
+                                        url: "../../../ways.php",
                                         type: "POST",
                                         timeout: 8000,
                                         data: {
@@ -2990,7 +2990,7 @@ $(document).ready(function() {
                                                 var set = ' tzDone = \''+csData['tzDone-swtz']['nr2']+'\',status = \''+csData['zjzt-zc']['nr2']+'\''
                                             }
                                             $.ajax({
-                                                url: "../../../index.php",
+                                                url: "../../../ways.php",
                                                 type: "POST",
                                                 timeout: 8000,
                                                 data: {
@@ -3009,7 +3009,7 @@ $(document).ready(function() {
                                                 }
                                             })
                                             $.ajax({
-                                                url: "../../../index.php",
+                                                url: "../../../ways.php",
                                                 type: "POST",
                                                 timeout: 8000,
                                                 data: {
@@ -3030,7 +3030,7 @@ $(document).ready(function() {
                                     })
                                     //判断准驾类型是否将发生变化，如果是，要存在tjxx表中
                                     $.ajax({
-                                        url: "../../../index.php",
+                                        url: "../../../ways.php",
                                         type: "POST",
                                         timeout: 8000,
                                         data: {
@@ -3052,7 +3052,7 @@ $(document).ready(function() {
                                                     testData['row']['driveCode'] = csData['zjlx-J6']['name']
                                                 }
                                                 $.ajax({
-                                                    url: "../../../index.php",
+                                                    url: "../../../ways.php",
                                                     type: "POST",
                                                     timeout: 8000,
                                                     data: {
@@ -3071,7 +3071,7 @@ $(document).ready(function() {
                                                     }
                                                 })
                                                 $.ajax({
-                                                    url: "../../../index.php",
+                                                    url: "../../../ways.php",
                                                     type: "POST",
                                                     timeout: 8000,
                                                     data: {
@@ -3101,7 +3101,7 @@ $(document).ready(function() {
                                                     testData['row']['driveCode'] = csData['zjlx-J6']['name']
                                                 }
                                                 $.ajax({
-                                                    url: "../../../index.php",
+                                                    url: "../../../ways.php",
                                                     type: "POST",
                                                     timeout: 8000,
                                                     data: {
@@ -3120,7 +3120,7 @@ $(document).ready(function() {
                                                     }
                                                 })
                                                 $.ajax({
-                                                    url: "../../../index.php",
+                                                    url: "../../../ways.php",
                                                     type: "POST",
                                                     timeout: 8000,
                                                     data: {
@@ -3175,7 +3175,7 @@ $(document).ready(function() {
                 $(this).css({'background':'#ddd','fontWeight':'bold'}).siblings('div').css({'background':'inherit','fontWeight':'normal'});
                 $(".appendContent").css('display','block').siblings('.levelUpContent').css('display','none');
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -3342,7 +3342,7 @@ $(document).ready(function() {
                     $(this).next('.tips').css('display','none')
                 })
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -3531,7 +3531,7 @@ $(document).ready(function() {
                             $('.appendInfo .archivesId').text(data[i]['archivesId'])
                             $('.appendInfo .name').text(data[i]['UName'])
                             $('.appendInfo .sex').text(data[i]['sex'])
-                            $('.appendInfo .department').text(data[i]['department'])
+                            $('.appendInfo .department').text(data[i]['Department'])
                             $('.appendInfo .cardId').text(data[i]['cardId'])
                             $('.appendInfo .birthDate').text(data[i]['birthDate'])
                             $('.appendInfo .txrq').text(data[i]['txrq'])
@@ -3550,7 +3550,7 @@ $(document).ready(function() {
                             }
                         }
                         $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             timeout: 8000,
                             data: {
@@ -3578,7 +3578,7 @@ $(document).ready(function() {
                                                         var sjDriveType = csData['zjlx-'+$('.appendInfo .sjDriveCodeInput').val()]['nr1']
                                                         var i = index;
                                                         var ajaxTimeOut = $.ajax({
-                                                            url: "../../../index.php",
+                                                            url: "../../../ways.php",
                                                             type: "POST",
                                                             timeout: 8000,
                                                             data: {
@@ -3604,7 +3604,7 @@ $(document).ready(function() {
                                                                 lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
                                                                 lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
                                                                 $.ajax({
-                                                                    url: "../../../index.php",
+                                                                    url: "../../../ways.php",
                                                                     type: "POST",
                                                                     timeout: 8000,
                                                                     data: {
@@ -3623,7 +3623,7 @@ $(document).ready(function() {
                                                                     success: function (ret) {
                                                                         //调入成功了，从dbsx表中移除这条信息
                                                                         $.ajax({
-                                                                            url: "../../../index.php",
+                                                                            url: "../../../ways.php",
                                                                             type: "POST",
                                                                             timeout: 8000,
                                                                             data: {
@@ -3643,7 +3643,7 @@ $(document).ready(function() {
                                                                     }
                                                                 })
                                                                 $.ajax({
-                                                                    url: "../../../index.php",
+                                                                    url: "../../../ways.php",
                                                                     type: "POST",
                                                                     timeout: 8000,
                                                                     data: {
@@ -3744,7 +3744,7 @@ $(document).ready(function() {
                         obj.birthDate = $(val).find('.birthDate').val()
                         uploadArr[i] = Object.assign(obj);
                         $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             timeout: 8000,
                             data: {
@@ -3763,7 +3763,7 @@ $(document).ready(function() {
                                 if(data['success'] === 0){
                                     //未重复，插入
                                     $.ajax({
-                                        url: "../../../index.php",
+                                        url: "../../../ways.php",
                                         type: "POST",
                                         timeout: 8000,
                                         data: {
@@ -3794,7 +3794,7 @@ $(document).ready(function() {
                                 }else if(data['success'] === 1){
                                     //重复，更新
                                     $.ajax({
-                                        url: "../../../index.php",
+                                        url: "../../../ways.php",
                                         type: "POST",
                                         timeout: 8000,
                                         data: {
@@ -3822,7 +3822,7 @@ $(document).ready(function() {
                     })
                     var time = window.setTimeout(test,6000)
                     function test(){
-                        if($('.progressBar .done').html() === $('.progressBar .total').html()){
+                        if($('.progressBar .done').html() === uploadArr.length){
                             alert('上传成功')
                             location.reload()
                         }else{
@@ -3860,7 +3860,7 @@ $(document).ready(function() {
                             }
                         }
                         $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type: "POST",
                             timeout: 8000,
                             data: {
@@ -3888,7 +3888,7 @@ $(document).ready(function() {
                                                         var sjDriveType = csData['zjlx-'+$('.appendInfo .sjDriveCodeInput').val()]['nr1']
                                                         var i = index;
                                                         var ajaxTimeOut = $.ajax({
-                                                            url: "../../../index.php",
+                                                            url: "../../../ways.php",
                                                             type: "POST",
                                                             timeout: 8000,
                                                             data: {
@@ -3913,7 +3913,7 @@ $(document).ready(function() {
                                                                 lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
                                                                 lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
                                                                 $.ajax({
-                                                                    url: "../../../index.php",
+                                                                    url: "../../../ways.php",
                                                                     type: "POST",
                                                                     timeout: 8000,
                                                                     data: {
@@ -3932,7 +3932,7 @@ $(document).ready(function() {
                                                                     success: function (ret) {
                                                                         //提升操作完成，从dbsx表中移除这条信息
                                                                         $.ajax({
-                                                                            url: "../../../index.php",
+                                                                            url: "../../../ways.php",
                                                                             type: "POST",
                                                                             timeout: 8000,
                                                                             data: {
@@ -3952,7 +3952,7 @@ $(document).ready(function() {
                                                                     }
                                                                 })
                                                                 $.ajax({
-                                                                    url: "../../../index.php",
+                                                                    url: "../../../ways.php",
                                                                     type: "POST",
                                                                     timeout: 8000,
                                                                     data: {
@@ -4068,7 +4068,7 @@ $(document).ready(function() {
                             $('#yearSelect').remove()
                         }
                         var ajaxTimeOut1 = $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type:"POST",
                             timeout:8000,
                             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -4224,7 +4224,7 @@ $(document).ready(function() {
                             $('#yearSelect').remove()
                         }
                         var ajaxTimeOut2 = $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type:"POST",
                             timeout:8000,
                             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -4379,7 +4379,7 @@ $(document).ready(function() {
                             $('#yearSelect').remove()
                         }
                         var ajaxTimeOut3 = $.ajax({
-                            url: "../../../index.php",
+                            url: "../../../ways.php",
                             type:"POST",
                             timeout:8000,
                             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -4545,7 +4545,7 @@ $(document).ready(function() {
                         $('#summaryContainer .summaryBanner #yearSelect').off('change').on('change',function(){
                             var year = $(this).val()
                             var ajaxTimeOut4 = $.ajax({
-                                url: "../../../index.php",
+                                url: "../../../ways.php",
                                 type:"POST",
                                 timeout:8000,
                                 //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -4556,7 +4556,7 @@ $(document).ready(function() {
                                     console.log(lastYearData)
                                     if(lastYearData['success'] === 1){
                                         $.ajax({
-                                            url: "../../../index.php",
+                                            url: "../../../ways.php",
                                             type: "POST",
                                             timeout: 8000,
                                             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -4729,7 +4729,7 @@ $(document).ready(function() {
                                     else{
                                         alert('查无上年度数据，只生成今年度数据')
                                         $.ajax({
-                                            url: "../../../index.php",
+                                            url: "../../../ways.php",
                                             type: "POST",
                                             timeout: 8000,
                                             //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -4808,7 +4808,7 @@ $(document).ready(function() {
                         var date1 = new Date();
                         var year = date1.getFullYear()
                         var ajaxTimeOut5 = $.ajax({
-                                url: "../../../index.php",
+                                url: "../../../ways.php",
                                 type:"POST",
                                 timeout:8000,
                                 //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -4976,7 +4976,7 @@ $(document).ready(function() {
         var payId = sessionGet('payId');
         //在这里添加动态渲染页面的代码，根据payid取驾驶证信息
         $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type: "POST",
             data: {
                 funcName: 'getInfo', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
@@ -5003,7 +5003,7 @@ $(document).ready(function() {
         if (confirm('是否确定要申请补发驾驶证？\u000d请注意，发出申请不可修改，请谨慎操作！')) {
             var payId = sessionGet('payId');
             var ajaxTimeOut = $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 timeout: 8000,
                 data: {
@@ -5068,7 +5068,7 @@ $(document).ready(function() {
         if (confirm('是否确定要申请换发驾驶证？\u000d请注意，发出申请不可修改，请谨慎操作！')) {
             var payId = sessionGet('payId');
             var ajaxTimeOut = $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 timeout: 8000,
                 data: {
@@ -5130,7 +5130,7 @@ $(document).ready(function() {
                 var payid = $(".yearlyBanner .queryInput").val();
                 var column = ' payId,UName,department,startDate,deadline,phyTest,yearlyCheckDate';
                 var ajaxTimeOut = $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
@@ -5185,7 +5185,7 @@ $(document).ready(function() {
         $('.yearlyButtonBanner .phyTestOk').off('click').on('click',function(){
             if(confirm(data['UName']+'师傅的体检结论合格，确定？')){
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     data: {
@@ -5204,7 +5204,7 @@ $(document).ready(function() {
         $('.yearlyButtonBanner .phyTestNo').off('click').on('click',function(){
             if(confirm(data['UName']+'师傅的体检结论不合格，确定？')){
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     data: {
@@ -5235,7 +5235,7 @@ $(document).ready(function() {
                 if($('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/)){
                     var setDate = $('#yearlyContainer .queryInfoContent .yearlyCheckDateInput').val();
                     $.ajax({
-                        url: "../../../index.php",
+                        url: "../../../ways.php",
                         type: "POST",
                         timeout: 8000,
                         data: {
@@ -5272,7 +5272,7 @@ $(document).ready(function() {
     //从全员信息库中取申请表要用的信息
     function getUserinfo(payId,changeType) {
         var ajaxTimeOut = $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type: "POST",
             timeout: 8000,
             data: {
@@ -5289,7 +5289,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function (data) {
                 $.ajax({
-                    url: "../../../index.php",
+                    url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
                     data: {
@@ -5551,7 +5551,7 @@ $(document).ready(function() {
             lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
             lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
             var ajaxTimeOut = $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 timeout: 8000,
                 data: {
@@ -5600,7 +5600,7 @@ $(document).ready(function() {
             //该变量是update语句中set后面的句段
             setStr = setStr.substring(0, setStr.length - 1);
             $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 timeout: 8000,
                 data: {
@@ -5625,7 +5625,7 @@ $(document).ready(function() {
             date = date.getFullYear() + '-' + date.month + '-' + date.date;
             var sjDate = $("#originYearInTable").text()+'-'+$("#originMonthInTable").text()+'-'+$("#originDateInTable").text();
             $.ajax({
-                url: "../../../index.php",
+                url: "../../../ways.php",
                 type: "POST",
                 timeout: 8000,
                 data: {
@@ -5666,7 +5666,7 @@ $(document).ready(function() {
     function checkCardStatus(csData) {
         var payId = sessionGet('payId');
         $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type: "POST",
             timeout: 8000,
             data: {
@@ -5693,7 +5693,7 @@ $(document).ready(function() {
 
                 }else{
                     $.ajax({
-                        url: "../../../index.php",
+                        url: "../../../ways.php",
                         type: "POST",
                         timeout: 8000,
                         data: {
@@ -5763,7 +5763,7 @@ $(document).ready(function() {
         var uname = sessionGet('user');
         //取用户身份证号
         var ajaxTimeOut1 = $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type: "POST",
             timeout: 8000,
             data: {
@@ -5832,7 +5832,7 @@ $(document).ready(function() {
         var uname = sessionGet('user');
         //取用户身份证号
         var ajaxTimeOut1 = $.ajax({
-            url: "../../../index.php",
+            url: "../../../ways.php",
             type: "POST",
             timeout: 8000,
             data: {
