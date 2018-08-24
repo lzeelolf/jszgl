@@ -464,13 +464,16 @@ function login(){
             success: function(data){
                 console.log(data)
                 if(data.success===1 && data.login ===1){ // 根据返回的数据做不同处理
-                    alert('欢迎，'+data.username);
                     sessionSet('token',data.token);
                     sessionSet('power',data.power);
                     sessionSet('user',data.username);
                     sessionSet('department',data.department);
                     sessionSet('payId',data.payId);
+                    //记住登录时的session
+                    userSessionInfo = rememberSession('token', 'user', 'power', 'department','payId');
+                    alert('欢迎，'+data.username);
                     window.location.href = 'index.html'
+                    return userSessionInfo
                 }else if(data.success===1 && data.login !==1){
                     alert('密码错误！')
                 }else if(data.success===0){
@@ -507,6 +510,37 @@ function rememberSession(token,user,power,department,payId){
 
 //测试session是否被更改过
 function testSession(obj){
+    //2018.8.24
+    $.ajax({
+        url: "../../../ways.php",
+        type:"POST",
+        timeout:8000,
+        data:{funcName:'select',serverName:'10.101.62.62',uid:'sa',pwd:'2huj15h1',Database:'userinfo',
+            tableName:'userinfo1',column:' substring(power,21,1) AS power,uName',where:' where payId = \''+obj.payId+'\''},
+        dataType:'json',
+        success:function(data){
+            if(data['success'] === 1){
+                if(data['row1']['power'] === obj.power && data['row1']['uName'] === obj.user ){
+
+                }else{
+                    alert('用户信息发生变化，请重新登录')
+                    window.location  = 'login.html'
+                }
+            }else{
+                alert('用户信息发生变化，请重新登录')
+                window.location  = 'login.html'
+            }
+
+        }
+    })
+
+
+
+
+
+
+
+
     if(obj.token === sessionGet('token') && obj.user ===sessionGet('user') && obj.power ===sessionGet('power') && obj.department === sessionGet('department') && obj.payId === sessionGet('payId')){
     }else{
         alert('用户信息发生变化，请重新登录');

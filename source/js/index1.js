@@ -5,6 +5,7 @@ $(document).ready(function() {
     //记住登录时的session
     userSessionInfo = rememberSession('token', 'user', 'power', 'department','payId');
     //证件查询按钮的事件,调用displayQueryForm函数
+    testSession(userSessionInfo)
     eventBound(queryCardButton, 'click', displayQueryForm);
     //以下这些部门人员较少，直接面向教育科，由教育科负责审核
     var straightJYK = ['安全生产指挥中心','技术科','综合分析室','安全科','职工教育科','统计信息科'];
@@ -58,6 +59,7 @@ $(document).ready(function() {
     function displayContainer(){
         var power = sessionGet('power');
         var index = $(this).index();
+        testSession(userSessionInfo)
         if(power === 'V'){
             //教育科管理人员或车间管理人员
             if($(this).next().length>0) {

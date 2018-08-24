@@ -4,6 +4,7 @@ $(document).ready(function(){
     sessionRemove('token');
     sessionRemove('power');
     sessionRemove('department')
+    sessionRemove('payId')
     //登录按钮
     var loginBtn = document.getElementById('login');
     loginBtn.onclick = login;
