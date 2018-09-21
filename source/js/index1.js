@@ -3783,8 +3783,6 @@ $(document).ready(function() {
                                             if(ret['success'] === 1){
                                                 $(".progressBar .total").html(uploadArr.length)
                                                 done+=1;
-                                                var width = 228*done/uploadArr.length;
-                                                $(".doneProgress").css({'width':width+'px'})
                                                 $(".progressBar .done").html(done)
                                                 if(done === uploadArr.length){
                                                     alert('上传成功')
@@ -3813,27 +3811,28 @@ $(document).ready(function() {
                                         success:function(data){
                                             $(".progressBar .total").html(uploadArr.length)
                                             done+=1;
-                                            var width = 228*done/uploadArr.length;
-                                            $(".doneProgress").css({'width':width+'px'})
                                             $(".progressBar .done").html(done)
+                                            if(done === uploadArr.length){
+                                                alert('上传成功')
+                                                location.reload()
+                                            }
                                         }
                                     })
                                 }
                             }
                         })
                     })
-                    var time = window.setTimeout(test,6000)
+                    var time = window.setTimeout(test,5000)
                     function test(){
-                        if($('.progressBar .done').html() === uploadArr.length){
-                            alert('上传成功')
-                            location.reload()
-                        }else{
-                            alert('由于网络原因，上传未全部成功，请再次点击上传')
+                        if($(".progressBar .done").html() !== $(".progressBar .total").html()){
+                            alert('由于网络原因，上传失败，请重新上传')
+
                         }
                         window.clearTimeout(time)
                     }
 
                 })
+
                 $('#appendTSTable .ts').off('click').on('click',function(){
                     var index = ''
                     for(var i in data){
