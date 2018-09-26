@@ -996,8 +996,6 @@
 
                 //取参数表
                 $.ajax({
-                    //取参数表的车间部门名补全部门选项
-                    //6.13   实现根据权限来渲染不同页面元素。获取车间人员的所属车间，把检索范围规定住。找几个权限不同的测试用户
                     url: "../../../ways.php",
                     type: "POST",
                     timeout: 8000,
@@ -1015,6 +1013,7 @@
                 //等待结果页签，点选总公司返回的名单，把此人信息加入jbxx表
                 function appendJbxx(csData){
                     $("#uploadContent2 table tbody tr").off('click').on('click',function(){
+                        var _this = $(this);
                         var uname = $(this).find('.uName').text()
                         var sex = $(this).find('.sex').text()
                         var sjDriveCode = $(this).find('.sjDriveCode').text();
@@ -1076,32 +1075,168 @@
                                             var status = csData['zjzt-zc']['nr2'];
                                             var tzDone = csData['tzDone-swtz']['nr2'];
                                             var phyTest = csData['tjjl-hg']['nr2']
+
+                                            //这次请求是验证库内是否已经有这个工资号（主键），有的话update否则insert
                                             $.ajax({
                                                 url: "../../../ways.php",
-                                                type: "POST",
-                                                timeout: 8000,
-                                                data: {
-                                                    funcName: 'insert',
-                                                    serverName: '10.101.62.73',
-                                                    uid: 'sa',
-                                                    pwd: '2huj15h1',
-                                                    Database: 'jszgl',
-                                                    tableName: ' jbxx',
-                                                    column: ' (payId,archivesId,UName,sex,department,birthDate,txrq,cardId,sjDate,' +
-                                                    'startdate,deadline,sjDriveCode,sjDriveType,status,tzdone,phyTest)',
-                                                    values: '(\''+payId+'\',\'' + archivesId + '\',\'' + UName + '\',\'' + sex + '\',\'' + department + '\',\'' + birthDate + '\',\'' + txrq + '\',\'' + cardId + '\',\''
-                                                    + sjDate + '\',\'' + startDate + '\',\'' + deadline + '\',\'' + sjDriveCode + '\',\'' + sjDriveType + '\',\'' + status + '\',\''+tzDone+'\',\''+phyTest+'\')'
-                                                },
-                                                dataType: 'json',
-                                                success: function (){
+                                                type:"POST",
+                                                timeout:8000,
+                                                //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                                                data:{funcName:'select',where:' where archivesId =\''+archivesId+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                                                    tableName:' jbxx ',column:' archivesId',order:' '},
+                                                dataType:'json',
+                                                success:function(data){
+                                                    console.log(data)
+                                                    if(data['success'] === 0){
+                                                        //insert
+                                                        $.ajax({
+                                                            url: "../../../ways.php",
+                                                            type: "POST",
+                                                            timeout: 8000,
+                                                            data: {
+                                                                funcName: 'insert',
+                                                                serverName: '10.101.62.73',
+                                                                uid: 'sa',
+                                                                pwd: '2huj15h1',
+                                                                Database: 'jszgl',
+                                                                tableName: ' jbxx',
+                                                                column: ' (payId,archivesId,UName,sex,department,birthDate,txrq,cardId,sjDate,' +
+                                                                'startdate,deadline,sjDriveCode,sjDriveType,status,tzdone,phyTest)',
+                                                                values: '(\''+payId+'\',\'' + archivesId + '\',\'' + UName + '\',\'' + sex + '\',\'' + department + '\',\'' + birthDate + '\',\'' + txrq + '\',\'' + cardId + '\',\''
+                                                                + sjDate + '\',\'' + startDate + '\',\'' + deadline + '\',\'' + sjDriveCode + '\',\'' + sjDriveType + '\',\'' + status + '\',\''+tzDone+'\',\''+phyTest+'\')'
+                                                            },
+                                                            dataType: 'json',
+                                                            success: function (){
+                                                                alert('添加成功')
+                                                                _this.remove()
+                                                                $.each($("#uploadContent2 table tr .number"),function(m,val){
+                                                                    $(this).text($(this).parent().index()-3)
+                                                                })
 
+                                                                //删除DBSX表中数据
+                                                                $.ajax({
+                                                                    url: "../../../ways.php",
+                                                                    type: "POST",
+                                                                    timeout: 8000,
+                                                                    data: {
+                                                                        funcName: 'delete',
+                                                                        serverName: '10.101.62.73',
+                                                                        uid: 'sa',
+                                                                        pwd: '2huj15h1',
+                                                                        Database: 'jszgl',
+                                                                        tableName: ' dbsx',
+                                                                        where: ' where archivesId =\'' + archivesId + '\''
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success:function(data){
+
+                                                                    }
+                                                                })
+                                                                //更新tjxx表
+                                                                var date = new Date();
+                                                                var year = date.getFullYear()
+                                                                var setStr1 = 'increaseAmount = increaseAmount + 1,kshg=kshg+1,yearlyAmount = yearlyAmount+1';
+                                                                var where1 =  ' where driveCode = \''+ sjDriveCode +'\' AND year = '+year;
+                                                                $.ajax({
+                                                                    url: "../../../ways.php",
+                                                                    type: "POST",
+                                                                    timeout: 8000,
+                                                                    data: {
+                                                                        funcName: 'update',
+                                                                        serverName: '10.101.62.73',
+                                                                        uid: 'sa',
+                                                                        pwd: '2huj15h1',
+                                                                        Database: 'jszgl',
+                                                                        tableName: ' tjxx',
+                                                                        setStr: setStr1,
+                                                                        where: where1
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success: function () {
+
+                                                                    }
+                                                                })
+                                                            }
+                                                        })
+                                                    }else{
+                                                        //update
+                                                        var columnArr = ['payId','UName','department','cardId','sex','birthDate','txrq','sjDate','startDate','deadline','sjDriveCode','sjDriveType','status','tzDone','phyTest'];
+                                                        var valuesArr = [payId,UName,department,cardId,sex,birthDate,txrq,sjDate,startDate,deadline,sjDriveCode,sjDriveType,status,tzDone,phyTest];
+                                                        var setStr = '';
+                                                        for (var i = 0; i < columnArr.length; i++) {
+                                                            setStr += columnArr[i] + '=' + '\'' + valuesArr[i] + '\'' + ','
+                                                        }
+                                                        //该变量是update语句中set后面的句段
+                                                        setStr = setStr.substring(0, setStr.length - 1);
+                                                        $.ajax({
+                                                            url: "../../../ways.php",
+                                                            type: "POST",
+                                                            timeout: 8000,
+                                                            data: {
+                                                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                                                                tableName: ' jbxx', setStr: setStr, where: ' where archivesId = \''+archivesId+'\''
+                                                            },
+                                                            dataType: 'json',
+                                                            success: function () {
+                                                                alert('添加完成')
+                                                                _this.remove()
+                                                                $.each($("#uploadContent2 table tr .number"),function(m,val){
+                                                                    $(this).text($(this).parent().index()-3)
+                                                                })
+                                                                //删除DBSX表中数据
+                                                                $.ajax({
+                                                                    url: "../../../ways.php",
+                                                                    type: "POST",
+                                                                    timeout: 8000,
+                                                                    data: {
+                                                                        funcName: 'delete',
+                                                                        serverName: '10.101.62.73',
+                                                                        uid: 'sa',
+                                                                        pwd: '2huj15h1',
+                                                                        Database: 'jszgl',
+                                                                        tableName: ' dbsx',
+                                                                        where: ' where archivesId =\'' + archivesId + '\''
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success:function(data){
+
+                                                                    }
+                                                                })
+                                                                //更新tjxx表
+                                                                var date = new Date();
+                                                                var year = date.getFullYear()
+                                                                var setStr1 = 'increaseAmount = increaseAmount + 1,kshg=kshg+1,yearlyAmount = yearlyAmount+1';
+                                                                var where1 =  ' where driveCode = \''+ sjDriveCode +'\' AND year = '+year;
+                                                                $.ajax({
+                                                                    url: "../../../ways.php",
+                                                                    type: "POST",
+                                                                    timeout: 8000,
+                                                                    data: {
+                                                                        funcName: 'update',
+                                                                        serverName: '10.101.62.73',
+                                                                        uid: 'sa',
+                                                                        pwd: '2huj15h1',
+                                                                        Database: 'jszgl',
+                                                                        tableName: ' tjxx',
+                                                                        setStr: setStr1,
+                                                                        where: where1
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success: function () {
+
+                                                                    }
+                                                                })
+                                                            }
+                                                        })
+                                                    }
                                                 }
                                             })
+
+
                                         }
                                     })
                                 }else if(data['rows'] > 1){
                                     //找到此人并且有重名情况
-                                    console.log(1)
                                     var top = document.documentElement.scrollTop;
 
                                     $('#appendWindowContent').css({'visibility':'visible','opacity':'0.9'})
@@ -1162,8 +1297,107 @@
                                                 }else{
                                                     console.log($('.appendWindowArea table td .appendRadio:checked').parent().parent().index())
                                                     var payId = data[flag]['payId'];
+                                                    column = ' *'
                                                     console.log(payId)
                                                     console.log(uname)
+                                                    //数据对应，写入jbxx表
+                                                    $.ajax({
+                                                        url: "../../../ways.php",
+                                                        type:"POST",
+                                                        timeout:8000,
+                                                        //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                                                        data:{funcName:'select',where:' where payid =\''+payId+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                                                            tableName:' dbsx ',column:column,order:' '},
+                                                        dataType:'json',
+                                                        success:function(data){
+                                                            console.log(data)
+                                                            data['sjDate'] = sjDate;
+                                                            data['sjDriveCode'] = sjDriveCode;
+                                                            data['sjDrive'] = sjDriveType;
+                                                            data['sex'] = sex;
+                                                            console.log(data)
+                                                            var payId = data['row1']['payId'];
+                                                            var archivesId = data['row1']['archivesId'];
+                                                            var UName = data['row1']['UName'];
+                                                            var birthDate = data['row1']['birthDate'];
+                                                            var cardId = data['row1']['cardId'];
+                                                            var department = data['row1']['Department'];
+                                                            var txrq = data['row1']['txrq'];
+                                                            var status = csData['zjzt-zc']['nr2'];
+                                                            var tzDone = csData['tzDone-swtz']['nr2'];
+                                                            var phyTest = csData['tjjl-hg']['nr2']
+                                                            $.ajax({
+                                                                    url: "../../../ways.php",
+                                                                    type: "POST",
+                                                                    timeout: 8000,
+                                                                    data: {
+                                                                        funcName: 'insert',
+                                                                        serverName: '10.101.62.73',
+                                                                        uid: 'sa',
+                                                                        pwd: '2huj15h1',
+                                                                        Database: 'jszgl',
+                                                                        tableName: ' jbxx',
+                                                                        column: ' (payId,archivesId,UName,sex,department,birthDate,txrq,cardId,sjDate,' +
+                                                                        'startdate,deadline,sjDriveCode,sjDriveType,status,tzdone,phyTest)',
+                                                                        values: '(\''+payId+'\',\'' + archivesId + '\',\'' + UName + '\',\'' + sex + '\',\'' + department + '\',\'' + birthDate + '\',\'' + txrq + '\',\'' + cardId + '\',\''
+                                                                        + sjDate + '\',\'' + startDate + '\',\'' + deadline + '\',\'' + sjDriveCode + '\',\'' + sjDriveType + '\',\'' + status + '\',\''+tzDone+'\',\''+phyTest+'\')'
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success: function (){
+                                                                        $('#appendWindowContent').css({'visibility':'hidden','opacity':'0'})
+                                                                        alert('添加完成')
+                                                                        _this.remove()
+                                                                        $.each($("#uploadContent2 table tr .number"),function(m,val){
+                                                                            $(this).text($(this).parent().index()-3)
+                                                                        })
+                                                                        //删除DBSX表中数据
+                                                                        $.ajax({
+                                                                            url: "../../../ways.php",
+                                                                            type: "POST",
+                                                                            timeout: 8000,
+                                                                            data: {
+                                                                                funcName: 'delete',
+                                                                                serverName: '10.101.62.73',
+                                                                                uid: 'sa',
+                                                                                pwd: '2huj15h1',
+                                                                                Database: 'jszgl',
+                                                                                tableName: ' dbsx',
+                                                                                where: ' where archivesId =\'' + archivesId + '\''
+                                                                            },
+                                                                            dataType: 'json',
+                                                                            success:function(data){
+
+                                                                            }
+                                                                        })
+                                                                        //更新tjxx表
+                                                                        var date = new Date();
+                                                                        var year = date.getFullYear()
+                                                                        var setStr1 = 'increaseAmount = increaseAmount + 1,kshg=kshg+1,yearlyAmount = yearlyAmount+1';
+                                                                        var where1 =  ' where driveCode = \''+ sjDriveCode +'\' AND year = '+year;
+                                                                        $.ajax({
+                                                                            url: "../../../ways.php",
+                                                                            type: "POST",
+                                                                            timeout: 8000,
+                                                                            data: {
+                                                                                funcName: 'update',
+                                                                                serverName: '10.101.62.73',
+                                                                                uid: 'sa',
+                                                                                pwd: '2huj15h1',
+                                                                                Database: 'jszgl',
+                                                                                tableName: ' tjxx',
+                                                                                setStr: setStr1,
+                                                                                where: where1
+                                                                            },
+                                                                            dataType: 'json',
+                                                                            success: function () {
+
+                                                                            }
+                                                                        })
+                                                                    }
+                                                                })
+                                                        }
+                                                    })
+
                                                 }
 
                                             })
@@ -1204,6 +1438,8 @@
                                             // })
                                         }
                                     })
+                                }else if(data['success'] === 0){
+                                    alert('查无此人')
                                 }
                             }
                         })
