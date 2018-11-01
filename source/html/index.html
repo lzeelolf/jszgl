@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>洛阳机务段机车驾驶证管理系统</title>
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
@@ -86,6 +87,13 @@
 <div id="loadingPic">
     <p>正在连接,请稍候...</p>
 </div>
+<div class="navbar-fixed-top navbar-inverse">
+    <div class="navbar-inner">
+        <p class="welcome float">欢迎</p>
+        <a href="#" class="floatR"><i class="icon-cog icon-white"></i></a>
+        <p class="name floatR"></p>
+    </div>
+</div>
 <div id="reasonContainer">
     <div id="reasonContent">
         <p>请选择驳回该申请的原因：</p>
@@ -112,35 +120,113 @@
 
 </div>
 
+<div id="selectPC" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="selectPCLabel">请选择批次：</h3>
+    </div>
+    <div class="modal-body">
+        <form action="" class="form-horizontal">
+            <select name="year" id="year">
 
-<div id="appendInfoContent">
-    <div class="appendInfo">
-        <div>
-            <p>工资号：</p><div class="payId"></div>
-            <p>档案号：</p><div class="archivesId"></div>
-            <p>姓名：</p><div class="name"></div>
-        </div>
-        <div>
-            <p>性别：</p><div class="sex"></div>
-            <p>部门：</p><div class="department"></div>
-            <p>身份证号：</p><div class="cardId"></div>
-        </div>
-        <div>
-            <p>出生日期：</p><div class="birthDate"></div>
-            <p>退休日期：</p><div class="txrq"></div>
-        </div>
-        <div>
-            <p>初次领证日期：</p><div><input type="text" class="sjDateInput date"></div>
-            <p>准驾类型代码：</p><div><input type="text" class="sjDriveCodeInput"></div>
-        </div>
-        <div>
-            <p>有效起始日期：</p><div><input type="text" class="startDateInput date"></div>
-            <p>有效截止日期：</p><div><input type="text" class="deadlineInput date"></div>
-        </div>
-        <div>
-            <button class="submit"></button>
-            <button class="exit"></button>
-        </div>
+            </select>
+            <div class="input-prepend input-append">
+                <span class="add-on">年第</span>
+                <select name="year" id="PCselect">
+
+                </select>
+                <span class="add-on">批</span>
+            </div>
+        </form>
+
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+        <button class="btn btn-primary">提交</button>
+    </div>
+</div>
+<div id="inputArchivesId" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    </div>
+    <div class="modal-body">
+        <form action="" class="form-horizontal">
+            <fieldset>
+                <legend>大名单中查无此人，请输入档案号：</legend>
+                <label id="inputArchivesIdName"></label>
+                <input id="inputArchivesIdInput" type="text" placeholder="请输入档案号：">
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+        <button class="btn btn-primary">提交</button>
+    </div>
+</div>
+
+<div id="drInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="drInfoLabel">填写人员信息</h3>
+    </div>
+    <div class="modal-body">
+        <form action="" class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label">工资号：</label>
+                <input class="payId uneditable-input span2" disabled/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">档案号：</label>
+                <input class="archivesId uneditable-input span2" disabled/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">姓名：</label>
+                <input class="name uneditable-input span2" disabled/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">性别：</label>
+                <input class="sex uneditable-input span2" disabled/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">部门：</label>
+                <input class="department uneditable-input span2" disabled/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">身份证号：</label>
+                <input class="cardId uneditable-input span3" disabled/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">出生日期：</label>
+                <input class="birthDate uneditable-input span2" disabled/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">退休日期：</label>
+                <input class="txrq uneditable-input span2" disabled/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">初次领证日期：</label>
+                <input type="text" class="sjDateInput date span2"/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">准驾类型代码：</label>
+                <input type="text" class="sjDriveCodeInput span2"/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">有效起始日期：</label>
+                <input type="text" class="startDateInput date span2"/>
+            </div>
+            <div class="control-group">
+                <label class="control-label">有效截止日期：</label>
+                <input type="text" class="deadlineInput date span2" />
+            </div>
+        </form>
+
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+        <button class="btn btn-primary">提交</button>
     </div>
 </div>
 <div id="bigContent">
@@ -157,60 +243,77 @@
         </div>
     </div>
     <div id="leftContent">
-        <p class="welcome">欢迎</p>
-        <p class="name"></p>
         <ul id="buttonList">
         </ul>
     </div>
     <div id="rightContent">
-        <h1 id="title">洛阳机务段机车驾驶证管理系统</h1>
         <div class="operateContent">
             <div class="jykUse" id="appendContainer">
-                <div id="appendBanner">
-                    <div id="dr" class="float">人员调入</div>
-                    <div id="ts" class="float">人员提升</div>
-                </div>
-                <div class="appendContent">
-                    <table cellspacing="0" cellpadding="0" id="appendDRTable" class="table"></table>
-                </div>
-                <div class="levelUpContent">
-                    <div class="buttonBanner">
-                        <div class="float">
-                            <p>上传参加考试人员信息表</p>
-                            <span class="question">?</span>
-                            <span class="tips">每一次提升司机，请先点击该页签，并在下方上传《》录入该批次人员信息</span>
-                        </div>
-                        <span>
+                <ul id="appendBanner" class="nav nav-tabs">
+                    <li id="dr" class="float"><a href="#drContent">人员调入<span class="redPoint"></span></a></li>
+                    <li id="ts" class="float"><a href="#tsContent">人员提升</a></li>
+                    <li id="quit" class="float"><a href="#quitContent">人员离职<span class="redPoint"></span></a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="appendContent tab-pane" id="drContent">
+                        <a href="Webshell://hello" class="float">同步数据库</a>
+                        <table cellspacing="0" cellpadding="0" id="appendDRTable" class="table table-striped table-bordered table-condensed"></table>
+                        <p></p>
+                    </div>
+                    <div class="levelUpContent tab-pane" id="tsContent">
+                        <div class="buttonBanner">
+                            <div class="float">
+                                <p>上传参加考试人员信息表</p>
+                                <a class="question" data-toggle="tooltip" title data-original-title="每一次提升司机，请先点击该页签，并在下方上传《》录入该批次人员信息">?</a>
+                            </div>
+                            <span>
                             <img src="../images/rightArrow.png" alt="">
                             <img src="../images/rightArrow.png" alt="">
                         </span>
-                        <div class="float">
-                            <p>等待结果</p>
-                            <span class="question">?</span>
-                            <span class="tips">考试结果下发后，请点击该页签，上传《》来标识通过考试的人员</span>
+                            <div class="float">
+                                <p>等待结果</p>
+                                <span class="question" data-toggle="tooltip" title data-original-title="考试结果下发后，请点击该页签，上传《》来标识通过考试的人员">?</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="uploadExcelContent">
-                        <label for="uploadExcel">请上传《应提升司机人员信息表》</label>
-                        <input type="file" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="uploadExcel"/>
-                        <div id="uploadContent"></div>
-                        <button class="confirmUpload">上传信息</button>
-                        <div class="progressBar">
+                        <div class="uploadExcelContent">
+                            <form action="" class="form-horizontal">
+                                <div class="control-group">
+                                    <label style="width:auto;margin-left:210px" class="control-label" for="uploadExcel1">请先上传劳人科《具提升资格人员大名单》</label>
+                                    <div class="controls">
+                                        <input type="file" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="uploadExcel1"/>
+                                    </div>
+                                </div>
+                                <div class="control-group" id="hiddenUpload" style="visibility: hidden;">
+                                    <label style="width:auto;margin-left:251px" class="control-label" for="uploadExcel">再上传《司机理论考试信息一览表》</label>
+                                    <div class="controls">
+                                        <input type="file" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="uploadExcel"/>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div id="uploadContent"></div>
+                            <button class="confirmUpload">上传信息</button>
+                            <div class="progressBar">
                             <span class="floatR">
                                 <span class="done"></span>
                                 /
                                 <span class="total"></span>
                             </span>
+                            </div>
+                        </div>
+                        <div class="levelUpTableContent">
+                            <table cellspacing="0" cellpadding="0" id="appendTSTable" class="table table-bordered table-condensed"></table>
+                            <div>
+                                <input type="file" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="uploadExcel2"/>
+                                <div id="uploadContent2"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="levelUpTableContent">
-                        <table cellspacing="0" cellpadding="0" id="appendTSTable" class="table"></table>
-                        <div>
-                            <input type="file" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="uploadExcel2"/>
-                            <div id="uploadContent2"></div>
-                        </div>
+                    <div class="quitContent tab-pane" id="quitContent">
+                        <table cellspacing="0" cellpadding="0" id="appendLZTable" class="table table-striped table-bordered table-condensed"></table>
                     </div>
                 </div>
+
                 <div id="appendPage">
                     <span class="prev">上一页</span>
                     <span>第</span>
@@ -285,7 +388,7 @@
             <div class="jykUse cjUse" id="dataContainer">
                 <div id="dataBanner"></div>
                 <div id="dataContent">
-                    <table id="dataTable" cellpadding="0" cellspacing="0"></table>
+                    <table id="dataTable" cellpadding="0" cellspacing="0" class="table table-bordered table-condensed table-striped"></table>
                 </div>
                 <div id="dataPage">
                     <span class="prev">上一页</span>
@@ -755,125 +858,9 @@
 <script type="text/javascript" src="../js/base_64.js"></script>
 <script type="text/javascript" src="../js/newFunc.js"></script>
 <script type="text/javascript" src="../js/index1.js"></script>
+<script type="text/javascript" src="../bootstrap/js/bootstrap.min.js"></script>
 <script>
-    function handleFile(e) {
-        var files = e.target.files;
-        var i,f;
-        for (i = 0, f = files[i]; i != files.length; ++i) {
-            var reader = new FileReader();
-            var name = f.name;
-            reader.onload = function(e) {
-                var data = e.target.result;
-                var workbook = XLSX.read(data, {type: 'binary'});
-                var sheet_name_list = workbook.SheetNames;
-                var result = [];
-                var headItem=[];
-                var dataItem=[];
-                var dataFormulae=[];
-                var dataCsv=[];
-                var headCode=[];
-                var rowNum=0;
-                sheet_name_list.forEach(function(y) {
-                    var worksheet = workbook.Sheets[y];
-                    var json = XLSX.utils.sheet_to_json(workbook.Sheets[y]);
-                    var formulae = XLSX.utils.sheet_to_formulae(workbook.Sheets[y]);
-                    var csv = XLSX.utils.sheet_to_formulae(workbook.Sheets[y]);
-                    if(json.length > 0){
-                        result=json;
-                        dataCsv=csv;
-                    }
-                });
-                $.each(dataFormulae,function (j,head) {
-                    var headlist=head.split("='")
-                    if(/^[A-Z]1$/.test(headlist[0])){
-                        headItem.push(headlist[1])
-                    }
-                })
-                $.each(result,function (i,val) {
-                    var data=[]
-                    $.each(headItem,function (k,head) {
-                        val[head]!=undefined?data.push(val[head]):data.push("")
-                    })
-                    dataItem.push(data)
-                })
-                $.each(dataCsv,function (j,head) {
-                    var headlist=head.split("='")
-                    rowNum=/^[A-Z]+(\d+)$/.exec(headlist[0])[1];
-                    headCode.indexOf(/^([A-Z]+)\d+$/.exec(headlist[0])[1])==-1?headCode.push(/^([A-Z]+)\d+$/.exec(headlist[0])[1]):'';
-                })
-                headCode=headCode.sort();
-                $.each(headCode,function (i,val) {
-                    headItem[val]='';
-                })
-                for(var i=0;i<Number(rowNum)-1;i++){
-                    var obj={};
-                    $.each(headCode,function (i,val) {
-                        obj[val]='';
-                    })
-                    dataItem[i]=obj;
-                }
-                $.each(dataCsv,function (j,head) {
-                    var headlist=head.split("='")
-                     var code= /^([A-Z]+)\d+$/.exec(headlist[0])[1];
-                    var row= /^[A-Z]+(\d+)$/.exec(headlist[0])[1];
-                    if(row==1){
-                        headItem[j]=headlist[1]
-                    }else{
-                        dataItem[row-2][code]=headlist[1];
-                    }
-                })
-                var headstr='';
-                var datastr='';
-                $.each(headItem,function (i,head) {
-                    headstr=headstr+'<th style="border: 1px solid #cccccc">'+head+'</th>'
-                })
-                $.each(dataItem,function (i,data) {
-                    datastr=datastr+'<tr >';
-                    var clasS = '';
-                    $.each(data,function (j,val) {
-                        switch (j){
-                            //
-                            //按照劳人科给的《具提升资格人员名单》，把每一列和类名意义对应
-                            //需要和劳人科约定规则，不能随意更改
-                            case 'A':clasS = 'number';
-                                break;
-                            case 'B':clasS = 'department';
-                                break;
-                            case 'C':clasS = 'archivesId';
-                                break;
-                            case 'D':clasS = 'uName';
-                                break;
-                            case 'E':clasS = 'payId';
-                                break;
-                            case 'F':clasS = 'birthDate';
-                                break;
-                            case 'G':clasS = 'funName';
-                                break;
-                            case 'H':clasS = 'workDate';
-                                break;
-                            case 'I':clasS = 'fsjDate';
-                                break;
-                            case 'J':clasS = 'fsjDate';
-                                break;
-                            case 'K':clasS = 'cardId';
-                                break;
-                        }
-                        datastr=datastr+'<td style="border: 1px solid #cccccc">'+'<input class="'+clasS+'" style="font-size:13px" type="text" value="'+val+'"></td>'
-                    })
-                    datastr=datastr+'</tr>';
-                })
-                var table='<table style="border: 1px solid #cccccc;border-collapse: collapse;"><thead><tr style="font-weight: bold">'+headstr+'</tr></thead><tbody>'+datastr+ '</tbody></table>'
-                $('#uploadContent').empty().html( $('#uploadContent').html()+table);
-                alert('请检查信息是否有误，确认无误后请点击表格末尾的“上传”按钮')
-                $('.confirmUpload').css('display','inline-block')
-            };
-            reader.readAsBinaryString(f);
-        }
-        $('#uploadExcel').val('')
-    }
-    $('#uploadExcel').bind('change', handleFile);
-</script>
-<script>
+    //铁路局返回名单上传
     function handleFile2(e,csData) {
         var files = e.target.files;
         var i,f;
@@ -1071,12 +1058,17 @@
                                             var birthDate = data['row1']['birthDate'];
                                             var cardId = data['row1']['cardId'];
                                             var department = data['row1']['Department'];
+                                            if(department.indexOf('运用') >= 0){
+                                                department += ',运用系统'
+                                            }else if(department.indexOf('整备') >= 0){
+                                                department += ',整备系统'
+                                            }
                                             var txrq = data['row1']['txrq'];
                                             var status = csData['zjzt-zc']['nr2'];
                                             var tzDone = csData['tzDone-swtz']['nr2'];
                                             var phyTest = csData['tjjl-hg']['nr2']
 
-                                            //这次请求是验证库内是否已经有这个工资号（主键），有的话update否则insert
+                                            //这次请求是验证库内是否已经有这个档案号（主键），有的话update否则insert
                                             $.ajax({
                                                 url: "../../../ways.php",
                                                 type:"POST",
@@ -1086,7 +1078,6 @@
                                                     tableName:' jbxx ',column:' archivesId',order:' '},
                                                 dataType:'json',
                                                 success:function(data){
-                                                    console.log(data)
                                                     if(data['success'] === 0){
                                                         //insert
                                                         $.ajax({
@@ -1112,7 +1103,33 @@
                                                                 $.each($("#uploadContent2 table tr .number"),function(m,val){
                                                                     $(this).text($(this).parent().index()-3)
                                                                 })
-
+                                                                //插入bgxx
+                                                                var date = new Date();
+                                                                var year = date.getFullYear()
+                                                                var lotNumber = new Date();
+                                                                lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
+                                                                lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
+                                                                lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
+                                                                $.ajax({
+                                                                    url: "../../../ways.php",
+                                                                    type: "POST",
+                                                                    timeout: 8000,
+                                                                    data: {
+                                                                        funcName: 'insert',
+                                                                        serverName: '10.101.62.73',
+                                                                        uid: 'sa',
+                                                                        pwd: '2huj15h1',
+                                                                        Database: 'jszgl',
+                                                                        tableName: ' bgxx',
+                                                                        column: ' (id,lotNumber,Department,payId,archivesId,UName,changeType,' +
+                                                                        'driveCode,drive,jykOperator)',
+                                                                        values: '(getDate(),\'' + lotNumber + '\',\'' + department + '\',\'' + payId + '\',\'' + archivesId + '\',\'' + uname + '\',\'' + csData['czlb-levelup2']['nr2']  +
+                                                                        '\',\'' + sjDriveCode +  '\',\'' + sjDriveType + '\',\'' + sessionGet('user') + '\')'
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success: function (ret) {
+                                                                    }
+                                                                })
                                                                 //删除DBSX表中数据
                                                                 $.ajax({
                                                                     url: "../../../ways.php",
@@ -1133,8 +1150,6 @@
                                                                     }
                                                                 })
                                                                 //更新tjxx表
-                                                                var date = new Date();
-                                                                var year = date.getFullYear()
                                                                 var setStr1 = 'increaseAmount = increaseAmount + 1,kshg=kshg+1,yearlyAmount = yearlyAmount+1';
                                                                 var where1 =  ' where driveCode = \''+ sjDriveCode +'\' AND year = '+year;
                                                                 $.ajax({
@@ -1251,7 +1266,6 @@
                                             tableName:' dbsx ',column:column,order:' '},
                                         dataType:'json',
                                         success:function(data){
-                                            console.log(data)
                                             var count = data['count'];
                                             delete data['count']
                                             delete data['success']
@@ -1298,8 +1312,6 @@
                                                     console.log($('.appendWindowArea table td .appendRadio:checked').parent().parent().index())
                                                     var payId = data[flag]['payId'];
                                                     column = ' *'
-                                                    console.log(payId)
-                                                    console.log(uname)
                                                     //数据对应，写入jbxx表
                                                     $.ajax({
                                                         url: "../../../ways.php",
@@ -1310,18 +1322,21 @@
                                                             tableName:' dbsx ',column:column,order:' '},
                                                         dataType:'json',
                                                         success:function(data){
-                                                            console.log(data)
                                                             data['sjDate'] = sjDate;
                                                             data['sjDriveCode'] = sjDriveCode;
                                                             data['sjDrive'] = sjDriveType;
                                                             data['sex'] = sex;
-                                                            console.log(data)
                                                             var payId = data['row1']['payId'];
                                                             var archivesId = data['row1']['archivesId'];
                                                             var UName = data['row1']['UName'];
                                                             var birthDate = data['row1']['birthDate'];
                                                             var cardId = data['row1']['cardId'];
                                                             var department = data['row1']['Department'];
+                                                            if(department.indexOf('运用') >= 0){
+                                                                department += ',运用系统'
+                                                            }else if(department.indexOf('整备') >= 0){
+                                                                department += ',整备系统'
+                                                            }
                                                             var txrq = data['row1']['txrq'];
                                                             var status = csData['zjzt-zc']['nr2'];
                                                             var tzDone = csData['tzDone-swtz']['nr2'];
@@ -1439,7 +1454,7 @@
                                         }
                                     })
                                 }else if(data['success'] === 0){
-                                    alert('查无此人')
+                                    alert('查无此人');
                                 }
                             }
                         })

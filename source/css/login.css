@@ -32,25 +32,25 @@ a,a:hover,a:active,a:visited{
     margin-left: -100px;
 }
 #banner{
-    background-color: cadetblue;
+    background-color: rgba(26, 117, 252, 0.85);
 }
 #banner h1{
     cursor: default;
     font: 26px '微软雅黑';
     text-align: center;
-    color: antiquewhite;
+    color: white;
     font-weight: bold;
 }
 #main{
     width: 100%;
-    background-color: aliceblue;
+    background-color: rgb(255,245,225);
     position: relative;
     overflow: hidden;
 }
 #loginArea{
     width: 50%;
     height: 100%;
-    background: white;
+    background:  rgb(255,245,225);
     position: absolute;
     left: 25%;
 }
@@ -67,7 +67,7 @@ a,a:hover,a:active,a:visited{
     width: 80%;
     min-width: 100px;
     padding-left: 20%;
-    background-color: azure;
+    background-color:  rgb(255,245,225);
     font-weight: bold;
     overflow: visible;
 }
@@ -82,16 +82,20 @@ a,a:hover,a:active,a:visited{
  }
 #login{
     cursor: pointer;
-    width: 70px;
-    height: 30px;
-    line-height: 26px;
+    width: 120px;
+    height: 32px;
+    line-height: 32px;
     display: block;
     position: absolute;
     left:50%;
-    margin-left: -35px;
+    margin-left: -60px;
     font-weight: bold;
+    background-color: rgba(236, 21, 77, 0.85);
+    font-size: 14px;
+    color: white;
+    border-radius: 4px;
 }
 #bottom{
     width: 100%;
-    background-color: cadetblue;
+    background-color: rgba(26, 117, 252, 0.85);
 }

@@ -1,16 +1,18 @@
-html,body,*{
+html,body,*,ul{
     margin: 0;
     padding: 0;
-    font: 16px '微软雅黑';
+    font-size: 14px;
+    font-family:  "Helvetica Neue",Helvetica,Arial,sans-serif;
     color: #555;
     user-select: none;
+
     -ms-user-select: none;
     -moz-user-select: none;
 }
 body{
     overflow-x: auto;
     overflow-y: visible;
-    background-color: #eee;
+    background-color: rgba(26, 117, 252, 0.2);
     position: relative;
     min-height: 1000px;
 }
@@ -108,36 +110,51 @@ a,a:hover,a:active,a:visited{
     margin-left: -100px;
 }
 #bigContent{
-    width: 96%;
+    width: 100%;
     overflow: hidden;
-    background-color: #efefef;
+    background-color: rgba(26, 117, 252, 0);
     position: absolute;
-    left: 3%;
     top: 40px;
 }
 #bigContent #leftContent{
     float: left;
+    margin-top: 50px;
     width: 12%;
-    min-height: 600px;
+    min-height: 450px;
     text-align: center;
-    background-color: white;
-    box-shadow: 0 0 3px 1px #999 ;
-    border-radius: 2px;
+    background-color: rgba(245, 245, 242, 1);
+    box-shadow: 0 0 5px 1px #999 ;
+    border-radius: 5px;
 }
-#bigContent #leftContent .welcome{
-    height: 150px;
-    line-height: 150px;
+.welcome{
+    height: 40px;
+    font-size: 16px;
+    line-height: 40px;
     font-weight: bold;
+    color:#eee;
+    margin: 0 0 0 50px;
 }
-#bigContent #leftContent .name{
-    height: 50px;
-    line-height: 50px;
+.navbar-inverse a.floatR{
+    height: 40px;
+    font-weight: bold;
+    margin-right: 40px;
+}
+.navbar-inverse a.floatR i{
+    margin-top: 10px;
+}
+.navbar-inverse .name{
+    font-weight: bold;
+    height: 40px;
+    line-height: 40px;
+    color:#eee;
+    margin: 0 30px 0 0 ;
 }
 #bigContent #leftContent #buttonList{
-    margin-top: 30px;
     list-style-type: none;
 }
 #bigContent #leftContent #buttonList li{
+    color:#333;
+    font-weight: bold;
     text-align: center;
     font-size: 12px;
     height: 50px;
@@ -161,7 +178,7 @@ a,a:hover,a:active,a:visited{
 }
 #bigContent #leftContent #buttonList li:hover{
     font-weight: bold;
-    background-color: #bbb;
+    background-color: rgba(26, 117, 252, 0.5);
     color: white;
     transition: 0.3s;
 }
@@ -170,7 +187,7 @@ a,a:hover,a:active,a:visited{
     width: 80%;
     margin-left: 4%;
     min-height: 600px;
-    background-color: white;
+    background-color: rgba(245, 245, 242, 1);
     box-shadow: 0 0 3px 1px #999 ;
     border-radius: 2px;
 }
@@ -179,12 +196,14 @@ a,a:hover,a:active,a:visited{
     height: 80px;
     line-height: 80px;
     font-size: 30px;
+    color: #333;
 }
 #bigContent #rightContent .operateContent{
     width: 95%;
     min-height: 460px;
+    margin-top: 50px;
     padding: 0 2.5% 40px 2.5%;
-    background-color: #f4f4f4;
+    background-color: rgba(26, 117, 252, 0);
 }
 #bigContent #rightContent .operateContent>div{
     width: 100%;
@@ -358,9 +377,6 @@ a,a:hover,a:active,a:visited{
 }
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr{
     height: 24px;
-}
-#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr>th:last-child,td:last-child{
-    border-right: 1px solid #333;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr>th{
     cursor:pointer;
@@ -785,25 +801,11 @@ a,a:hover,a:active,a:visited{
     color: cornflowerblue;
     cursor: pointer;
 }
-#bigContent #rightContent #dataContainer #dataContent{
-    padding-top: 30px;
-    overflow-x: auto;
-    white-space: nowrap;
-}
-#bigContent #rightContent #dataContainer #dataContent #dataTable th,#bigContent #rightContent #dataContainer #dataContent #dataTable td{
-    border: 1px solid #333;
-    border-left: none;
-    padding: 5px 10px 5px 10px;
-    font-size: 14px;
-}
 #bigContent #rightContent #giveOutContainer #giveOutContent{
     padding-top: 30px;
 }
 #bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable{
     margin: 0 0 0 160px;
-}
-#bigContent #rightContent #dataContainer #dataContent #dataTable th:first-child,#bigContent #rightContent #dataContainer #dataContent #dataTable td:first-child{
-    border-left: 1px solid #333;
 }
 #bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable th,#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable td{
     border: 1px solid #333;
@@ -925,6 +927,9 @@ a,a:hover,a:active,a:visited{
 #summaryContainer #summaryPage{
     display: none;
 }
+#summaryContainer .summaryContent {
+    overflow: auto;
+}
 #summaryContainer .summaryContent #summaryTable{
     background-color: white;
     margin-top: 40px;
@@ -962,35 +967,11 @@ a,a:hover,a:active,a:visited{
     -moz-user-select: text;
     -ms-user-select: text;
 }
-#bigContent #rightContent #appendContainer #appendBanner{
-    height: 40px;
-    border-bottom: 1px solid #333333;
+body table.table th,body table.table td{
+    text-align: center;
 }
-#bigContent #rightContent #appendContainer #appendBanner>div{
-    height: 40px;
-    border: 1px solid #333;
-    border-bottom: none;
-    font-size: 14px;
-    line-height: 40px;
-    border-radius: 10px 15px 0 0;
-    cursor: pointer;
-    width: 80px;
-}
-#appendContainer .appendContent,.levelUpContent{
-    background-color: white;
-    margin-top: 40px;
-    display: none;
-    position: relative;
-    overflow: hidden;
-}
-#appendInfoContent{
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    opacity: 0;
-    background-color: #aaa;
-    z-index: 999;
-    visibility: hidden;
+#drInfo .modal-header #drInfoLabel{
+    font-size: 20px;
 }
 #appendInfoContent .appendInfo{
     position: absolute;
@@ -1002,18 +983,6 @@ a,a:hover,a:active,a:visited{
 }
 #appendInfoContent .appendInfo>div{
     height: 40px;
-}
-#appendInfoContent .appendInfo>div .submit,#appendInfoContent .appendInfo>div .exit{
-    width: 50px;
-    height: 30px;
-    line-height: 30px;
-    margin-top: 5px;
-    margin-left: 90px;
-    font-size: 14px;
-    background: url("../images/pass.png") no-repeat 7px -4px;
-}
-#appendInfoContent .appendInfo>div .exit{
-    background: url("../images/reject.png") no-repeat 15px 5px;
 }
 #appendInfoContent .appendInfo>div>p,#appendInfoContent .appendInfo>div>div{
     float: left;
@@ -1034,30 +1003,39 @@ a,a:hover,a:active,a:visited{
 #appendContainer #appendPage{
     display: none;
 }
-#appendContainer  .table{
-    margin-left: 40px;
-}
-#appendContainer  .table th ,#appendContainer  .table td {
-    border: 1px solid #333;
-    border-right: none;
-    padding: 3px 8px;
-    font-size: 14px;
-}
-#appendContainer  .table th:last-child ,#appendContainer  .table td:last-child{
-    border-right: 1px solid #333;
-}
-#appendContainer  .table .dr,#appendContainer  .table .ts{
+#appendContainer  .table .dr,#appendContainer  .table .ts,#appendContainer  .table .dc,#dataTable{
     text-decoration: underline;
     color: cornflowerblue;
     cursor: pointer;
     font-size: 12px;
 }
-#appendContainer  .table .tz{
+#appendContainer  .table .tz,#appendContainer  .table .tx{
     text-decoration: underline;
     color: cornflowerblue;
     cursor: pointer;
     font-size: 12px;
     margin-left: 4px;
+}
+#appendBanner #quit,#dr{
+    position: relative;
+}
+#appendBanner #quit .redPoint,#dr .redPoint{
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    width: 7px;
+    height: 7px;
+    display: none;
+    background: url("../images/point.png") no-repeat;
+    background-size: 7px 7px;
+}
+#appendContainer .appendContent .float{
+    height: 24px;
+    line-height: 20px;
+    font-size: 12px;
+    width: 68px;
+    border-radius: 6px;
+    background-color: #eee;
 }
 #appendContainer .appendContent .singleAppendForm{
     overflow: hidden;
@@ -1115,6 +1093,7 @@ a,a:hover,a:active,a:visited{
     width: 100%;
     color: inherit;
     font-weight: inherit;
+    margin:0;
 }
 #appendContainer .levelUpContent .buttonBanner .question{
     font-size: 12px;
@@ -1125,18 +1104,6 @@ a,a:hover,a:active,a:visited{
     border-radius: 50%;
     background-color: yellow;
     font-weight: bold;
-}
-#appendContainer .levelUpContent .buttonBanner .tips{
-    display: none;
-    width: 150px;
-    height: 68px;
-    font-size: 12px;
-    position: absolute;
-    border-radius: 10px;
-    border: 1px solid #333;
-    background-color: #fff76e;
-    top: 2px;
-    left: 105px;
 }
 #appendContainer .levelUpContent .uploadExcelContent{
     display: none;
@@ -1152,39 +1119,7 @@ a,a:hover,a:active,a:visited{
     overflow: auto;
 }
 
-#uploadContent th:first-child,#uploadContent td:first-child input{
-    width: 32px;
-}
-#uploadContent th:nth-child(2),#uploadContent td:nth-child(2) input{
-    width: 80px;
-}
-#uploadContent th:nth-child(3),#uploadContent td:nth-child(3) input{
-    width: 60px;
-}
-#uploadContent th:nth-child(4),#uploadContent td:nth-child(4) input{
-    width: 60px;
-}
-#uploadContent th:nth-child(5),#uploadContent td:nth-child(5) input{
-    width: 60px;
-}
-#uploadContent th:nth-child(6),#uploadContent td:nth-child(6) input{
-    width: 80px;
-}
-#uploadContent th:nth-child(7),#uploadContent td:nth-child(7) input{
-    width: 100px;
-}
-#uploadContent th:nth-child(8),#uploadContent td:nth-child(8) input{
-    width: 100px;
-}
-#uploadContent th:nth-child(9),#uploadContent td:nth-child(9) input{
-    width: 120px;
-}
-#uploadContent th:nth-child(10),#uploadContent td:nth-child(10) input{
-    width: 60px;
-}
-#uploadContent th:nth-child(11),#uploadContent td:nth-child(11) input{
-    width: 150px;
-}
+
 #uploadContent2 tbody tr{
     cursor: pointer;
     transition: 0.5s;

@@ -61,7 +61,7 @@ function resizePage(){
 //检查登录状态和用户名
 function loginStatus(){
     if(sessionGet('user')){
-        $("#bigContent #leftContent .name").text(sessionGet('user'))
+        $(".navbar-inverse .name").text(sessionGet('user'))
         //$("#bigContent #leftContent .name").text(sessionGet('user'))
     }else{
         alert('请先登录！');
