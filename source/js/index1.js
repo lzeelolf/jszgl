@@ -3751,8 +3751,6 @@ $(document).ready(function() {
                 if(confirm('请注意，该功能请不要频繁使用')){
                     location.reload();
                 }
-
-
             })
             //调入：填写驾驶证信息，添加入系统
             $('#appendDRTable .dr').off('click').on('click',function(){
@@ -3942,6 +3940,7 @@ $(document).ready(function() {
             appendModal();
             //上传按钮事件，上传具提升司机资格名单
             $(".uploadExcelContent .confirmUpload").off('click').on('click',function(){
+                //设置这一批的批次名
                 var year = new Date();
                 year = year.getFullYear();
                 var html ='';
@@ -3954,10 +3953,9 @@ $(document).ready(function() {
                 $("#PCselect").empty().append(html);
                 $('#selectPC').modal('show');
                 $("#uploadContent tbody tr td").css('background','inherit')
-                $('.progressBar').css('display','block')
-                $('.progressBar .doneProgress').css('width',0)
                 var uploadArr = [];
                 var driveTypeArr = [];
+                //取准驾机型
                 for(var i in csData){
                     if(csData[i]['lb'] === 'zjlx'){
                         driveTypeArr.push(csData[i]['name'])
@@ -3965,7 +3963,10 @@ $(document).ready(function() {
                 }
                 var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;      //身份证正则
                 var done = 0;
+                //提交按钮
                 $("#selectPC .btn-primary").off('click').on('click',function(){
+                    //逻辑：大名单中的信息在bigArr中，拿小名单中的cardId去比对，比对成功就把信息
+                    //合并，然后再一起循环发ajax请求新增dbsx
                     var flag =true;
                     var PC = $('#selectPC #year option:selected').val()+'年第'+$('#selectPC #PCselect option:selected').val()+'批';
                     $.each($('#uploadContent table tbody tr'),function(i,val){
@@ -3988,22 +3989,38 @@ $(document).ready(function() {
                             flag = false;
                             return false;
                         }
+                        //处理小名单中的准驾类型
                         for(var j=0;j<driveTypeArr.length;j++){
                             var reg1 = new RegExp(driveTypeArr[j]);
                             if(reg1.exec($(val).find('.applyType').val())){
                                 obj.sjDriveCode = reg1.exec($(val).find('.applyType').val())[0];
                             }
                         }
+                        //比对：身份证号相同并且（名字第一个字或最后一个字相同），然后补全档案号
                         for(var m=0;m<bigArr.length;m++){
-                            if(obj.cardId === bigArr[m]['cardId']){
-                                obj.archivesId = bigArr[m]['archivesId'];
+                            if(obj.cardId === bigArr[m]['cardId'] && (obj.uName[0] === bigArr[m]['uName'][0] || obj.uName[obj.uName.length] === bigArr[m]['uName'][bigArr[m]['uName'].length-1])){
+                                if(bigArr[m]['archivesId'].match(/^[0-9]{5}$/)){
+                                    obj.archivesId = bigArr[m]['archivesId'];
+                                }else if(bigArr[m]['archivesId'].match(/^[0-9]{4}$/)){
+                                    obj.archivesId = '0'+bigArr[m]['archivesId'];
+                                }else if(bigArr[m]['archivesId'].match(/^[0-9]{3}$/)){
+                                    obj.archivesId = '00'+bigArr[m]['archivesId'];
+                                }else if(bigArr[m]['archivesId'].match(/^[0-9]{2}$/)){
+                                    obj.archivesId = '000'+bigArr[m]['archivesId'];
+                                }else if(bigArr[m]['archivesId'].match(/^[0-9]{1}$/)){
+                                    obj.archivesId = '0000'+bigArr[m]['archivesId'];
+                                }
+                                break;
                             }
                         }
                         uploadArr[i] = Object.assign(obj);
                     })
-                    /*
                     for(var m=0;m<uploadArr.length;m++){
                         if(!uploadArr[m].archivesId){
+                            //如果没有档案号，说明该条用身份证在两个名单没比对成功（有可能是打错身份证）
+                            //还有一种原因：教育科说报名以车间报的为准，劳人科的名单只作参考。所以小名单中
+                            //的身份证在大名单中找不到。
+                            //那么就用身份证号去62库中比对，但是62表中身份证有错，所以加一层出生日期校验
                             $.ajax({
                                 url: "../../../ways.php",
                                 type: "POST",
@@ -4028,7 +4045,8 @@ $(document).ready(function() {
                             })
                         }
                     }
-                    */
+                    //回调函数再次检验uploadArr，这时候如果还有没有档案号的数据，那只能用户输入了
+                    //为了防止错误，输入后还要去62库比对一下，如果身份证、姓名、电话能对上一种，就予通过
                     testUploadArr(uploadArr);
                     function testUploadArr(uploadArr){
                         var flag1 = true;
@@ -4079,145 +4097,125 @@ $(document).ready(function() {
                                 break;
                             }
                         }
-                        if(flag1){//下午做，检查完数据直接插入
-                            console.log(uploadArr)
-                        }
-                    }
-
-                    /*
-                    if(flag){
-                        $('#selectPC').modal('hide')
-                        var payId ='';
-                        var archivesId='';
-                        var uName='';
-                        var birthDate='';
-                        var department='';
-                        var cardId='';
-                        var phone='';
-                        var txrq='';
-                        var sjDriveCode='';
-                        var sex='';
-                        for(var i=0;i<uploadArr.length;i++){
-                            $.ajax({
-                                url: "../../../ways.php",
-                                type: "POST",
-                                async:false,
-                                data: {
-                                    funcName: 'select',
-                                    serverName: '10.101.62.62',
-                                    uid: 'sa',
-                                    pwd: '2huj15h1',
-                                    Database: 'userinfo',
-                                    tableName: ' userinfo1 ',
-                                    column: ' payId,archivesId,department,sex,birthDate,txrq',
-                                    where: ' where cardId = \'' + uploadArr[i]['cardId'] + '\' AND charindex(substring(birthdate,1,4)+substring(birthdate,6,2)+substring(birthdate,9,2),cardid) =7',
-                                    order: ' '
-                                },
-                                dataType: 'json',
-                                success: function (data){
-                                    if(data['success'] === 1 && data['count'] ===1){
-                                        //最正常情况，身份证+生日验证双重匹配
-                                        uName = uploadArr[i]['uName'];
-                                        phone = uploadArr[i]['phone'];
-                                        cardId = uploadArr[i]['cardId'];
-                                        sjDriveCode = uploadArr[i]['sjDriveCode'];
-                                        sex = uploadArr[i]['sex'];
-                                        payId = data['row1']['payId']?data['row1']['payId']:'';
-                                        archivesId = data['row1']['archivesId']?data['row1']['archivesId']:'';
-                                        birthDate = data['row1']['birthDate']?data['row1']['birthDate']:'';
-                                        txrq = data['row1']['txrq']?data['row1']['txrq']:'';
-                                        if(data['row1']['department'].split(',').length>1){
-                                            department = data['row1']['department'].split(',')[0];
+                        if(flag1){
+                            //没有无档案号的数据了，开始新增dbsx表数据
+                            //先去62表中取部门和payId，比对逻辑是档案号加姓名首字或末字（防止之前大名单中有错）
+                            $(".uploadExcelContent .progressBar").css('display','block')
+                            $('#selectPC').modal('hide')
+                            var payId ='';
+                            var archivesId='';
+                            var uName='';
+                            var department='';
+                            var cardId='';
+                            var type = csData['czlb-levelup2']['nr2']
+                            var phone='';
+                            var sjDriveCode='';
+                            var sex='';
+                            var birthDate='';
+                            var txrq='';
+                            for(var i=0;i<uploadArr.length;i++){
+                                $.ajax({
+                                    url: "../../../ways.php",
+                                    type: "POST",
+                                    async:false,
+                                    data: {
+                                        funcName: 'select',
+                                        serverName: '10.101.62.62',
+                                        uid: 'sa',
+                                        pwd: '2huj15h1',
+                                        Database: 'userinfo',
+                                        tableName: ' userinfo1 ',
+                                        column: ' payId,department,birthDate,txrq',
+                                        where: ' where archivesId = \'' + uploadArr[i]['archivesId'] + '\' AND (substring(uName,1,1) =\''+uploadArr[i]['uName'][0]+'\' OR substring(uName,LEN(uName),1)=\''+uploadArr[i]['uName'][uploadArr[i]['uName'].length-1]+'\')',
+                                        order: ' '
+                                    },
+                                    dataType: 'json',
+                                    success: function (data){
+                                        if(data['success'] === 1 && data['count'] ===1){
+                                            uName = uploadArr[i]['uName'];
+                                            phone = uploadArr[i]['phone'];
+                                            cardId = uploadArr[i]['cardId'];
+                                            archivesId = uploadArr[i]['archivesId'];
+                                            sjDriveCode = uploadArr[i]['sjDriveCode'];
+                                            sex = uploadArr[i]['sex'];
+                                            payId = data['row1']['payId']?data['row1']['payId']:'';
+                                            birthDate = data['row1']['birthDate']?data['row1']['birthDate']:'';
+                                            txrq = data['row1']['txrq']?data['row1']['txrq']:'';
+                                            if(data['row1']['department'].split(',').length>1){
+                                                department = data['row1']['department'].split(',')[0];
+                                            }else{
+                                                department = data['row1']['department']?data['row1']['department']:'';
+                                            }
                                         }else{
-                                            department = data['row1']['department']?data['row1']['department']:'';
+                                            alert('没有全部上传成功。出错条目：'+uploadArr[i]['uName']+'\u000d请更正Excel后重新上传')
+                                            done-=1;
                                         }
-                                    }else if(data['success'] === 1 && data['count'] >1){
-                                        //身份证匹配到多个人，这种情况应该很少发生，备用
-                                    }else if(data['success'] === 0){
-                                        //用身份证匹配不到的人，用姓名进行第二次匹配
                                         $.ajax({
                                             url: "../../../ways.php",
                                             type: "POST",
+                                            timeout: 8000,
                                             async:false,
                                             data: {
-                                                funcName: 'select',
-                                                serverName: '10.101.62.62',
+                                                funcName: 'checkIfExist',
+                                                serverName: '10.101.62.73',
                                                 uid: 'sa',
                                                 pwd: '2huj15h1',
-                                                Database: 'userinfo',
-                                                tableName: ' userinfo1 ',
-                                                column: ' payId,archivesId,department,sex,birthDate,txrq',
-                                                where: ' where uName = \'' + uploadArr[i]['uName'] + '\'',
+                                                Database: 'JSZGL',
+                                                tableName: ' dbsx',
+                                                column: ' *',
+                                                where: ' where archivesId = \'' + archivesId + '\'',
                                                 order: ' '
                                             },
                                             dataType: 'json',
-                                            success: function (data){
-                                                if(data['success'] === 1 && data['count'] ===1){
-                                                    //理想情况，没有重名
-                                                    uName = uploadArr[i]['uName'];
-                                                    phone = uploadArr[i]['phone'];
-                                                    cardId = uploadArr[i]['cardId'];
-                                                    sjDriveCode = uploadArr[i]['sjDriveCode'];
-                                                    sex = uploadArr[i]['sex'];
-                                                    payId = data['row1']['payId']?data['row1']['payId']:'';
-                                                    archivesId = data['row1']['archivesId']?data['row1']['archivesId']:'';
-                                                    birthDate = data['row1']['birthDate']?data['row1']['birthDate']:'';
-                                                    txrq = data['row1']['txrq']?data['row1']['txrq']:'';
-                                                    if(data['row1']['department'].split(',').length>1){
-                                                        department = data['row1']['department'].split(',')[0];
-                                                    }else{
-                                                        department = data['row1']['department']?data['row1']['department']:'';
-                                                    }
-                                                }else if(data['success'] === 1 && data['count'] >1){
-                                                    //重名
-                                                    console.log(uploadArr[i]['uName']+'重名')
-                                                }else if(data['success'] === 0){
-                                                    //用姓名还匹配不到，用电话号码第三次匹配
-
-                                                }
-                                            }
-                                        })
-                                    }
-
-
-                                    $.ajax({
-                                        url: "../../../ways.php",
-                                        type: "POST",
-                                        timeout: 8000,
-                                        async:false,
-                                        data: {
-                                            funcName: 'checkIfExist',
-                                            serverName: '10.101.62.73',
-                                            uid: 'sa',
-                                            pwd: '2huj15h1',
-                                            Database: 'JSZGL',
-                                            tableName: ' dbsx',
-                                            column: ' *',
-                                            where: ' where archivesId = \'' + archivesId + '\'',
-                                            order: ' '
-                                        },
-                                        dataType: 'json',
-                                        success:function(data){
-                                            if(data['success'] === 0){
-                                                //未重复，插入
-                                                $.ajax({
-                                                    url: "../../../ways.php",
-                                                    type: "POST",
-                                                    timeout: 8000,
-                                                    async:false,
-                                                    data: {
-                                                        funcName: 'insert',
-                                                        serverName: '10.101.62.73',
-                                                        uid: 'sa',
-                                                        pwd: '2huj15h1',
-                                                        Database: 'jszgl',
-                                                        tableName: ' dbsx',
-                                                        column: ' (payId,archivesId,uname,department,cardId,type,birthDate,txrq,sjDriveCode,phone,PC)',
-                                                        values: '(\''+payId+'\',\'' + archivesId + '\',\'' + uName + '\',\'' + department + '\',\'' + cardId + '\',\'' + csData['czlb-levelup2']['nr2'] + '\',\'' +birthDate+'\',\'' + txrq + '\',\'' + sjDriveCode + '\',\''+ phone + '\',\''+ PC +'\')'
-                                                    },
-                                                    dataType: 'json',
-                                                    success: function (ret) {
-                                                        if(ret['success'] === 1){
+                                            success:function(data){
+                                                if(data['success'] === 0){
+                                                    //未重复，插入
+                                                    $.ajax({
+                                                        url: "../../../ways.php",
+                                                        type: "POST",
+                                                        timeout: 8000,
+                                                        async:false,
+                                                        data: {
+                                                            funcName: 'insert',
+                                                            serverName: '10.101.62.73',
+                                                            uid: 'sa',
+                                                            pwd: '2huj15h1',
+                                                            Database: 'jszgl',
+                                                            tableName: ' dbsx',
+                                                            column: ' (payId,archivesId,uname,department,cardId,type,birthDate,txrq,sjDriveCode,phone,PC)',
+                                                            values: '(\''+payId+'\',\'' + archivesId + '\',\'' + uName + '\',\'' + department + '\',\'' + cardId + '\',\'' + type + '\',\'' +birthDate+'\',\'' + txrq + '\',\'' + sjDriveCode + '\',\''+ phone + '\',\''+ PC +'\')'
+                                                        },
+                                                        dataType: 'json',
+                                                        success: function (ret) {
+                                                            if(ret['success'] === 1){
+                                                                $(".progressBar .total").html(uploadArr.length)
+                                                                done+=1;
+                                                                $(".progressBar .done").html(done)
+                                                                if(done === uploadArr.length){
+                                                                    alert('上传成功')
+                                                                }
+                                                            }
+                                                        }
+                                                    })
+                                                }else if(data['success'] === 1){
+                                                    //重复，更新
+                                                    $.ajax({
+                                                        url: "../../../ways.php",
+                                                        type: "POST",
+                                                        timeout: 8000,
+                                                        async:false,
+                                                        data: {
+                                                            funcName: 'update',
+                                                            serverName: '10.101.62.73',
+                                                            uid: 'sa',
+                                                            pwd: '2huj15h1',
+                                                            Database: 'jszgl',
+                                                            tableName: ' dbsx',
+                                                            setStr: ' uname = \''+ uName+'\',payId = \''+ payId+'\',department = \''+department+'\',cardId = \''+ cardId +'\',birthDate = \''+birthDate+'\',txrq = \''+txrq+'\',phone = \''+phone+'\',sjDriveCode = \''+sjDriveCode+'\',sex = \''+ sex+'\',type = \''+csData['czlb-levelup2']['nr2']+'\'',
+                                                            where: ' where archivesId = \'' + archivesId + '\''
+                                                        },
+                                                        dataType: 'json',
+                                                        success:function(data){
                                                             $(".progressBar .total").html(uploadArr.length)
                                                             done+=1;
                                                             $(".progressBar .done").html(done)
@@ -4226,61 +4224,16 @@ $(document).ready(function() {
                                                                 //location.reload()
                                                             }
                                                         }
-                                                    }
-                                                })
-                                            }else if(data['success'] === 1){
-                                                //重复，更新
-                                                $.ajax({
-                                                    url: "../../../ways.php",
-                                                    type: "POST",
-                                                    timeout: 8000,
-                                                    async:false,
-                                                    data: {
-                                                        funcName: 'update',
-                                                        serverName: '10.101.62.73',
-                                                        uid: 'sa',
-                                                        pwd: '2huj15h1',
-                                                        Database: 'jszgl',
-                                                        tableName: ' dbsx',
-                                                        setStr: ' uname = \''+ uName+'\',payId = \''+ payId+'\',department = \''+department+'\',cardId = \''+ cardId +'\',birthDate = \''+birthDate+'\',txrq = \''+txrq+'\',phone = \''+phone+'\',sjDriveCode = \''+sjDriveCode+'\',sex = \''+ sex+'\',type = \''+csData['czlb-levelup2']['nr2']+'\'',
-                                                        where: ' where archivesId = \'' + archivesId + '\''
-                                                    },
-                                                    dataType: 'json',
-                                                    success:function(data){
-                                                        $(".progressBar .total").html(uploadArr.length)
-                                                        done+=1;
-                                                        $(".progressBar .done").html(done)
-                                                        if(done === uploadArr.length){
-                                                            alert('上传成功')
-                                                            //location.reload()
-                                                        }
-                                                    }
-                                                })
+                                                    })
+                                                }
                                             }
-                                        }
-                                    })
-
-
-                                }
-                            })
-
-
-
-
+                                        })
+                                    }
+                                })
+                            }
                         }
-                    }else{
-                        $('#selectPC').modal('hide')
-                    }*/
-
-                    var time = window.setTimeout(test,5000)
-                    function test(){
-                        if($(".progressBar .done").html() !== $(".progressBar .total").html()){
-                            alert('由于网络原因，上传失败，请重新上传')
-                        }
-                        window.clearTimeout(time)
                     }
                 })
-
             })
             //调出
             $('#appendLZTable .dc').off('click').on('click',function(){
@@ -5207,7 +5160,9 @@ $(document).ready(function() {
             'show':false
         })
         $("#inputArchivesId").modal({
-            'show':false
+            'show':false,
+            'backdrop':'static',
+            'keyboard':false
         })
     }
 
