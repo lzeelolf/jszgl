@@ -1003,7 +1003,7 @@ body table.table th,body table.table td{
 #appendContainer #appendPage{
     display: none;
 }
-#appendContainer  .table .dr,#appendContainer  .table .ts,#appendContainer  .table .dc,#dataTable{
+#appendContainer  .table .dr,#appendContainer  .table .ts,#appendContainer  .table .dc,#dataTable .back{
     text-decoration: underline;
     color: cornflowerblue;
     cursor: pointer;
@@ -1115,7 +1115,6 @@ body table.table th,body table.table td{
     max-height: 500px;
     overflow: auto;
 }
-
 
 #uploadContent2 tbody tr{
     cursor: pointer;
