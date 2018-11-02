@@ -1073,17 +1073,17 @@ body table.table th,body table.table td{
 }
 #appendContainer .levelUpContent .buttonBanner>div{
     overflow: visible;
-    width: 180px;
+    width: 150px;
     height: 70px;
     border: #999999 1px solid;
     border-radius: 5px;
-    margin-left: 70px;
+    margin-left: 50px;
     position: relative;
     cursor: pointer;
 }
 #appendContainer .levelUpContent .buttonBanner>span{
     float: left;
-    margin-left: 70px;
+    margin-left: 50px;
     margin-top: 19px;
 }
 #appendContainer .levelUpContent .buttonBanner p{
@@ -1105,13 +1105,10 @@ body table.table th,body table.table td{
     background-color: yellow;
     font-weight: bold;
 }
-#appendContainer .levelUpContent .uploadExcelContent{
+#appendContainer .levelUpContent .content{
     display: none;
 }
-#appendContainer .levelUpContent .levelUpTableContent{
-    display: none;
-}
-#appendContainer #levelUpPage{
+#appendContainer #levelUpPage,#checkWithPCPage{
     display: none;
 }
 #appendContainer #uploadContent,#uploadContent2 table{

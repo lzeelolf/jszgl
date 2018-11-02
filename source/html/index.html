@@ -259,19 +259,23 @@
                     <div class="levelUpContent tab-pane" id="tsContent">
                         <div class="buttonBanner">
                             <div class="float">
-                                <p>上传参加考试人员信息表</p>
+                                <p>上传报名名单表</p>
                                 <a class="question" data-toggle="tooltip" title data-original-title="每一次提升司机，请先点击该页签，并在下方上传《》录入该批次人员信息">?</a>
                             </div>
                             <span>
-                            <img src="../images/rightArrow.png" alt="">
-                            <img src="../images/rightArrow.png" alt="">
-                        </span>
+                                <img src="../images/rightArrow.png" alt="">
+                                <img src="../images/rightArrow.png" alt="">
+                            </span>
                             <div class="float">
-                                <p>等待结果</p>
+                                <p>考试通过</p>
                                 <span class="question" data-toggle="tooltip" title data-original-title="考试结果下发后，请点击该页签，上传《》来标识通过考试的人员">?</span>
                             </div>
+                            <div class="float">
+                                <p>历史记录</p>
+                                <span class="question" data-toggle="tooltip" title data-original-title="点此查阅过往批次通过情况">?</span>
+                            </div>
                         </div>
-                        <div class="uploadExcelContent">
+                        <div class="uploadExcelContent content">
                             <form action="" class="form-horizontal">
                                 <div class="control-group">
                                     <label style="width:auto;margin-left:210px" class="control-label" for="uploadExcel1">请先上传劳人科《具提升资格人员大名单》</label>
@@ -297,11 +301,29 @@
                             </span>
                             </div>
                         </div>
-                        <div class="levelUpTableContent">
+                        <div class="levelUpTableContent content">
                             <table cellspacing="0" cellpadding="0" id="appendTSTable" class="table table-bordered table-condensed"></table>
                             <div>
                                 <input type="file" accept=" application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="uploadExcel2"/>
                                 <div id="uploadContent2"></div>
+                            </div>
+                        </div>
+                        <div class="checkWithPCContent content">
+                            <div class="control-group">
+                                <select id="checkWithPCSelect" multiple="multiple"></select>
+                                <button class="btn">查询</button>
+                            </div>
+                            <p class="pcStatus"></p>
+                            <table cellspacing="0" cellpadding="0" id="checkWithPCTable" class="table table-bordered table-condensed"></table>
+                            <div id="checkWithPCPage">
+                                <span class="prev">上一页</span>
+                                <span>第</span>
+                                <span class="cur"></span>
+                                <span>页&nbsp;/</span>
+                                <span>共</span>
+                                <span class="total"></span>
+                                <span>页</span>
+                                <span class="next">下一页</span>
                             </div>
                         </div>
                     </div>

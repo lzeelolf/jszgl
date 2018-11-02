@@ -3735,16 +3735,223 @@ $(document).ready(function() {
         function boundAppendEvent(data){
             //data是原始数据
             $('.buttonBanner .float:eq(0)').off('click').on('click',function(){
-                $('.uploadExcelContent').css('display','block').siblings('.levelUpTableContent').css('display','none')
+                $('.uploadExcelContent').css('display','block').siblings('.content').css('display','none')
                 $('.buttonBanner .float:eq(0)').css({'background':'green','color':'white','fontWeight':'bold'})
                 $('.buttonBanner .float:eq(1)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
+                $('.buttonBanner .float:eq(2)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
                 $("#appendPage").css('visibility','hidden')
             })
             $('.buttonBanner .float:eq(1)').off('click').on('click',function(){
-                $('.levelUpTableContent').css('display','block').siblings('.uploadExcelContent').css('display','none')
+                $('.levelUpTableContent').css('display','block').siblings('.content').css('display','none')
                 $('.buttonBanner .float:eq(1)').css({'background':'green','color':'white','fontWeight':'bold'})
                 $('.buttonBanner .float:eq(0)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
+                $('.buttonBanner .float:eq(2)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
                 $("#appendPage").css('visibility','visible')
+            })
+            //查看批次历史记录
+            $('.buttonBanner .float:eq(2)').off('click').on('click',function(){
+                $('.checkWithPCContent').css('display','block').siblings('.content').css('display','none')
+                $('.buttonBanner .float:eq(2)').css({'background':'green','color':'white','fontWeight':'bold'})
+                $('.buttonBanner .float:eq(0)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
+                $('.buttonBanner .float:eq(1)').css({'background':'inherit','color':'inherit','fontWeight':'inherit'})
+                $("#appendPage").css('visibility','hidden')
+                $.ajax({
+                    url: "../../../ways.php",
+                    type: "POST",
+                    data: {
+                        funcName: 'select',
+                        serverName: '10.101.62.73',
+                        uid: 'sa',
+                        pwd: '2huj15h1',
+                        Database: 'JSZGL',
+                        tableName: ' bgxx ',
+                        column: ' distinct pc from dbsx union select distinct pc ',
+                        where: ' ',
+                        order: ' '
+                    },
+                    dataType: 'json',
+                    success: function (d){
+                        var html='';
+                        delete d['count']
+                        delete d['success']
+                        for(var i in d){
+                            if(d[i]['pc']){
+                                html+='<option>'+d[i]['pc']+'</option>';
+                            }
+                        }
+                        $('#checkWithPCSelect').empty().append(html);
+                        $('.checkWithPCContent .control-group .btn').off('click').on('click',function(){
+                            if($("#checkWithPCSelect option:selected").val()){
+                                var where = ' where PC =\''+$("#checkWithPCSelect option:selected").val()+'\''
+                                var columnBGXX = ' PC,archivesId,uName,department,lotnumber';
+                                var columnDBSX = ' PC,archivesId,uName,department'
+                                $.ajax({
+                                    url: "../../../ways.php",
+                                    type: "POST",
+                                    async:false,
+                                    data: {
+                                        funcName: 'select',
+                                        serverName: '10.101.62.73',
+                                        uid: 'sa',
+                                        pwd: '2huj15h1',
+                                        Database: 'JSZGL',
+                                        tableName: ' dbsx ',
+                                        column: columnDBSX,
+                                        where: where,
+                                        order: ' '
+                                    },
+                                    dataType: 'json',
+                                    success: function (data){
+                                        $.ajax({
+                                            url: "../../../ways.php",
+                                            type: "POST",
+                                            data: {
+                                                funcName: 'select',
+                                                serverName: '10.101.62.73',
+                                                uid: 'sa',
+                                                pwd: '2huj15h1',
+                                                Database: 'JSZGL',
+                                                tableName: ' bgxx ',
+                                                column: columnBGXX,
+                                                where: where,
+                                                order: ' '
+                                            },
+                                            dataType: 'json',
+                                            success: function (ret){
+                                                //下午做考试通过
+                                                var passNum =ret['count']?ret['count']:0;
+                                                var notPassNum = data['count']?data['count']:0;
+                                                var totalNum = passNum+notPassNum;
+                                                delete data['count']
+                                                delete data['sql']
+                                                delete data['success']
+                                                delete ret['count']
+                                                delete ret['sql']
+                                                delete ret['success']
+                                                var p = $("#checkWithPCSelect option:selected").val()+'，共：'+totalNum+'人,已通过：'+passNum+'人，尚未通过：'+notPassNum+'人';
+                                                $('.checkWithPCContent .pcStatus').empty().text(p)
+                                                var big=[];
+                                                for(var i in data){
+                                                    data[i].lotNumber = '';
+                                                    data[i].status = '尚未通过';
+                                                    big.push(data[i])
+                                                }
+                                                for(var m in ret){
+                                                    ret[m].status = '已通过'
+                                                    big.push(ret[m])
+                                                }
+                                                var html = '<tr><th>批次</th><th>档案号</th><th>姓名</th><th>部门</th><th>通过时间</th><th>状态</th></tr>';
+                                                var count = big.length;
+                                                if (count < 11) {
+                                                    for (var i in big) {
+                                                        html += '<tr>';
+                                                        for (var j in big[i]) {
+                                                            html += '<td>' + big[i][j] + '</td>';
+                                                        }
+                                                        html += '</tr>'
+                                                    }
+                                                    $("#checkWithPCTable").empty().append(html);
+                                                    //空白tr补齐表格
+                                                    if ($("#checkWithPCTable tbody tr").length < 11) {
+                                                        html = '';
+                                                        var count = 11 - $("#checkWithPCTable tbody tr").length;
+                                                        var columns = $("#checkWithPCTable tbody tr:first-child th").length;
+                                                        for (var m = 0; m < count; m++) {
+                                                            html += '<tr>';
+                                                            for (var n = 0; n < columns; n++) {
+                                                                html += "<td>&nbsp</td>";
+                                                            }
+                                                            html += "</tr>";
+                                                        }
+                                                        $("#checkWithPCTable tbody").append(html);
+                                                    }
+                                                } else {
+                                                    var q = 0;
+                                                    var cur = 1;
+                                                    var total = Math.ceil(count / 10);
+                                                    $("#checkWithPCPage").css("display", 'block');
+                                                    for (var i in big) {
+                                                        html += '<tr>';
+                                                        for (var j in big[i]) {
+                                                            html += '<td>' + big[i][j] + '</td>';
+                                                        }
+                                                        html += '</tr>'
+                                                        q += 1;
+                                                        if (q > 9) {
+                                                            break
+                                                        }
+                                                    }
+                                                    $("#checkWithPCTable").empty().append(html);
+                                                    $("#checkWithPCPage .cur").text(cur);
+                                                    $("#checkWithPCPage .total").text(total);
+                                                    $("#checkWithPCPage .next").off('click').on('click', function () {
+                                                        if (cur < total) {
+                                                            var j = 0;
+                                                            var html = '<tr><th>批次</th><th>档案号</th><th>姓名</th><th>部门</th><th>通过时间</th><th>状态</th></tr>';
+                                                            for (var i in big) {
+                                                                if (j > 10 * cur - 1 && j < 10 * (cur + 1) && i) {
+                                                                    j++;
+                                                                    html += '<tr>';
+                                                                    for (var m in big[i]) {
+                                                                        html += '<td>' + big[i][m] + '</td>';
+                                                                    }
+                                                                    html += '</tr>'
+                                                                } else {
+                                                                    j++;
+                                                                }
+                                                            }
+                                                            $("#checkWithPCTable").empty().append(html);
+                                                            //空白tr补齐表格
+                                                            if ($("#checkWithPCTable tbody tr").length < 11) {
+                                                                html = '';
+                                                                var count = 11 - $("#checkWithPCTable tbody tr").length;
+                                                                var columns = $("#checkWithPCTable tbody tr:first-child th").length;
+                                                                for (var m = 0; m < count; m++) {
+                                                                    html += '<tr>';
+                                                                    for (var n = 0; n < columns; n++) {
+                                                                        html += "<td>&nbsp</td>";
+                                                                    }
+                                                                    html += "</tr>";
+                                                                }
+                                                                $("#checkWithPCTable tbody").append(html);
+                                                            }
+                                                            cur += 1;
+                                                            $("#checkWithPCPage .cur").text(cur);
+                                                        }
+
+                                                    })
+                                                    $("#checkWithPCPage .prev").off('click').on('click', function () {
+                                                        if (cur > 1) {
+                                                            var j = 0;
+                                                            var html = '<tr><th>批次</th><th>档案号</th><th>姓名</th><th>部门</th><th>通过时间</th><th>状态</th></tr>';
+                                                            for (var i in big) {
+                                                                if (j > 10 * (cur - 2) - 1 && j < 10 * (cur - 1) && i) {
+                                                                    j++;
+                                                                    html += '<tr>';
+                                                                    for (var m in big[i]) {
+                                                                        html += '<td>' + big[i][m] + '</td>';
+                                                                    }
+                                                                    html += '</tr>'
+                                                                } else {
+                                                                    j++;
+                                                                }
+                                                            }
+                                                            $("#checkWithPCTable").empty().append(html);
+                                                            cur -= 1;
+                                                            $("#checkWithPCPage .cur").text(cur);
+                                                        }
+                                                    })
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            }else{
+                                alert('请选择批次')
+                            }
+                        })
+                    }
+                })
             })
             //同步数据库按钮
             $(".appendContent .float").off('click').on('click',function(){
@@ -4667,6 +4874,9 @@ $(document).ready(function() {
                 }
             }
             $('#uploadExcel1').bind('change', handleFile1);
+
+            //明天做按批次查看人员，加一个标签页，
+
         }
         //激活标签页
         $('#appendBanner a').click(function (e) {
@@ -4859,7 +5069,7 @@ $(document).ready(function() {
                         delete data['success'];
                         var count = data['count'];
                         delete data['count'];
-                        var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th></tr>';
+                        var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th><th>批次</th></tr>';
 
                         var use = {};
                         use = $.extend(true,use,data);
@@ -4921,7 +5131,7 @@ $(document).ready(function() {
                             $("#appendPage .next").off('click').on('click', function () {
                                 if (cur < total) {
                                     var j = 0;
-                                    var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th></tr>';
+                                    var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th><th>批次</th></tr>';
                                     for (var i in use) {
                                         if (j > 10 * cur - 1 && j < 10 * (cur + 1) && i) {
                                             j++;
@@ -4958,7 +5168,7 @@ $(document).ready(function() {
                             $("#appendPage .prev").off('click').on('click', function () {
                                 if (cur > 1) {
                                     var j = 0;
-                                    var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th></tr>';
+                                    var html = '<tr><th>工资号</th><th>档案号</th><th>姓名</th><th>部门</th><th>身份证号</th><th>操作类别</th><th>批次</th></tr>';
                                     for (var i in use) {
                                         if (j > 10 * (cur - 2) - 1 && j < 10 * (cur - 1) && i) {
                                             j++;
