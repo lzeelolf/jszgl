@@ -428,18 +428,20 @@ a,a:hover,a:active,a:visited{
     line-height: 30px;
     padding: 0;
     float: left;
-    width: 70px;
+    width: 90px;
     font-size: 14px;
-    margin-top: 20px;
 }
-#bigContent #rightContent .operateContent #informationContainer #cardInfoContent div{
+#cardInfoContent>div{
+    width:100%;
+    overflow: hidden;
+}
+#bigContent #rightContent .operateContent #informationContainer #cardInfoContent>div>div{
     height: 30px;
     line-height: 30px;
     padding: 0;
     font-size: 14px;
+    min-width: 70px;
     float: left;
-    width: 110px;
-    margin-top: 20px;
     border-bottom: 1px solid #333;
 }
 #bigContent #rightContent .operateContent #informationContainer #cardInfoContent div.idCard{
@@ -451,13 +453,15 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent #applyContainer{
     padding-top: 50px;
 }
-#bigContent #rightContent .operateContent #applyContainer #fixButton,#yxqmButton,#fyxqmButton{
-    padding: 5px 20px;
-    height: 50px;
-    line-height: 10px;
-    font-size: 14px;
-    display: block;
-    margin: 0 0 50px 50px;
+#bigContent #rightContent .operateContent #applyContainer #btnArea{
+    width: 260px;
+    height: 100%;
+}
+#bigContent #rightContent .operateContent #applyContainer #btnArea button{
+    margin-bottom: 30px;
+}
+#back{
+    visibility: hidden;
 }
 #bigContent #rightContent .operateContent #applyContainer #applySubmit{
     width: 60px;
@@ -628,10 +632,10 @@ a,a:hover,a:active,a:visited{
     font-weight: bold;
 }
 .origin input,.apply input{
-    margin: 8px 0 0 15px;
+    margin: 7px 0 0 30px;
 }
 .origin label,.origin span,.apply label{
-    margin: 6px 0 0 3px;
+    margin: 3px 0 0 3px;
 }
 .phyCheck label,.apply span{
     font-size: 14px;
@@ -647,6 +651,15 @@ a,a:hover,a:active,a:visited{
 }
 #otherReasonText{
     margin-top: 4px;
+}
+#statusContainer #applyInfo{
+    margin-top: 50px;
+    font-size: 16px;
+}
+#statusContainer #applyInfo span{
+    display: block;
+    margin-top: 10px;
+    font-size: 16px;
 }
 #bigContent #rightContent #improveContainer{
     height: 560px;
@@ -730,18 +743,10 @@ a,a:hover,a:active,a:visited{
     z-index: 1;
 }
 #bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable,#exchangeCheckTable{
-    margin: 50px 0 0 5px;
+    margin: 10px 0 0 0;
 }
-#bigContent #rightContent #checkContainer #checkContent th,#bigContent #rightContent #checkContainer #checkContent td{
-    padding: 3px 15px 3px 15px;
-    border: 1px solid #333;
-    border-right: none;
-}
-#bigContent #rightContent #checkContainer #checkContent th:last-child,#bigContent #rightContent #checkContainer #checkContent td:last-child{
-    border-right: 1px solid #333;
-    font-size: 14px;
-    padding: 3px 15px 3px 15px;
-}
+
+
 #bigContent #rightContent #checkContainer #checkContent .seeInfo{
     font-size: 12px;
     color: cornflowerblue;
@@ -750,6 +755,7 @@ a,a:hover,a:active,a:visited{
 }
 #bigContent #rightContent #checkContainer #checkContent .pass{
     float: left;
+    margin-left: 10px;
     background:url("../images/pass.png");
     width: 32px;
     height: 32px;
@@ -771,18 +777,16 @@ a,a:hover,a:active,a:visited{
     cursor: pointer;
 }
 #bigContent #rightContent #alertContainer #alertBanner {
-    height: 60px;
+    height: 30px;
     padding-left: 100px;
     border-bottom: 1px solid #333;
     text-align: left;
-    line-height: 60px;
+    line-height: 30px;
 }
 #bigContent #rightContent #alertContainer #alertBanner *{
     float: left;
 }
-#bigContent #rightContent #alertContainer #alertContent #alertTable {
-    margin:40px 0 40px 80px;
-}
+
 #bigContent #rightContent #alertContainer #alertContent #alertPage ,#dataPage,#giveOutPage{
     display: none;
 }
@@ -802,11 +806,9 @@ a,a:hover,a:active,a:visited{
     cursor: pointer;
 }
 #bigContent #rightContent #giveOutContainer #giveOutContent{
-    padding-top: 30px;
+    padding-top: 10px;
 }
-#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable{
-    margin: 0 0 0 160px;
-}
+
 #bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable th,#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable td{
     border: 1px solid #333;
     border-left: none;
@@ -827,20 +829,17 @@ a,a:hover,a:active,a:visited{
 }
 #bigContent #rightContent #editContainer .tip,#yearlyContainer .tip{
     text-align: left;
+    margin-top: 4px;
     text-indent: 2em;
 }
 #bigContent #rightContent #editContainer .queryInput,#yearlyContainer .queryInput{
-    width: 70px;
-    margin-right: 40px;
-}
-#bigContent #rightContent #editContainer .queryButton,#yearlyContainer .queryButton{
-    width: 40px;
+    width: 60px;
+    margin-right: 10px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent,#yearlyContainer .queryInfoContent{
     width: 100%;
     overflow: hidden;
     display: none;
-    margin-top: 50px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryPicInfo,#yearlyContainer .queryInfoContent .queryPicInfo{
     width: 40%;
@@ -855,9 +854,12 @@ a,a:hover,a:active,a:visited{
     width: 100px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div,#yearlyContainer .queryInfo>div{
-    margin-top: 8px;
+    margin-top: 40px;
     height: 30px;
     white-space: nowrap;
+}
+div.sjRemark{
+    width: 130px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>*,#yearlyContainer .queryInfo>div>*{
     float: left;
@@ -892,12 +894,7 @@ a,a:hover,a:active,a:visited{
     margin-top: 50px;
 }
 #bigContent #rightContent #editContainer .editButtonBanner .rydc,.cjEdit,.infoFix,.logout,.phyTestOk,.phyTestNo,.yearlyCheck{
-    width: 90px;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 2px;
-    cursor: pointer;
-    background-color: #eee;
+    font-size: 12px;
     margin-right: 50px;
 }
 #bigContent #rightContent #editContainer .editButtonBanner .cjEdit{
@@ -969,6 +966,7 @@ a,a:hover,a:active,a:visited{
 }
 body table.table th,body table.table td{
     text-align: center;
+    white-space: nowrap;
 }
 #drInfo .modal-header #drInfoLabel{
     font-size: 20px;

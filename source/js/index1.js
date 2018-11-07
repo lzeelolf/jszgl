@@ -236,7 +236,6 @@ $(document).ready(function() {
                             $('.infoFix').text('信息更正').css({'color':'#555','fontWeight':'normal'})
                             $('.queryInfo>div>div').css('backgroundColor','inherit')
                             $('#editContainer .queryInfoContent').css('display','block')
-                            console.log(data['row1'])
                             $('.queryInfoContent .queryPicInfo img').prop('src',data['row1']['cardPath']);
                             $('.queryInfoContent .queryInfo .payIdInput').val(data['row1']['payId']);
                             $('.queryInfoContent .queryInfo .name').text(data['row1']['UName']);
@@ -281,32 +280,6 @@ $(document).ready(function() {
     function boundEditEvent(data){
         var payId = $('.queryInput').val();
         var flag = true;
-        //车间转调按钮
-        $('.cjEdit').off('click').on('click',function(){
-            $("#editContainer .textContent .name").text($(".queryInfo .name").text())
-            $("#editContainer .logOutContent").css('display','none');
-            $("#editContainer .textContent").css('display','block');
-            $("#editFixSelect").off('change').on('change',function(){
-                if(confirm('确认要将'+$(".queryInfo .name").text()+'的关系调入'+$(this).val().split(',')[0]+'？')){
-                    var setStr =' department =\''+$(this).val()+'\' ';
-                    var where =' where payId =\''+$('.queryInfo .payIdInput').val()+'\'';
-                    $.ajax({
-                        url: "../../../ways.php",
-                        type: "POST",
-                        timeout: 8000,
-                        data: {
-                            funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                            tableName: ' jbxx', setStr: setStr, where: where
-                        },
-                        dataType: 'json',
-                        success: function (data) {
-                            $(".textContent").css('display','none')
-                            alert('操作成功')
-                        }
-                    })
-                }
-            })
-        })
         //人员调出按钮
         $('.rydc').off('click').on('click',function(){
             if(confirm('（注意！请在确认该人员已调出本段的情况下进行调出操作）\u000d'+'确认'+$(".queryInfo .name").html()+'师傅已调出？')){
@@ -394,7 +367,6 @@ $(document).ready(function() {
                     j++;
                 }
             }
-
             if($(this).text() === '信息更正'){
                 alert('您现在可以对人员部分信息进行更正');
                 $(this).text('确认更改').css({'color':'GREEN','fontWeight':'bold'})
@@ -419,7 +391,7 @@ $(document).ready(function() {
             }else if($(this).text() === '确认更改'){
                 checkIfInArray($(".queryInfo .driveCodeInput").val(),arr)
                 //提交
-                if($(".queryInfo .payIdInput").val().match(/^[0-9]{5}$/) && $('.queryInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .yearlyCheckDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && flag){
+                if($(".queryInfo .payIdInput").val().match(/^[0-9]{5}$/) && $('.queryInfo .sjDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('#editContainer .queryInfo .yearlyCheckDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .startDateInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && $('.queryInfo .deadlineInput').val().match(/^\d{4}-\d{2}-\d{2}$/) && flag){
                     if(confirm('确认要进行更改吗？')){
                         var setStr ='payid =\''+$(".queryInfo .payIdInput").val()+'\',sjDate =\''+$(".queryInfo .sjDateInput").val()+'\',yearlyCheckDate =\''+$(".queryInfo .yearlyCheckInput").val()+'\',sjDriveCode =\''+$(".queryInfo .driveCodeInput").val()+'\',sjDriveType =\''+$(".queryInfo .driveTypeInput").val()+'\',startDate =\''+$(".queryInfo .startDateInput").val()+'\',deadline = \''+$(".queryInfo .deadlineInput").val()+'\',sjRemark =\''+$(".queryInfo .sjRemarkInput").val()+'\'';
                         var where = ' where payid =\''+payId+'\'';
@@ -1058,130 +1030,105 @@ $(document).ready(function() {
             }
         }
         function rejectApply(){
-            var shortage ='';
             var failedReason ='';
+            var shortage ;
             var _thisReject = $(this);
-            $(".rejectReasonDiv input:checkbox").attr('checked',false);
-            $("#reasonContainer").css('visibility','visible').dequeue().animate({'opacity':0.9},500);
+            var changeType = $(this).parent().prev().prev().text();
+            $('#rejectModal').modal('show')
+            $('#rejectModal input').prop('checked',false);
+            $('#rejectModal .control-group').empty()
+            var html ='';
+            if(changeType === csData['czlb-bz']['nr3']){
+                for(var i in csData){
+                    if(csData[i]['lb'] === 'bzsxcl'){
+                        html += '<label class="checkbox"><input type="checkbox" value="'+ csData[i]['nr2']+'">缺少'+ csData[i]['nr2'] +'</label>';
+                    }
+                }
+            }
+            else if(changeType === csData['czlb-yxqmhz']['nr3'] || changeType === csData['czlb-fyxqmhz']['nr3']){
+                for(var i in csData){
+                    if(csData[i]['lb'] === 'hzsxcl'){
+                        html += '<label class="checkbox"><input type="checkbox" value="'+ csData[i]['nr2']+'">缺少'+ csData[i]['nr2'] +'</label>';
+                    }
+                }
+            }
             $("#short").off('click').on('click',function(){
-                $(".rejectReasonDiv input:checkbox").attr('disabled',false);
+                $('#rejectModal .control-group').empty().append(html);
             });
-            $("#false").off('click').on('click',function(){
-                $(".rejectReasonDiv input:checkbox").attr('disabled',true);
-                $(".rejectReasonDiv input:checkbox").attr('checked',false);
+            $("#wrong").off('click').on('click',function(){
+                $('#rejectModal .control-group').empty()
             });
-            $("#rejectReasonSubmit").off('click').on('click',function(){
+            $("#rejectModal .btn-primary").off('click').on('click',function(){
                 var short = document.getElementById('short').checked;
-                var _false = document.getElementById('false').checked;
-                if(short && $(".rejectReasonDiv input:checked").length===0){
+                var wrong = document.getElementById('wrong').checked;
+                if(short && $("#rejectModal .control-group input:checked").length===0){
                     alert('请选择缺少的材料');
-                }else if(short && $(".rejectReasonDiv input:checked").length>0){
-                    for(var i =0;i<$(".rejectReasonDiv input:checked").length;i++){
-                        shortage +=$(".rejectReasonDiv input:checked:eq("+i+")").next('label').text();
+                    return false;
+                }
+                else if(short && $("#rejectModal .control-group input:checked").length>0){
+                    shortage ='';
+                    for(var i =0;i<$("#rejectModal .control-group input:checked").length;i++){
+                        shortage +=$("#rejectModal .control-group input:checked:eq("+i+")").val();
                         shortage+=','
                     }
                     shortage = shortage.substring(0,shortage.length-1);
                     failedReason = '材料不齐全';
-                    if(confirm('请认真核对该申请表信息。操作无法撤回。\u000d确定要驳回该申请请选“确定”。返回请选“取消”')){
-                        id = $(_thisReject).parent().prev().prev().prop('className').substring(0,$(_thisReject).parent().prev().prev().prop('className').length-3);
-                        payId = $(_thisReject).parent().prev().prev().prev().prev().text();
-                        lotNumber = $(_thisReject).parent().prev().prev().prev().prev().prev().text();
-                        changeType = $(_thisReject).parent().prev().prev().text();
-                        uname = $(_thisReject).parent().prev().prev().prev().text();
-                        rejectSetStr = ' checkStatus = \''+csData['checkStatus-shwtg']['nr2']+'\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\'' + rejectSetStr;
-                        where = ' where id=\''+id+'\'';
-                        $.ajax({
-                            url: "../../../ways.php",
-                            type: "POST",
-                            timeout: 8000,
-                            data: {
-                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                                tableName: ' bgxx', setStr: rejectSetStr, where: where
-                            },
-                            dataType: 'json',
-                            success: function () {
-                                alert('操作成功，您已驳回了'+uname+'师傅的'+changeType+'申请');
-                                $(_thisReject).prev('span').remove();
-                                $(_thisReject).remove();
-                                $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
-                                    $("#reasonContainer").css('visibility','hidden')
-                                });
-                            }
-                        });
-                        $.ajax({
-                            url: "../../../ways.php",
-                            type: "POST",
-                            timeout: 8000,
-                            data: {
-                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                                tableName: ' jbxx', setStr: ' status =\''+csData['zjzt-yj']['nr2']+'\' ', where: ' where payId =\''+payId+'\''
-                            },
-                            dataType: 'json',
-                            success: function () {
-
-                            }
-                        });
-                    }
-                }else if(_false){
-                    failedReason = '信息有误';
-                    if(confirm('请认真核对该申请表信息。操作无法撤回。\u000d确定要驳回该申请请选“确定”。返回请选“取消”')){
-                        id = $(_thisReject).parent().prev().prev().prop('className').substring(0,$(_thisReject).parent().prev().prev().prop('className').length-3);
-                        payId = $(_thisReject).parent().prev().prev().prev().prev().text();
-                        lotNumber = $(_thisReject).parent().prev().prev().prev().prev().prev().text();
-                        changeType = $(_thisReject).parent().prev().prev().text();
-                        uname = $(_thisReject).parent().prev().prev().prev().text();
-                        rejectSetStr = ' checkStatus = \''+csData['checkStatus-shwtg']['nr2']+'\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\''+rejectSetStr;
-                        where = ' where id=\''+id+'\'';
-                        $.ajax({
-                            url: "../../../ways.php",
-                            type: "POST",
-                            timeout: 8000,
-                            data: {
-                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                                tableName: ' bgxx', setStr: rejectSetStr, where: where
-                            },
-                            dataType: 'json',
-                            success: function () {
-                                alert('操作成功，您已驳回了'+uname+'师傅的'+changeType+'申请');
-                                $(_thisReject).prev('span').remove();
-                                $(_thisReject).remove();
-                                $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
-                                    $("#reasonContainer").css('visibility','hidden')
-                                });
-                            }
-                        });
-                        $.ajax({
-                            url: "../../../ways.php",
-                            type: "POST",
-                            timeout: 8000,
-                            data: {
-                                funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                                tableName: ' jbxx', setStr: ' status =\''+csData['zjzt-yj']['nr2']+'\' ', where: ' where payId =\''+payId+'\''
-                            },
-                            dataType: 'json',
-                            success: function () {
-
-                            }
-                        });
-                    }
                 }
+                else if(wrong){
+                    failedReason = '信息有误';
+                    shortage ='';
+                }
+                if(confirm('请认真核对该申请表信息。操作无法撤回。\u000d确定要驳回该申请请选“确定”。返回请选“取消”')){
+                    id = $(_thisReject).parent().prev().prev().prop('className').substring(0,$(_thisReject).parent().prev().prev().prop('className').length-3);
+                    payId = $(_thisReject).parent().prev().prev().prev().prev().text();
+                    lotNumber = $(_thisReject).parent().prev().prev().prev().prev().prev().text();
+                    changeType = $(_thisReject).parent().prev().prev().text();
+                    uname = $(_thisReject).parent().prev().prev().prev().text();
+                    rejectSetStr = ' checkStatus = \''+csData['checkStatus-shwtg']['nr2']+'\''+' ,shortage = \''+shortage+'\''+ ' ,failedReason = \''+failedReason+'\'' + rejectSetStr;
+                    where = ' where id=\''+id+'\'';
+                    $.ajax({
+                        url: "../../../ways.php",
+                        type: "POST",
+                        timeout: 8000,
+                        data: {
+                            funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                            tableName: ' bgxx', setStr: rejectSetStr, where: where
+                        },
+                        dataType: 'json',
+                        success: function () {
+                            alert('操作成功，您已驳回了'+uname+'师傅的'+changeType+'申请');
+                            $(_thisReject).prev('span').remove();
+                            $(_thisReject).remove();
+                            $("#rejectModal").modal('hide')
+                            var status = '';
+                            if(changeType === csData['czlb-yxqmhz']['nr3']){
+                                status = csData['zjzt-yj']['nr2'];
+                            }else if(changeType === csData['czlb-fyxqmhz']['nr3']){
+                                status = csData['zjzt-zc']['nr2'];
+                            }else if(changeType === csData['czlb-bz']['nr3']){
 
-            });
-            $("#cancelReject").off('click').on('click',function(){
-                $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
-                    $("#reasonContainer").css('visibility','hidden')
-                });
-            })
-            $(document).keyup(function(event){
-                switch(event.keyCode) {
-                    case 27:
-                        $("#reasonContainer").dequeue().animate({'opacity':0},500,function(){
-                            $("#reasonContainer").css('visibility','hidden')
-                        });
+                            }
+                            if(status !== ''){
+                                $.ajax({
+                                    url: "../../../ways.php",
+                                    type: "POST",
+                                    timeout: 8000,
+                                    data: {
+                                        funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                                        tableName: ' jbxx', setStr: ' status =\''+ status +'\' ', where: ' where payId =\''+payId+'\''
+                                    },
+                                    dataType: 'json',
+                                    success: function () {
+
+                                    }
+                                });
+                            }
+
+                        }
+                    });
                 }
             });
         }
-
     }
 
     //添加预警信息
@@ -1497,7 +1444,6 @@ $(document).ready(function() {
                                         }
                                     }
                                 }
-                                console.log(data)
                                 if(alertCount<11){
                                     for(var i in data){
                                         html += '<tr>';
@@ -1665,6 +1611,7 @@ $(document).ready(function() {
     }
 
     function tzEvent(csData,type,payId,button){
+        var phone = 18538832516;
         if(type === csData['zjzt-yj']['nr2']){
             $.ajax({
                 url: "../../../ways.php",
@@ -1685,7 +1632,7 @@ $(document).ready(function() {
                 success: function (data) {
                     if(data['success'] === 1){
                         delete data['success'];
-                        var phone = data['row']['phone1'];
+                        //var phone = data['row']['phone1'];
                         var text = data['row']['uname']+'师傅，您好。您的驾驶证已进入到期预警状态，请及时联系车间教育负责人准备相应材料，谢谢。';
                         $.ajax({
                             url: "../../../ways.php",
@@ -1746,7 +1693,7 @@ $(document).ready(function() {
                 success: function (data) {
                     if(data['success'] === 1){
                         delete data['success'];
-                        var phone = data['row']['phone1'];
+                        //var phone = data['row']['phone1'];
                         var text = data['row']['uname']+'师傅，您好。您的新驾驶证已由车间发放到个人，若未收到，请联系车间教育负责人核实，谢谢。';
                         $.ajax({
                             url: "../../../ways.php",
@@ -1791,7 +1738,7 @@ $(document).ready(function() {
                 success: function (data) {
                     if(data['success'] === 1){
                         delete data['success'];
-                        var phone = data['row']['phone1'];
+                        //var phone = data['row']['phone1'];
                         var text = data['row']['uname']+'师傅，您好。您的新驾驶证已发放到车间，请于近期到车间教育口领取，谢谢。';
                         $.ajax({
                             url: "../../../ways.php",
@@ -1835,7 +1782,7 @@ $(document).ready(function() {
                 success: function (data) {
                     if(data['success'] === 1){
                         delete data['success'];
-                        var phone = data['row']['phone1'];
+                        //var phone = data['row']['phone1'];
                         var text = data['row']['uname']+'师傅，您好。您的驾驶证补发申请已受理，请联系车间教育负责人开具《驾驶证丢失证明》并留意后续的发证通知信息，谢谢。';
                         $.ajax({
                             url: "../../../ways.php",
@@ -1879,7 +1826,7 @@ $(document).ready(function() {
                 success: function (data) {
                     if(data['success'] === 1){
                         delete data['success'];
-                        var phone = data['row']['phone1'];
+                        //var phone = data['row']['phone1'];
                         var text = data['row']['uname']+'师傅，您好。您的驾驶证有效期满换证程序已开始，请留意后续的发证通知信息，谢谢。';
                         $.ajax({
                             url: "../../../ways.php",
@@ -1924,7 +1871,6 @@ $(document).ready(function() {
                     if(data['success'] === 1){
                         delete data['success'];
                         //var phone = data['row']['phone1'];
-                        var phone = 18538832516;
                         var text = data['row']['uname']+'师傅，您好。欢迎入职洛阳机务段，请于近期内携带您的机车驾驶证原件到段教育科登记驾驶证信息，谢谢。';
                         $.ajax({
                             url: "../../../ways.php",
@@ -2234,7 +2180,6 @@ $(document).ready(function() {
                                 $("#dataPage .cur").text(cur);
                                 $("#dataPage .total").text(total);
                                 $("#dataPage .next").off('click').on('click',function(){
-                                    console.log(data)
                                     if(cur<total){
                                         var j =0;
                                         var html = '<tr><th>部门</th><th>日期</th><th>工资号</th><th>姓名</th><th>车间发放人</th><th>车间发放日期</th><th>教育科发放人</th><th>教育科发放日期</th></tr>';
@@ -3676,10 +3621,11 @@ $(document).ready(function() {
             }
         }
     }
+    appendModal();
+    appendToolTip()
 
     //添加新增证件功能(人员提升标签)
     function appendAppend(csData){
-        console.log(csData)
         var power = sessionGet('power');
         if(power === 'V') {
             $.ajax({
@@ -4144,7 +4090,6 @@ $(document).ready(function() {
 
                 })
             })
-            appendModal();
             //上传按钮事件，上传具提升司机资格名单
             $(".uploadExcelContent .confirmUpload").off('click').on('click',function(){
                 //设置这一批的批次名
@@ -4390,8 +4335,8 @@ $(document).ready(function() {
                                                             pwd: '2huj15h1',
                                                             Database: 'jszgl',
                                                             tableName: ' dbsx',
-                                                            column: ' (payId,archivesId,uname,department,cardId,type,birthDate,txrq,sjDriveCode,phone,PC)',
-                                                            values: '(\''+payId+'\',\'' + archivesId + '\',\'' + uName + '\',\'' + department + '\',\'' + cardId + '\',\'' + type + '\',\'' +birthDate+'\',\'' + txrq + '\',\'' + sjDriveCode + '\',\''+ phone + '\',\''+ PC +'\')'
+                                                            column: ' (payId,archivesId,uname,department,cardId,type,birthDate,txrq,sjDriveCode,phone,sex,PC)',
+                                                            values: '(\''+payId+'\',\'' + archivesId + '\',\'' + uName + '\',\'' + department + '\',\'' + cardId + '\',\'' + type + '\',\'' +birthDate+'\',\'' + txrq + '\',\'' + sjDriveCode + '\',\''+ phone + '\',\''+ sex + '\',\''+ PC +'\')'
                                                         },
                                                         dataType: 'json',
                                                         success: function (ret) {
@@ -4976,229 +4921,403 @@ $(document).ready(function() {
                             }
                         })
                         //提升操作
-                        var successArr =[];
-                        var successObj ={};
-                        $.each(realArr,function(m,val){
-                            //大致思路。用姓名和sjdrivecode去dbsx中匹配，如果有结果并只有一条（理想情况）
-                            //就直接新增jbxx和bgxx，删除dbsx
-                            //如果有结果并大于一条，说明重名且报的机型也一样，需要人工确认
-                            //显示一个模态框，打印出来这几个人的信息，让用户选择。
-                            //如果没有结果，应该是返回excel的名字打错或准驾机型错，做模糊匹配
-                            var sjDriveCode = val['sjDriveCode'];
-                            var uName = val['uName'];
-                            successObj.uName = uName;
-                            var startDate = dotTo(val['startDate']);
-                            var deadline = dotTo((val['deadline']));
-                            var sex  = val['sex'];
-                            var where = ' where uName =\''+uName+'\' AND sjDriveCode=\''+sjDriveCode+'\''
-                            var column =' * ';
-                            $.ajax({
-                                url: "../../../ways.php",
-                                type: "POST",
-                                async:false,
-                                data: {
-                                    funcName: 'select',
-                                    serverName: '10.101.62.73',
-                                    uid: 'sa',
-                                    pwd: '2huj15h1',
-                                    Database: 'JSZGL',
-                                    tableName: ' dbsx ',
-                                    column: column,
-                                    where: where,
-                                    order: ' '
-                                },
-                                dataType: 'json',
-                                success: function (data){
-                                    if(data['success'] === 1 && data['count'] === 1){
-                                        //理想情况，找到并只有一个
-                                        var sjDriveType = csData['zjlx-'+sjDriveCode]['nr1'];
-                                        var sjDate = startDate;
-                                        var payId = data['row1']['payId'];
-                                        var archivesId = data['row1']['archivesId'];
-                                        var birthDate = data['row1']['birthDate'];
-                                        var cardId = data['row1']['cardId'];
-                                        var department = data['row1']['Department'];
-                                        var txrq = data['row1']['txrq'];
-                                        var status = csData['zjzt-zc']['nr2'];
-                                        var tzDone = csData['tzDone-swtz']['nr2'];
-                                        var phyTest = csData['tjjl-hg']['nr2']
-                                        var PC = data['row1']['PC'];
-                                        successObj.archivesId = archivesId;
-                                        successObj.department = department;
-                                        successArr.push(successObj)        //往成功数组里加入，模态框显示
-                                        $.ajax({
-                                            url: "../../../ways.php",
-                                            type:"POST",
-                                            timeout:8000,
-                                            //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-                                            data:{funcName:'select',where:' where archivesId =\''+archivesId+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
-                                                tableName:' jbxx ',column:' archivesId',order:' '},
-                                            dataType:'json',
-                                            success:function(data){
-                                                if(data['success'] === 0){
-                                                    //insert
-                                                    $.ajax({
-                                                        url: "../../../ways.php",
-                                                        type: "POST",
-                                                        timeout: 8000,
-                                                        data: {
-                                                            funcName: 'insert',
-                                                            serverName: '10.101.62.73',
-                                                            uid: 'sa',
-                                                            pwd: '2huj15h1',
-                                                            Database: 'jszgl',
-                                                            tableName: ' jbxx',
-                                                            column: ' (payId,archivesId,UName,sex,department,birthDate,txrq,cardId,sjDate,' +
-                                                            'startdate,deadline,sjDriveCode,sjDriveType,status,tzdone,phyTest,PC)',
-                                                            values: '(\''+payId+'\',\'' + archivesId + '\',\'' + uName + '\',\'' + sex + '\',\'' + department + '\',\'' + birthDate + '\',\'' + txrq + '\',\'' + cardId + '\',\''
-                                                            + sjDate + '\',\'' + startDate + '\',\'' + deadline + '\',\'' + sjDriveCode + '\',\'' + sjDriveType + '\',\'' + status + '\',\''+tzDone+'\',\''+phyTest+'\',\''+PC+'\')'
-                                                        },
-                                                        dataType: 'json',
-                                                        success: function (){
-                                                            //插入bgxx
-                                                            var date = new Date();
-                                                            var year = date.getFullYear()
-                                                            var lotNumber = new Date();
-                                                            lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
-                                                            lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
-                                                            lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
-                                                            $.ajax({
-                                                                url: "../../../ways.php",
-                                                                type: "POST",
-                                                                timeout: 8000,
-                                                                data: {
-                                                                    funcName: 'insert',
-                                                                    serverName: '10.101.62.73',
-                                                                    uid: 'sa',
-                                                                    pwd: '2huj15h1',
-                                                                    Database: 'jszgl',
-                                                                    tableName: ' bgxx',
-                                                                    column: ' (id,lotNumber,Department,payId,archivesId,UName,changeType,' +
-                                                                    'driveCode,drive,jykOperator,pc)',
-                                                                    values: '(getDate(),\'' + lotNumber + '\',\'' + department + '\',\'' + payId + '\',\'' + archivesId + '\',\'' + uName + '\',\'' + csData['czlb-levelup2']['nr2']  +
-                                                                    '\',\'' + sjDriveCode +  '\',\'' + sjDriveType + '\',\'' + sessionGet('user') + '\',\'' + PC +'\')'
-                                                                },
-                                                                dataType: 'json',
-                                                                success: function (ret) {
-                                                                }
-                                                            })
-                                                            //删除DBSX表中数据
-                                                            $.ajax({
-                                                                url: "../../../ways.php",
-                                                                type: "POST",
-                                                                timeout: 8000,
-                                                                data: {
-                                                                    funcName: 'delete',
-                                                                    serverName: '10.101.62.73',
-                                                                    uid: 'sa',
-                                                                    pwd: '2huj15h1',
-                                                                    Database: 'jszgl',
-                                                                    tableName: ' dbsx',
-                                                                    where: ' where archivesId =\'' + archivesId + '\''
-                                                                },
-                                                                dataType: 'json'
-                                                            })
-                                                            //更新tjxx表
-                                                            var setStr1 = 'increaseAmount = increaseAmount + 1,kshg=kshg+1,yearlyAmount = yearlyAmount+1';
-                                                            var where1 =  ' where driveCode = \''+ sjDriveCode +'\' AND year = '+year;
-                                                            $.ajax({
-                                                                url: "../../../ways.php",
-                                                                type: "POST",
-                                                                timeout: 8000,
-                                                                data: {
-                                                                    funcName: 'update',
-                                                                    serverName: '10.101.62.73',
-                                                                    uid: 'sa',
-                                                                    pwd: '2huj15h1',
-                                                                    Database: 'jszgl',
-                                                                    tableName: ' tjxx',
-                                                                    setStr: setStr1,
-                                                                    where: where1
-                                                                },
-                                                                dataType: 'json'
-                                                            })
+                        var tempArr = [];               //临时
+                        var ajaxArr = [];               //即将发请求的数组
+                        checkRealArr(realArr);
+                        function checkRealArr(realArr){
+                            $('#appendSubmit table tbody').empty()
+                            var count = 0;      //计数，跟ajaxArr的长度比对，若少，说明用户没选择完毕
+                            $.each(realArr,function(m,val){
+                                //大致思路。用姓名和sjdrivecode去dbsx中匹配，如果有结果并只有一条（理想情况）
+                                //就直接新增jbxx和bgxx，删除dbsx
+                                //如果有结果并大于一条，说明重名且报的机型也一样，需要人工确认
+                                //显示一个模态框，打印出来这几个人的信息，让用户选择。
+                                //如果没有结果，应该是返回excel的名字打错或准驾机型错，做模糊匹配
+                                //在这里直接把姓名中的字母和数字去掉
+                                var person = {};
+                                person.sjDriveCode =val['sjDriveCode'];
+                                person.uName = val['uName'].replace(/[0-9a-zA-Z]/ig,"");
+                                person.startDate = dotTo(val['startDate']);
+                                person.deadline = dotTo(val['deadline']);
+                                person.sex  = val['sex'];
+                                var where = ' where uName =\''+person.uName+'\' AND sjDriveCode=\''+person.sjDriveCode+'\''
+                                var column =' * ';
+                                $.ajax({
+                                    url: "../../../ways.php",
+                                    type: "POST",
+                                    async:false,
+                                    data: {
+                                        funcName: 'select',
+                                        serverName: '10.101.62.73',
+                                        uid: 'sa',
+                                        pwd: '2huj15h1',
+                                        Database: 'JSZGL',
+                                        tableName: ' dbsx ',
+                                        column: column,
+                                        where: where,
+                                        order: ' '
+                                    },
+                                    dataType: 'json',
+                                    success: function (data){
+                                        person.sjDriveType = csData['zjlx-'+person.sjDriveCode]['nr1'];
+                                        person.status = csData['zjzt-zc']['nr2'];
+                                        person.phyTest = csData['tjjl-hg']['nr2'];
+                                        person.tzDone = csData['tzDone-swtz']['nr2'];
+                                        person.sjDate = person.startDate;
+                                        var html = '';
+                                        $("#appendSubmit").modal('show')
+                                        if(data['success'] === 1 && data['count'] === 1){
+                                            //理想情况，找到并只有一个
+                                            person.payId = data['row1']['payId'];
+                                            person.archivesId = data['row1']['archivesId'];
+                                            person.birthDate = data['row1']['birthDate'];
+                                            person.cardId = data['row1']['cardId'];
+                                            person.department = data['row1']['Department'];
+                                            person.txrq = data['row1']['txrq'];
+                                            person.PC = data['row1']['PC'];
+                                            count += 1;
+                                            ajaxArr.push(Object.assign(person))
+                                            html = '<tr><td>'+val['uName']+'</td><td>'+val['sjDriveCode']+'</td></tr>';
+                                            $('#appendSubmitTableLeft1').css('visibility','visible')
+                                            $('#appendSubmitTableLeft1 tbody').append(html);
+                                            html = '<tr><td>'+person.archivesId+'</td><td>'+person.department+'</td><td>'+person.uName+'</td><td>'+person.sjDriveCode+'</td><td>'+person.PC+'</td></tr>';
+                                            $('#appendSubmitTableRight1').css('visibility','visible');
+                                            $('#appendSubmitTableRight1 tbody').append(html);
+                                            html = '&nbsp;&nbsp;从文件中提取到以下人员：';
+                                            $('#appendSubmitP1').empty().append(html)
+                                            //tsAppendAjax(person,realArr,m)
+                                        }
+                                        else if(data['success'] === 1 && data['count']>1){
+                                            //找到并很多，说明有重名,显示一个模态框让用户选择
+                                            //提升成功依然加入成功数组
+                                            delete data['success'];
+                                            delete data['count'];
+                                            var p = '&nbsp;&nbsp;有重名信息，请在右边选择要提升的人员：';
+                                            var text = '';
+                                            count += 1;
+                                            html += '<tr><td>'+val['uName']+'</td><td>'+val['sjDriveCode']+'</td></tr>';
+                                            for(var i in data){
+                                                text += '<tr>';
+                                                text += '<td><label class="radio"><input type="radio" name=\'group'+ m +'\' value=\''+ i +'\'></label></td>'
+                                                text += '<td>'+ data[i]['archivesId']+'</td>';
+                                                text += '<td>'+ data[i]['Department']+'</td>';
+                                                text += '<td>'+ data[i]['UName']+'</td>';
+                                                text += '<td>'+ data[i]['sjDriveCode']+'</td>';
+                                                text += '<td>'+ data[i]['PC']+'</td>';
+                                                text += '</tr>';
+                                                person.payId = data[i]['payId'];
+                                                person.archivesId = data[i]['archivesId'];
+                                                person.birthDate = data[i]['birthDate'];
+                                                person.cardId = data[i]['cardId'];
+                                                person.department = data[i]['Department'];
+                                                person.txrq = data[i]['txrq'];
+                                                person.PC = data[i]['PC'];
+                                                console.log(person.payId)
+                                                tempArr.push(Object.assign({},person))
+                                            }
+                                            $("#appendSubmitP2").empty().append(p)
+                                            $('#appendSubmitTableLeft2').css('visibility','visible')
+                                            $('#appendSubmitTableLeft2 tbody').append(html);
+                                            $('#appendSubmitTableRight2').css('visibility','visible');
+                                            $('#appendSubmitTableRight2 tbody').append(text);
+                                        }
+                                        else if(data['success'] === 0){
+                                            //没找到，错名或错机型
+                                            //模糊匹配,选取姓名开头或结尾相同的，暂不限制机型
+                                            var uNameStart = val['uName'][0];
+                                            var uNameOver = val['uName'][val['uName'].length-1];
+                                            count += 1;
+                                            where = ' where uName like\''+ uNameStart +'%\' OR uName like \'%'+ uNameOver +'\''
+                                            $.ajax({
+                                                url: "../../../ways.php",
+                                                type: "POST",
+                                                async:false,
+                                                data: {
+                                                    funcName: 'select',
+                                                    serverName: '10.101.62.73',
+                                                    uid: 'sa',
+                                                    pwd: '2huj15h1',
+                                                    Database: 'JSZGL',
+                                                    tableName: ' dbsx ',
+                                                    column: column,
+                                                    where: where,
+                                                    order: ' '
+                                                },
+                                                dataType: 'json',
+                                                success: function (data){
+                                                    if(data['success'] === 1){
+                                                        delete data['success'];
+                                                        delete data['count'];
+                                                        var p = '&nbsp;&nbsp;有查无结果的信息，请在右边选择可能的人员进行提升：';
+                                                        var text = '';
+                                                        html += '<tr><td>'+val['uName']+'</td><td>'+val['sjDriveCode']+'</td></tr>';
+                                                        for(var i in data){
+                                                            text += '<tr>';
+                                                            text += '<td><label class="radio"><input type="radio" name=\'group'+ m +'\' value=\''+ i +'\'></label></td>'
+                                                            text += '<td>'+ data[i]['archivesId']+'</td>';
+                                                            text += '<td>'+ data[i]['Department']+'</td>';
+                                                            text += '<td>'+ data[i]['UName']+'</td>';
+                                                            text += '<td>'+ data[i]['sjDriveCode']+'</td>';
+                                                            text += '<td>'+ data[i]['PC']+'</td>';
+                                                            text += '</tr>';
+                                                            person.uName = data[i]['UName'];
+                                                            person.payId = data[i]['payId'];
+                                                            person.archivesId = data[i]['archivesId'];
+                                                            person.birthDate = data[i]['birthDate'];
+                                                            person.cardId = data[i]['cardId'];
+                                                            person.department = data[i]['Department'];
+                                                            person.txrq = data[i]['txrq'];
+                                                            person.PC = data[i]['PC'];
+                                                            tempArr.push(Object.assign({},person))
                                                         }
-                                                    })
-                                                }else{
-                                                    //update
-                                                    var columnArr = ['payId','UName','department','cardId','sex','birthDate','txrq','sjDate','startDate','deadline','sjDriveCode','sjDriveType','status','tzDone','phyTest','pc'];
-                                                    var valuesArr = [payId,uName,department,cardId,sex,birthDate,txrq,sjDate,startDate,deadline,sjDriveCode,sjDriveType,status,tzDone,phyTest,PC];
-                                                    var setStr = '';
-                                                    for (var i = 0; i < columnArr.length; i++) {
-                                                        setStr += columnArr[i] + '=' + '\'' + valuesArr[i] + '\'' + ','
+                                                        $("#appendSubmitLeftP3").empty().append(p)
+                                                        $('#appendSubmitTableLeft3').css('visibility','visible')
+                                                        $('#appendSubmitTableLeft3 tbody').append(html);
+                                                        $('#appendSubmitTableRight3').css('visibility','visible');
+                                                        $('#appendSubmitTableRight3 tbody').append(text);
+                                                    }else{
+                                                        alert('文件中姓名为'+ val['uName'] + '的信息查无此人，请对照批次记录，更正Excel并保存后再上传')
+                                                        $('#appendSubmit').modal('hide')
                                                     }
-                                                    setStr = setStr.substring(0, setStr.length - 1);
-                                                    //
-                                                    $.ajax({
-                                                        url: "../../../ways.php",
-                                                        type: "POST",
-                                                        timeout: 8000,
-                                                        data: {
-                                                            funcName: 'update', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
-                                                            tableName: ' jbxx', setStr: setStr, where: ' where archivesId = \''+archivesId+'\''
-                                                        },
-                                                        dataType: 'json',
-                                                        success: function () {
-                                                            //删除DBSX表中数据
-                                                            $.ajax({
-                                                                url: "../../../ways.php",
-                                                                type: "POST",
-                                                                timeout: 8000,
-                                                                data: {
-                                                                    funcName: 'delete',
-                                                                    serverName: '10.101.62.73',
-                                                                    uid: 'sa',
-                                                                    pwd: '2huj15h1',
-                                                                    Database: 'jszgl',
-                                                                    tableName: ' dbsx',
-                                                                    where: ' where archivesId =\'' + archivesId + '\''
-                                                                },
-                                                                dataType: 'json'
-                                                            })
-                                                            //更新tjxx表
-                                                            var date = new Date();
-                                                            var year = date.getFullYear()
-                                                            var setStr1 = 'increaseAmount = increaseAmount + 1,kshg=kshg+1,yearlyAmount = yearlyAmount+1';
-                                                            var where1 =  ' where driveCode = \''+ sjDriveCode +'\' AND year = '+year;
-                                                            $.ajax({
-                                                                url: "../../../ways.php",
-                                                                type: "POST",
-                                                                timeout: 8000,
-                                                                data: {
-                                                                    funcName: 'update',
-                                                                    serverName: '10.101.62.73',
-                                                                    uid: 'sa',
-                                                                    pwd: '2huj15h1',
-                                                                    Database: 'jszgl',
-                                                                    tableName: ' tjxx',
-                                                                    setStr: setStr1,
-                                                                    where: where1
-                                                                },
-                                                                dataType: 'json'
-                                                            })
-                                                        }
-                                                    })
                                                 }
+                                            })
+                                        }
+                                        $("#appendSubmit .btn-primary").off('click').on('click',function(){
+                                            //思路：点提交，先校验用户有没有完整勾选人员，通过数组长度和count比对
+                                            //把要提升的人员信息加一个标志位，不能直接移出数组
+                                            var checkedArr = $('#appendSubmit table input[type="radio"]:checked')
+                                            if(count === ajaxArr.length+checkedArr.length){
+                                                for(var i=0;i<checkedArr.length;i++){
+                                                    for(var j in tempArr){
+                                                        if(tempArr[j]['archivesId'] === $(checkedArr[i]).parent().parent().next('td').text()){
+                                                            ajaxArr.push(tempArr[j])
+                                                        }
+                                                    }
+                                                }
+                                                var successArr =[];             //成功后展示的数组
+                                                $("#appendSubmit").modal('hide')
+                                                for(var m in ajaxArr){
+                                                    tsAppendAjax(ajaxArr[m],successArr)
+                                                }
+                                                displaySuccess(successArr)
+                                            }else{
+                                                alert('请完整勾选')
                                             }
                                         })
-                                    }else if(data['success'] === 1 && data['count']>1){
-                                        //找到并很多，说明有重名,显示一个模态框让用户选择
-                                        //提升成功依然加入成功数组
-                                    }else if(data['success'] === 0){
-                                        //没找到，错名或错机型
-                                        //模糊匹配
+                                    }
+                                })
+                            })
+                        }
+
+                        function tsAppendAjax(person,successArr){
+                            $.ajax({
+                                url: "../../../ways.php",
+                                async:false,
+                                type:"POST",
+                                timeout:8000,
+                                //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
+                                data:{funcName:'select',where:' where archivesId =\''+person.archivesId+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                                    tableName:' jbxx ',column:' archivesId',order:' '},
+                                dataType:'json',
+                                success:function(data){
+                                    var date = new Date();
+                                    var year = date.getFullYear()
+                                    var lotNumber = new Date();
+                                    lotNumber.month = lotNumber.getMonth() < 9 ? '0' + (lotNumber.getMonth() + 1) : lotNumber.getMonth() + 1;
+                                    lotNumber.date = lotNumber.getDate() < 10 ? '0' + lotNumber.getDate() : lotNumber.getDate();
+                                    lotNumber = lotNumber.getFullYear() + '-' + lotNumber.month + '-' + lotNumber.date;
+                                    if(data['success'] === 0){
+                                        //insert jbxx
+                                        $.ajax({
+                                            url: "../../../ways.php",
+                                            type: "POST",
+                                            async:false,
+                                            timeout: 8000,
+                                            data: {
+                                                funcName: 'insert',
+                                                serverName: '10.101.62.73',
+                                                uid: 'sa',
+                                                pwd: '2huj15h1',
+                                                Database: 'jszgl',
+                                                tableName: ' jbxx',
+                                                column: ' (payId,archivesId,UName,sex,department,birthDate,txrq,cardId,sjDate,' +
+                                                'startdate,deadline,sjDriveCode,sjDriveType,status,tzdone,phyTest,PC)',
+                                                values: '(\''+person.payId+'\',\'' + person.archivesId + '\',\'' + person.uName + '\',\'' + person.sex + '\',\'' + person.department + '\',\'' + person.birthDate + '\',\'' + person.txrq + '\',\'' + person.cardId + '\',\''
+                                                + person.sjDate + '\',\'' + person.startDate + '\',\'' + person.deadline + '\',\'' + person.sjDriveCode + '\',\'' + person.sjDriveType + '\',\'' + person.status + '\',\''+person.tzDone+'\',\''+person.phyTest+'\',\''+person.PC+'\')'
+                                            },
+                                            dataType: 'json',
+                                            success: function (){
+                                                var successObj ={};
+                                                successObj.uName =person.uName;
+                                                successObj.archivesId = person.archivesId;
+                                                successObj.department = person.department;
+                                                successArr.push(Object.assign({},successObj))
+                                                //insert bgxx
+                                                $.ajax({
+                                                    url: "../../../ways.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'insert',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' bgxx',
+                                                        column: ' (id,lotNumber,Department,payId,archivesId,UName,changeType,checkStatus,' +
+                                                        'driveCode,drive,jykOperator,pc)',
+                                                        values: '(getDate(),\'' + lotNumber + '\',\'' + person.department + '\',\'' + person.payId + '\',\'' + person.archivesId + '\',\'' + person.uName + '\',\'' + csData['czlb-levelup2']['nr2'] + '\',\'' + csData['checkStatus-shtg']['nr2'] +
+                                                        '\',\'' + person.sjDriveCode +  '\',\'' + person.sjDriveType + '\',\'' + sessionGet('user') + '\',\'' + person.PC +'\')'
+                                                    },
+                                                    dataType: 'json',
+                                                    success: function (ret) {
+                                                    }
+                                                })
+                                                //删除DBSX表中数据
+                                                $.ajax({
+                                                    url: "../../../ways.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'delete',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' dbsx',
+                                                        where: ' where archivesId =\'' + person.archivesId + '\' AND type=\''+csData['czlb-levelup2']['nr2']+'\''
+                                                    },
+                                                    dataType: 'json'
+                                                })
+                                                //更新tjxx表
+                                                var setStr1 = 'increaseAmount = increaseAmount + 1,kshg=kshg+1,yearlyAmount = yearlyAmount+1';
+                                                var where1 =  ' where driveCode = \''+ person.sjDriveCode +'\' AND year = '+year;
+                                                $.ajax({
+                                                    url: "../../../ways.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'update',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' tjxx',
+                                                        setStr: setStr1,
+                                                        where: where1
+                                                    },
+                                                    dataType: 'json'
+                                                })
+                                            }
+                                        })
+                                    }else{
+                                        //update
+                                        var columnArr = ['payId','UName','department','cardId','sex','birthDate','txrq','sjDate','startDate','deadline','sjDriveCode','sjDriveType','status','tzDone','phyTest','pc'];
+                                        var valuesArr = [person.payId,person.uName,person.department,person.cardId,person.sex,person.birthDate,person.txrq,person.sjDate,person.startDate,person.deadline,person.sjDriveCode,person.sjDriveType,person.status,person.tzDone,person.phyTest,person.PC];
+                                        var setStr = '';
+                                        for (var i = 0; i < columnArr.length; i++) {
+                                            setStr += columnArr[i] + '=' + '\'' + valuesArr[i] + '\'' + ','
+                                        }
+                                        setStr = setStr.substring(0, setStr.length - 1);
+                                        //更新jbxx
+                                        $.ajax({
+                                            url: "../../../ways.php",
+                                            type: "POST",
+                                            timeout: 8000,
+                                            data: {
+                                                funcName: 'update',async:false, serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+                                                tableName: ' jbxx', setStr: setStr, where: ' where archivesId = \''+person.archivesId+'\''
+                                            },
+                                            dataType: 'json',
+                                            success: function () {
+                                                var successObj ={};
+                                                successObj.uName =person.uName;
+                                                successObj.archivesId = person.archivesId;
+                                                successObj.department = person.department;
+                                                successArr.push(Object.assign({},successObj))
+                                                //插入bgxx
+                                                $.ajax({
+                                                    url: "../../../ways.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'insert',
+                                                        serverName: '10.101.62.73',
+                                                        async:false,
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' bgxx',
+                                                        column: ' (id,lotNumber,Department,payId,archivesId,UName,changeType,checkStatus,' +
+                                                        'driveCode,drive,jykOperator,pc)',
+                                                        values: '(getDate(),\'' + lotNumber + '\',\'' + person.department + '\',\'' + person.payId + '\',\'' + person.archivesId + '\',\'' + person.uName + '\',\'' + csData['czlb-levelup2']['nr2'] +  '\',\'' + csData['checkStatus-shtg']['nr2'] +
+                                                        '\',\'' + person.sjDriveCode +  '\',\'' + person.sjDriveType + '\',\'' + sessionGet('user') + '\',\'' + person.PC +'\')'
+                                                    },
+                                                    dataType: 'json',
+                                                    success: function (ret) {
+
+                                                    }
+                                                })
+                                                //删除DBSX表中数据
+                                                $.ajax({
+                                                    url: "../../../ways.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'delete',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' dbsx',
+                                                        where: ' where archivesId =\'' + person.archivesId + '\' AND type=\''+csData['czlb-levelup2']['nr2']+'\''
+                                                    },
+                                                    dataType: 'json'
+                                                })
+                                                //更新tjxx表
+                                                var date = new Date();
+                                                var year = date.getFullYear()
+                                                var setStr1 = 'increaseAmount = increaseAmount + 1,kshg=kshg+1,yearlyAmount = yearlyAmount+1';
+                                                var where1 =  ' where driveCode = \''+ person.sjDriveCode +'\' AND year = '+year;
+                                                $.ajax({
+                                                    url: "../../../ways.php",
+                                                    type: "POST",
+                                                    timeout: 8000,
+                                                    data: {
+                                                        funcName: 'update',
+                                                        serverName: '10.101.62.73',
+                                                        uid: 'sa',
+                                                        pwd: '2huj15h1',
+                                                        Database: 'jszgl',
+                                                        tableName: ' tjxx',
+                                                        setStr: setStr1,
+                                                        where: where1
+                                                    },
+                                                    dataType: 'json'
+                                                })
+                                            }
+                                        })
                                     }
                                 }
                             })
-                        });
-                        var html ='<tr><th>档案号</th><th>部门</th><th>姓名</th></tr>';
-                        for(var x=0;x<successArr.length;x++){
-                            html+='<tr><td>'+successArr[x]['archivesId']+'</td><td>'+successArr[x]['department']+'</td><td>'+successArr[x]['uName']+'</td></tr>';
                         }
-                        var p = '本次操作成功提升司机'+successArr.length+'名';
-                        $('#tsSuccessP').empty().append(p)
-                        $('#tsSuccessTable').empty().append(html)
-                        $('#tsSuccess').modal('show')
+                        function displaySuccess(successArr){
+                            //成功提升的模态框
+                            console.log(successArr)
+                            if(successArr.length>0){
+                                var html ='<tr><th>档案号</th><th>部门</th><th>姓名</th></tr>';
+                                for(var x=0;x<successArr.length;x++){
+                                    html+='<tr><td>'+successArr[x]['archivesId']+'</td><td>'+successArr[x]['department']+'</td><td>'+successArr[x]['uName']+'</td></tr>';
+                                }
+                                var p = '本次操作成功提升司机'+successArr.length+'名';
+                                $('#tsSuccessP').empty().append(p)
+                                $('#tsSuccessTable').empty().append(html)
+                                $(".modal-backdrop").remove()
+                                $('#tsSuccess').modal('show');
+                            }
+                        }
+
+
                         function dotTo(str){
                             //该函数接收一个'xxxx.x.xx'格式的日期，返回一个'xxxx-xx-xx'格式
                             var strArr = str.split('.');
@@ -5698,7 +5817,6 @@ $(document).ready(function() {
             })
         })
     }
-    appendToolTip()
     function appendToolTip(){
         //初始化tooltips
         $(".question").tooltip({
@@ -5718,6 +5836,12 @@ $(document).ready(function() {
             'keyboard':false
         })
         $('#tsSuccess').modal({
+            'show':false
+        })
+        $('#appendSubmit').modal({
+            'show':false
+        })
+        $('#rejectModal').modal({
             'show':false
         })
     }
@@ -5876,7 +6000,6 @@ $(document).ready(function() {
                                         })
                                     }
                                     $(".summaryBanner .htmlToXls").off('click').on('click',function(){
-                                        console.log(data)
                                         if(confirm('是否要生成EXCEL表格')){
                                             var filterArray=['num','company','UName','sex','cardId','birthDate','applyDriveCode','driveCode','startDate','deadline','sjRemark','phyTest'];
                                             var headerArray=['序号','单位','姓名','性别','公民身份号码','出生日期','申请准驾\u000d类型代码','原证准驾\u000d类型代码','原证初次\u000d领证日期','原证有效\u000d截止日期','原证批准文号\u000d(公文号)','体检\u000d结论','备注']
@@ -5899,7 +6022,8 @@ $(document).ready(function() {
                                 }
                             }
                         })
-                    }else if($(this).val() === table3){//非有效期满
+                    }
+                    else if($(this).val() === table3){//非有效期满
                         if($('#yearSelect')){
                             $('#yearSelect').remove()
                         }
@@ -6054,7 +6178,8 @@ $(document).ready(function() {
                                 }
                             }
                         })
-                    }else if($(this).val() === table4){//补证
+                    }
+                    else if($(this).val() === table4){//补证
                         if($('#yearSelect')){
                             $('#yearSelect').remove()
                         }
@@ -6403,7 +6528,7 @@ $(document).ready(function() {
                                         })
                                     }
                                     else{
-                                        alert('查无上年度数据，只生成今年度数据')
+                                        alert('查无上年度数据，只生成当年度数据')
                                         $.ajax({
                                             url: "../../../ways.php",
                                             type: "POST",
@@ -6707,6 +6832,20 @@ $(document).ready(function() {
                         $("#applySubmit").css('visibility', 'visible');
                         $("#rightContent").css('width', '84%');
                         $(".operateContent").css('margin', 0);
+                        $('#back').css('visibility', 'visible');
+                        $('#back').off('click').on('click',function(){
+                            if(confirm('确认返回？')){
+                                $("#fixButton").css('display', 'block');
+                                $("#yxqmButton").css('display', 'block');
+                                $("#fyxqmButton").css('display', 'block');
+                                $("#fixTable").css('visibility', 'hidden');
+                                $("#print").css('visibility', 'hidden');
+                                $("#applySubmit").css('visibility', 'hidden');
+                                $("#rightContent").css('width', '80%');
+                                $(".operateContent").css('margin-top', '50px');
+                                $('#back').css('visibility', 'hidden');
+                            }
+                        })
                         getUserinfo(payId,csData['czlb-bz']['name']);
                     }
                 },
@@ -6728,14 +6867,28 @@ $(document).ready(function() {
     //有效期满换证
     $("#yxqmButton").off('click').on('click', function () {
             var payId = sessionGet('payId');
-            $("#fixButton").css('display', 'none');
-            $("#yxqmButton").css('display', 'none');
-            $("#fyxqmButton").css('display', 'none');
-            $("#fixTable").css('visibility', 'visible');
-            $("#print").css('visibility', 'visible');
-            //$("#applySubmit").css('visibility', 'visible');
-            $("#rightContent").css('width', '84%');
-            $(".operateContent").css('margin', 0);
+        $("#fixButton").css('display', 'none');
+        $("#yxqmButton").css('display', 'none');
+        $("#fyxqmButton").css('display', 'none');
+        $("#fixTable").css('visibility', 'visible');
+        $("#print").css('visibility', 'visible');
+        $("#applySubmit").css('visibility', 'visible');
+        $("#rightContent").css('width', '84%');
+        $(".operateContent").css('margin', 0);
+        $('#back').css('visibility', 'visible');
+        $('#back').off('click').on('click',function(){
+            if(confirm('确认返回？')){
+                $("#fixButton").css('display', 'block');
+                $("#yxqmButton").css('display', 'block');
+                $("#fyxqmButton").css('display', 'block');
+                $("#fixTable").css('visibility', 'hidden');
+                $("#print").css('visibility', 'hidden');
+                $("#applySubmit").css('visibility', 'hidden');
+                $("#rightContent").css('width', '80%');
+                $(".operateContent").css('margin-top', '50px');
+                $('#back').css('visibility', 'hidden');
+            }
+        })
             getUserinfo(payId,csData['czlb-yxqmhz']['name']);
     })
 
@@ -6772,6 +6925,20 @@ $(document).ready(function() {
                         $("#applySubmit").css('visibility', 'visible');
                         $("#rightContent").css('width', '84%');
                         $(".operateContent").css('margin', 0);
+                        $('#back').css('visibility', 'visible');
+                        $('#back').off('click').on('click',function(){
+                            if(confirm('确认返回？')){
+                                $("#fixButton").css('display', 'block');
+                                $("#yxqmButton").css('display', 'block');
+                                $("#fyxqmButton").css('display', 'block');
+                                $("#fixTable").css('visibility', 'hidden');
+                                $("#print").css('visibility', 'hidden');
+                                $("#applySubmit").css('visibility', 'hidden');
+                                $("#rightContent").css('width', '80%');
+                                $(".operateContent").css('margin-top', '50px');
+                                $('#back').css('visibility', 'hidden');
+                            }
+                        })
                         getUserinfo(payId,csData['czlb-fyxqmhz']['name']);
                     }
                 },
@@ -7022,7 +7189,7 @@ $(document).ready(function() {
             'disabled': true
         }).siblings('input').attr('disabled', true);
         if(cardData['sjDriveCode'] === 'A' || cardData['sjDriveCode'] === 'B' || cardData['sjDriveCode'] === 'C'){
-            $("#originOther").prop({'checked':true,'disabled':true}).siblings('input').attr('disabled', true)
+            $("#originOther").prop({'checked':true,'disabled':true}).siblings('input').prop({'checked':false,'disabled':true})
             $("#originOtherInput").prop({
                 'disabled':false
             }).val(cardData['sjDriveCode'])
@@ -7180,17 +7347,32 @@ $(document).ready(function() {
         //以下变量用来更新jbxx表
         var status = '';
         var where = ' where payid = \'' + payId + '\'';
-        var changeReason =''
-        var needed = csData['needed-hbzsqb']['nr2'] ;
+        var changeReason ='';
+        var needed = '';
+        if(changeType === csData['czlb-bz']['nr3']){
+            for(var i in csData){
+                if(csData[i]['lb'] === 'bzsxcl'){
+                    needed += csData[i]['nr2'];
+                    needed +=','
+                }
+            }
+            needed = needed.substring(0,needed.length-1);
+        }else if(changeType === csData['czlb-yxqmhz']['nr3'] || changeType === csData['czlb-fyxqmhz']['nr3']){
+            for(var i in csData){
+                if(csData[i]['lb'] === 'hzsxcl'){
+                    needed += csData[i]['nr2'];
+                    needed+=','
+                }
+            }
+            needed = needed.substring(0,needed.length-1);
+        }
         //根据用户勾选，取变更原因
         if ($("#cardLost").prop('checked')) {
             changeReason = csData['bzyy-jszds']['nr2'];
             status =csData['zjzt-ds']['nr2'];
-            needed = csData['needed-hbzsqb']['nr2'] + ',' + csData['needed-jszdszm']['nr2']
         } else if ($("#cardBreak").prop('checked')) {
             changeReason = csData['bzyy-jszsh']['nr2'];
             status =csData['zjzt-sh']['nr2'];
-            needed = csData['needed-hbzsqb']['nr2'] + ',' + csData['needed-jszdszm']['nr2']
         }else if($("#reasonDeadline").prop('checked')){
             changeReason = csData['hzyy-yxqm']['nr2'];
             status =csData['zjzt-hzz']['nr2'];
@@ -7330,7 +7512,6 @@ $(document).ready(function() {
     //打印
     function print() {
         var html = $("#bigContent #rightContent .operateContent #applyContainer #fixTable");
-        console.log(html)
         $("body").empty().append(html);
         alert('请根据您的分辨率调整页面大小及页边距以获得更好的打印效果');
         window.print()
@@ -7357,7 +7538,6 @@ $(document).ready(function() {
             },
             dataType: 'json',
             success: function (data) {
-                console.log(data)
                 $("#firstName").text(data['row']['UName'][0]);
                 $("#cardStatus").text(data['row']['status']).css({'color': 'red', 'fontWeight': 'bold'})
                 //预警或过期
@@ -7384,13 +7564,12 @@ $(document).ready(function() {
                         },
                         dataType: 'json',
                         success: function (data) {
-                            console.log(data)
-                            if (data['success'] == 1) {
+                            if (data['success'] === 1) {
                                 //换证补证，执行以下
                                 if (data['row']['changeType'] === csData['czlb-fyxqmhz']['nr3'] || data['row']['changeType'] === csData['czlb-yxqmhz']['nr3'] || data['row']['changeType'] === csData['czlb-bz']['nr3']) {
-                                    $("#applyInfo").empty().append('您有一项未完结的 ' + data['row']['changeType'] + ' 申请，')
-                                    $("#applyInfo").append('<span id="checkStatus"></span>\n' +
-                                        '                    <span id="finishStatus"></span>\n' +
+                                    $("#applyInfo").empty().append('您有一项未完结的 ' + data['row']['changeType'] + ' 申请')
+                                    $("#applyInfo").append('<br><span id="checkStatus"></span><br>' +
+                                        '                    <span id="finishStatus"></span><br>' +
                                         '                    <span id="needed"></span>')
                                     //审核未通过，执行以下
                                     if (data['row']['checkStatus'] === csData['checkStatus-shwtg']['nr2']) {
@@ -7398,18 +7577,23 @@ $(document).ready(function() {
                                     }//审核通过，执行以下
                                     else if(data['row']['checkStatus'] === csData['checkStatus-shtg']['nr2']){
                                         $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
-                                        $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
+                                        $("#finishStatus").empty().append('发放状态为：' + data['row']['finishStatus'])
                                     }//审核中，执行以下
                                     else if(data['row']['checkStatus'] === csData['checkStatus-jykshz']['nr2']){
                                         $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
-                                        $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
+                                        $("#finishStatus").empty().append('发放状态为：' + data['row']['finishStatus'])
                                     }else if(data['row']['checkStatus'] === csData['checkStatus-cjshz']['nr2']){
                                         $("#checkStatus").empty().append('审核状态为：' + data['row']['checkStatus']);
-                                        $("#finishStatus").empty().append('，发放状态为：' + data['row']['finishStatus'])
+                                        $("#finishStatus").empty().append('发放状态为：' + data['row']['finishStatus'])
                                         if (data['row']['changeType'] === csData['czlb-fyxqmhz']['nr3'] || data['row']['changeType'] === csData['czlb-yxqmhz']['nr3']) {
-
+                                            var text = '您需要将以下材料提交车间：';
+                                            text += csData['hzsxcl-hbzsqb']['nr2'] + '；' + csData['hzsxcl-sfz']['nr2'] + '原件和电子扫描件；'+csData['hzsxcl-jsz']['nr2'] +'、'+csData['hzsxcl-grzp']['nr2'] + '电子扫描件' ;
+                                            $("#needed").empty().append(text);
                                         } else if (data['row']['changeType'] === csData['czlb-bz']['nr3']) {
-                                            $("#needed").empty().append('您需准备如下材料：' + csData['needed-hbzsqb']['nr2'] + '、' + csData['needed-jszdszm']['nr2']);
+                                            var text = '您需要将以下材料提交车间：';
+                                            text += csData['bzsxcl-hbzsqb']['nr2'] + '；' + csData['bzsxcl-sfz']['nr2'] + '原件和电子扫描件' ;
+                                            text += '，并去车间开具'+csData['bzsxcl-dszm']['nr2']
+                                            $("#needed").empty().append(text);
                                         }
                                     }
                                     //新增，执行以下
@@ -7477,7 +7661,6 @@ $(document).ready(function() {
                     contentType: false,
                     cache: false,
                     success: function (data) {
-                        console.log(data);
                         if (data['success'] === 1) {
                             alert('驾驶证上传成功。请刷新页面来查看证件信息');
                             $("#cardInput").val('');
