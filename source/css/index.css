@@ -841,14 +841,17 @@ a,a:hover,a:active,a:visited{
     overflow: hidden;
     display: none;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryPicInfo,#yearlyContainer .queryInfoContent .queryPicInfo{
+#bigContent #rightContent #editContainer .queryInfoContent .queryPicInfo{
     width: 40%;
     height: 250px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo,#yearlyContainer .queryInfo{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo{
     width: 55%;
     padding-left: 5%;
     height: 250px;
+}
+#yearlyContainer .queryPicInfo{
+    padding: 20px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo .date,#yearlyContainer .queryInfo .date{
     width: 100px;
@@ -882,7 +885,7 @@ div.sjRemark{
     -webkit-user-select: unset;
     font-size: 14px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .payId,#yearlyContainer .queryInfo .payId{
+#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .payId,#yearlyContainer .queryInfo .archivesId{
     width: 70px;
 }
 #bigContent #rightContent #editContainer .queryInfoContent .queryInfo .driveCodeInput{
@@ -893,7 +896,7 @@ div.sjRemark{
     height: 40px;
     margin-top: 50px;
 }
-#bigContent #rightContent #editContainer .editButtonBanner .rydc,.cjEdit,.infoFix,.logout,.phyTestOk,.phyTestNo,.yearlyCheck{
+#bigContent #rightContent #editContainer .editButtonBanner .rydc,.cjEdit,.infoFix,.logout,.phyTestOk,.phyTestNo,.yearlyCheck,.uploadImg{
     font-size: 12px;
     margin-right: 50px;
 }

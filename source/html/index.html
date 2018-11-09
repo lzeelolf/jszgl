@@ -81,7 +81,42 @@
         }
         return true;
     }
-
+    function setSfzPreview()
+    {
+        var sfzInput=document.getElementById("sfzInput");
+        var sfzPreview=document.getElementById("sfzPreview");
+        if(sfzInput.files &&    sfzInput.files[0])
+        {
+            //火狐下，直接设img属性
+            sfzPreview.style.display = 'block';
+            sfzPreview.style.width = '150px';
+            sfzPreview.style.height = '150px';
+            //imgObjPreview.src = docObj.files[0].getAsDataURL();
+            //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+            sfzPreview.src = window.URL.createObjectURL(sfzInput.files[0]);
+        }
+        else
+        {
+            //IE下，使用滤镜
+            photoInput.select();
+            var imgSrc = document.selection.createRange().text;
+            var cardPic = document.getElementById("cardPic");
+            //图片异常的捕捉，防止用户修改后缀来伪造图片
+            try
+            {
+                cardPic.style.filter="progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+                cardPic.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
+            }
+            catch(e)
+            {
+                alert("您上传的图片格式不正确，请重新选择!");
+                return false;
+            }
+            sfzPreview.style.display = 'none';
+            document.selection.empty();
+        }
+        return true;
+    }
 
 </script>
 <div id="loadingPic">
@@ -312,6 +347,50 @@
         <button class="btn btn-primary">提交</button>
     </div>
 </div>
+<div id="uploadImage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="uploadImageLabel">上传照片</h3>
+    </div>
+    <div class="modal-body">
+        <form action="" class="form-horizontal" id="uploadImageForm" enctype="multipart/form-data">
+            <div class="control-group">
+                <img src="../images/暂无图片.png" alt="驾驶证" id="cardPreview">
+                <label for="cardInput">驾驶证扫描件:</label>
+                <input type="file" name="file" id="cardInput" accept="image/*"  onchange="setCardPreview();">
+            </div>
+            <div class="control-group">
+                <img src="../images/暂无图片.png" alt="身份证" id="sfzPreview">
+                <label for="sfzInput">身份证扫描件:</label>
+                <input type="file" name="file" id="sfzInput" accept="image/*"  onchange="setSfzPreview();">
+            </div>
+            <div class="control-group">
+                <img src="../images/暂无图片.png" alt="个人照片" id="photoPreview">
+                <label for="photoInput">个人照片:</label>
+                <input type="file" name="file" id="photoInput" accept="image/*"  onchange="setPhotoPreview();">
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+        <button class="btn btn-primary">上传</button>
+    </div>
+</div>
+<div id="improveAlert" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="improveAlertLabel">请注意</h3>
+    </div>
+    <div class="modal-body">
+        <p class="lead text-error">本车间有尚未完善照片（驾驶证扫描件、身份证正反面扫描件、电子照片）的人员</p>
+        <table id="improveAlertTable" cellpadding="0" cellspacing="0" class="table table-bordered table-striped"></table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+        <button class="btn btn-primary">上传</button>
+    </div>
+</div>
+
 <div id="bigContent">
     <div id="leftContent">
         <ul id="buttonList">
@@ -566,27 +645,44 @@
                     <input type="text" class="float queryInput">
                     <button class="queryButton float btn">查询</button>
                 </div>
-                <div class="queryInfoContent">
-                    <div class="float queryPicInfo"><img src="" alt="" style="width: 100%;height: 200px"></div>
-                    <div class="float queryInfo">
-                        <div class="control-group">
-                            <p>工资号</p><div class="payId"></div>
-                            <p>姓名</p><div class="name"></div>
-                            <p>部门</p><div class="department"></div>
+                <div class="queryInfoContent row-fluid">
+                    <div class="row-fluid">
+                        <div class="float queryPicInfo span6">
+                            <label class="control-label">驾驶证</label>
+                            <img src="" alt="驾驶证" id="jszPic">
                         </div>
-                        <div class="control-group">
-                            <p>有效起始</p><div class="startDate"></div>
-                            <p>有效截止</p><div class="deadline"></div>
-                        </div>
-                        <div class="control-group">
-                            <p>体检结论</p><div class="phyTest"></div>
-                            <p>年鉴时间</p><div class="yearlyCheckDate"><input type="text" class="yearlyCheckDateInput date"></div>
+                        <div class="float queryPicInfo span6">
+                            <label class="control-label">身份证</label>
+                            <img src="" alt="身份证" id="sfzPic">
                         </div>
                     </div>
-                    <div class="yearlyButtonBanner">
+                    <div class="row-fluid">
+                        <div class="span4 queryPicInfo">
+                            <img src="" alt="个人照片" id="photoPic1">
+                        </div>
+                        <div class="span7 offset1">
+                            <div class="queryInfo">
+                                <div class="control-group">
+                                    <p>档案号</p><div class="archivesId"></div>
+                                    <p>姓名</p><div class="name"></div>
+                                    <p>部门</p><div class="department"></div>
+                                </div>
+                                <div class="control-group">
+                                    <p>有效起始</p><div class="startDate"></div>
+                                    <p>有效截止</p><div class="deadline"></div>
+                                </div>
+                                <div class="control-group">
+                                    <p>体检结论</p><div class="phyTest"></div>
+                                    <p>年鉴时间</p><div class="yearlyCheckDate"><input type="text" class="yearlyCheckDateInput date"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="yearlyButtonBanner row-fluid">
                         <button class="phyTestOk btn">体检合格</button>
                         <button class="phyTestNo btn">体检不合格</button>
                         <button class="yearlyCheck btn">年鉴</button>
+                        <button class="uploadImg btn">上传图片</button>
                     </div>
                 </div>
             </div>
@@ -911,45 +1007,6 @@
                     <span id="finishStatus"></span>
                     <span id="needed"></span>
                 </div>
-            </div>
-            <div class="sjUse" id="improveContainer">
-                <div id="picContent" class="float">
-                    驾驶证扫描件
-                    <div id="cardPic">
-                        <img id="cardPreview" width=-1 height=-1 style="display:none" />
-                    </div>
-                    个人照片电子档
-                    <div id="photoPic">
-                        <img id="photoPreview" width=-1 height=-1 style="display:none" />
-                    </div>
-                </div>
-                <div class="float" id="formContent">
-                    <form id="cardForm">
-                        <div>
-
-                            <label for="cardInput">驾驶证扫描件:</label>
-                            <input type="file" name="file" id="cardInput" accept="image/*"  onchange="setCardPreview();">
-                            <br><br>
-                            <input type="button" name="submit" value="上传" multiple id="cardSubmit"/>
-
-                        </div>
-                    </form>
-                    <form id="photoForm">
-                        <div>
-
-                            <label for="photoInput">个人照片电子档:</label>
-                            <input type="file" name="file" id="photoInput" accept="image/*"  onchange="setPhotoPreview();">
-                            <br><br>
-                            <input type="button" name="submit" value="上传" id="photoSubmit"/>
-
-                        </div>
-                    </form>
-
-
-
-
-                </div>
-
             </div>
         </div>
     </div>

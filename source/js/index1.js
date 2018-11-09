@@ -128,7 +128,7 @@ $(document).ready(function() {
             appendApplyCheck(power,csData);
         } else if (power === '1') {//这里填车间管理人员的权限
             html = '<li class=\"queryButton\">证件查询</li><li class=\"dataButton\">数据统计</li><li class=\"checkButton\">申请审核</li>' +
-                '<li class="alertButton">预警信息<span class="redPoint"></span></li><li class="yearlyButton">年鉴体检</li><li class="giveOutButton">证件发放</li><li class="logOutButton">退出系统</li>';
+                '<li class="alertButton">预警信息<span class="redPoint"></span></li><li class="yearlyButton">完善信息</li><li class="giveOutButton">证件发放</li><li class="logOutButton">退出系统</li>';
             $("#buttonList").append(html);
             //车间管理人员没有添加和注销功能，移除相应区域
             $("#appendContainer").remove();
@@ -137,7 +137,7 @@ $(document).ready(function() {
             appendApplyCheck(power,csData);
         } else if (power === '0') {//这里填普通人员的权限
             html = '<li class=\"informationButton\">证件信息</li><li class=\"applyButton\">换补申请</li><li class=\"statusButton\">证件状态</li>' +
-                '<li class="improveButton">完善信息</li><li class="logOutButton">退出系统</li>';
+                '<li class="logOutButton">退出系统</li>';
             $("#buttonList").empty().append(html);
             normalUser();
         }
@@ -1633,7 +1633,7 @@ $(document).ready(function() {
                     if(data['success'] === 1){
                         delete data['success'];
                         //var phone = data['row']['phone1'];
-                        var text = data['row']['uname']+'师傅，您好。您的驾驶证已进入到期预警状态，请及时联系车间教育负责人准备相应材料，谢谢。';
+                        var text = data['row']['uname']+ csData['dxnr-yj']['nr1']+csData['dxnr-yj']['nr2']+csData['dxnr-yj']['nr3']+csData['dxnr-yj']['nr4']+csData['dxnr-yj']['nr5']+csData['dxnr-yj']['nr6'];
                         $.ajax({
                             url: "../../../ways.php",
                             type: "POST",
@@ -1694,7 +1694,7 @@ $(document).ready(function() {
                     if(data['success'] === 1){
                         delete data['success'];
                         //var phone = data['row']['phone1'];
-                        var text = data['row']['uname']+'师傅，您好。您的新驾驶证已由车间发放到个人，若未收到，请联系车间教育负责人核实，谢谢。';
+                        var text = data['row']['uname']+csData['dxnr-ffdgr']['nr1']+csData['dxnr-ffdgr']['nr2']+csData['dxnr-ffdgr']['nr3']+csData['dxnr-ffdgr']['nr4']+csData['dxnr-ffdgr']['nr5']+csData['dxnr-ffdgr']['nr6'];
                         $.ajax({
                             url: "../../../ways.php",
                             type: "POST",
@@ -1739,7 +1739,7 @@ $(document).ready(function() {
                     if(data['success'] === 1){
                         delete data['success'];
                         //var phone = data['row']['phone1'];
-                        var text = data['row']['uname']+'师傅，您好。您的新驾驶证已发放到车间，请于近期到车间教育口领取，谢谢。';
+                        var text = data['row']['uname']+ csData['dxnr-txqz']['nr1']+ csData['dxnr-txqz']['nr2']+ csData['dxnr-txqz']['nr3']+ csData['dxnr-txqz']['nr4']+ csData['dxnr-txqz']['nr5']+ csData['dxnr-txqz']['nr6'];
                         $.ajax({
                             url: "../../../ways.php",
                             type: "POST",
@@ -1783,7 +1783,7 @@ $(document).ready(function() {
                     if(data['success'] === 1){
                         delete data['success'];
                         //var phone = data['row']['phone1'];
-                        var text = data['row']['uname']+'师傅，您好。您的驾驶证补发申请已受理，请联系车间教育负责人开具《驾驶证丢失证明》并留意后续的发证通知信息，谢谢。';
+                        var text = data['row']['uname']+ csData['dxnr-bz']['nr1']+ csData['dxnr-bz']['nr2']+ csData['dxnr-bz']['nr3']+ csData['dxnr-bz']['nr4']+ csData['dxnr-bz']['nr5']+ csData['dxnr-bz']['nr6'];
                         $.ajax({
                             url: "../../../ways.php",
                             type: "POST",
@@ -1827,7 +1827,7 @@ $(document).ready(function() {
                     if(data['success'] === 1){
                         delete data['success'];
                         //var phone = data['row']['phone1'];
-                        var text = data['row']['uname']+'师傅，您好。您的驾驶证有效期满换证程序已开始，请留意后续的发证通知信息，谢谢。';
+                        var text = data['row']['uname']+ csData['dxnr-hz']['nr1']+ csData['dxnr-hz']['nr2']+ csData['dxnr-hz']['nr3']+ csData['dxnr-hz']['nr4']+ csData['dxnr-hz']['nr5']+ csData['dxnr-hz']['nr6'];
                         $.ajax({
                             url: "../../../ways.php",
                             type: "POST",
@@ -1871,7 +1871,7 @@ $(document).ready(function() {
                     if(data['success'] === 1){
                         delete data['success'];
                         //var phone = data['row']['phone1'];
-                        var text = data['row']['uname']+'师傅，您好。欢迎入职洛阳机务段，请于近期内携带您的机车驾驶证原件到段教育科登记驾驶证信息，谢谢。';
+                        var text = data['row']['uname']+ csData['dxnr-dr']['nr1']+ csData['dxnr-dr']['nr2']+ csData['dxnr-dr']['nr3']+ csData['dxnr-dr']['nr4']+ csData['dxnr-dr']['nr5']+ csData['dxnr-dr']['nr6'];
                         $.ajax({
                             url: "../../../ways.php",
                             type: "POST",
@@ -2797,6 +2797,7 @@ $(document).ready(function() {
 
         }
     }
+    //撤回事件
     function boundBackEvent(data){
         $("#dataTable .back").off('click').on('click',function(){
             var _this = $(this);
@@ -5844,6 +5845,12 @@ $(document).ready(function() {
         $('#rejectModal').modal({
             'show':false
         })
+        $('#uploadImage').modal({
+            'show':false
+        })
+        $("#improveAlert").modal({
+            'show':false
+        })
     }
 
     //添加汇总信息
@@ -6969,27 +6976,30 @@ $(document).ready(function() {
     })
     function displayYearly(){
         if(sessionGet('power') === '1'){
-            if($(".yearlyBanner .queryInput").val().match(/^[0-9]{5}$/)){
+            if($(".yearlyBanner .queryInput").val().match(/^[0-9]{5}$/) || $(".yearlyBanner .queryInput").val().match(/^[0-9]{4}$/)){
                 var payid = $(".yearlyBanner .queryInput").val();
-                var column = ' payId,UName,department,startDate,deadline,phyTest,yearlyCheckDate';
+                if(payid.length<5){
+                    payid = '0'+payid;
+                }
+                var department = sessionGet('department').split(',')[1]?sessionGet('department').split(',')[0]:sessionGet('department');
+                var column = ' archivesId,UName,department,startDate,deadline,phyTest,yearlyCheckDate,cardPath,photoPath,sfzPath';
                 var ajaxTimeOut = $.ajax({
                     url: "../../../ways.php",
                     type:"POST",
                     timeout:8000,
                     //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-                    data:{funcName:'select',where:' where payid =\''+payid+'\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
+                    data:{funcName:'select',where:' where payid =\''+payid+'\' AND department like \''+department+'%\'',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
                         tableName:' jbxx ',column:column,order:' '},
                     dataType:'json',
                     success:function(data) {
                         if(data['success'] ===1){
-                            $('.yearlyCheck').text('年鉴').css({
-                                'color':'#555',
-                                'fontWeight':'normal'
-                            })
                             $('.queryInfo>div>div').css('backgroundColor','inherit')
                             $('#yearlyContainer .queryInfoContent').css('display','block')
-                            $('#yearlyContainer .queryInfoContent .queryPicInfo img').prop('src',data['row1']['cardPath']);
-                            $('#yearlyContainer .queryInfoContent .queryInfo .payId').text(data['row1']['payId']);
+                            console.log(data)
+                            $('#yearlyContainer .queryInfoContent .queryPicInfo #jszPic').prop('src',data['row1']['cardPath']?data['row1']['cardPath']:'../images/暂无图片.png');
+                            $('#yearlyContainer .queryInfoContent .queryPicInfo #sfzPic').prop('src',data['row1']['sfzPath']?data['row1']['sfzPath']:'../images/暂无图片.png');
+                            $('#yearlyContainer .queryInfoContent .queryPicInfo #photoPic1').prop('src',data['row1']['photoPath']?data['row1']['photoPath']:'../images/暂无图片.png');
+                            $('#yearlyContainer .queryInfoContent .queryInfo .archivesId').text(data['row1']['archivesId']);
                             $('#yearlyContainer .queryInfoContent .queryInfo .name').text(data['row1']['UName']);
                             $('#yearlyContainer .queryInfoContent .queryInfo .department').text(data['row1']['department']);
                             $('#yearlyContainer .queryInfoContent .queryInfo .yearlyCheckDateInput').val(data['row1']['yearlyCheckDate']);
@@ -6998,7 +7008,8 @@ $(document).ready(function() {
                             $('#yearlyContainer .queryInfoContent .queryInfo .phyTest').text(data['row1']['phyTest']);
                             $('#yearlyContainer .queryInfoContent .queryInfo .yearlyCheckDateInput').val(data['row1']['yearlyCheckDate']);
                             $("#yearlyContainer .queryInfoContent .queryInfo input").prop('disabled',true).css('backgroundColor','inherit')
-                            $(".yearlyButtonBanner").css('display','block')
+                            $('#uploadImage input').val('')
+                            $('#uploadImage img').prop('src','../images/暂无图片.png').css({'width':'73px','height':'64px'})
                             boundYearEvent(data['row1'])
                         }else{
                             alert('您查询的信息不存在')
@@ -7023,7 +7034,35 @@ $(document).ready(function() {
             }
         }
     }
-
+    appendImproveAlert()
+    function appendImproveAlert(){
+        var power = sessionGet('power');
+        if(power === '1'){
+            var department = sessionGet('department').split(',')[1]?sessionGet('department').split(',')[0]:sessionGet('department');
+            var column = ' payId,uName,cardPath,sfzPath,photoPath';
+            var where = ' where department like \''+ department +'%\' AND (cardPath = \'\' OR sfzPath = \'\' OR photoPath = \'\')';
+            $.ajax({
+                url: "../../../ways.php",
+                type: "POST",
+                data: {
+                    funcName: 'select',
+                    serverName: '10.101.62.73',
+                    uid: 'sa',
+                    pwd: '2huj15h1',
+                    Database: 'JSZGL',
+                    tableName: ' jbxx ',
+                    column: column,
+                    where: where,
+                    order: ' '
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                    //信息不完善的data，下周把data处理后写入modal中，提示用户哪些人需要完善
+                }
+            })
+        }
+    }
     function boundYearEvent(data){
         $('.yearlyButtonBanner .phyTestOk').off('click').on('click',function(){
             if(confirm(data['UName']+'师傅的体检结论合格，确定？')){
@@ -7109,6 +7148,112 @@ $(document).ready(function() {
                 })
             }
         })
+        $('.yearlyButtonBanner .uploadImg').off('click').on('click',function(){
+            $("#uploadImage").modal('show')
+            //图片上传功能。
+            $("#uploadImage .btn-primary").off('click').on('click', function () {
+                var archivesId = $("#yearlyContainer .queryInfoContent .archivesId").text();
+                var uname = $("#yearlyContainer .queryInfoContent .name").text();
+                //取用户身份证号
+                var ajaxTimeOut1 = $.ajax({
+                    url: "../../../ways.php",
+                    type: "POST",
+                    timeout: 8000,
+                    data: {
+                        funcName: 'getInfo', serverName: '10.101.62.62', uid: 'sa', pwd: '2huj15h1', Database: 'USERINFO',
+                        tableName: 'userinfo1', column: ' cardid ', where: ' where archivesId = \'' + archivesId + '\'', order: ' '
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        var cardId = data['row']['cardid'];
+                        var fileCard = document.getElementById('cardInput').files[0];
+                        var fileSfz = document.getElementById('sfzInput').files[0];
+                        var filePhoto = document.getElementById('photoInput').files[0];
+                        var formData = new FormData($('#uploadImageForm')[0]);
+                        var cardPath = uname + cardId + '驾驶证' + '.jpg';
+                        var sfzPath = uname + cardId + '身份证' + '.jpg';
+                        var photoPath = uname + cardId + '电子照' + '.jpg';
+                        var setStr = '';
+                        //该变量是update语句中set后面的句段
+                        formData.append("uname", uname);
+                        formData.append("cardId", cardId);
+                        formData.append("serverName", '10.101.62.73');
+                        formData.append("uid", 'sa');
+                        formData.append("pwd", '2huj15h1');
+                        formData.append("Database", 'JSZGL');
+                        formData.append("tableName", 'jbxx');
+                        formData.append("where", ' where ' + ' archivesId = \'' + archivesId + '\'');
+                        var cardFlag = false;
+                        var sfzFlag = false;
+                        var photoFlag = false;
+                        var flag = true;
+                        if (!fileCard || fileCard.size <= 0) {}else{
+                            cardFlag = true;
+                            formData.set("file", fileCard);
+                            setStr = 'cardPath = \'..' + '/' + 'images' + '/' + 'userPic' + '/' + cardPath + '\'';
+                            formData.set("setStr", setStr);
+                            formData.set("fileName",cardPath)
+                            uploadImage(formData)
+                        }
+                        if( !fileSfz || fileSfz.size <= 0){}else{
+                            sfzFlag = true;
+                            formData.set("file", fileSfz);
+                            setStr = 'sfzPath = \'..' + '/' + 'images' + '/' + 'userPic' + '/' + sfzPath + '\'';
+                            formData.set("fileName",sfzPath)
+                            formData.set("setStr", setStr);
+                            uploadImage(formData)
+                        }
+                        if(!filePhoto || filePhoto.size <= 0){}else{
+                            photoFlag = true;
+                            formData.set("file", filePhoto);
+                            setStr = 'photoPath = \'..' + '/' + 'images' + '/' + 'userPic' + '/' + photoPath + '\' ';
+                            formData.set("fileName",photoPath)
+                            formData.set("setStr", setStr);
+                            uploadImage(formData)
+                        }
+                        if(!cardFlag && !sfzFlag && !photoFlag){
+                            alert("请选择图片");
+                            return;
+                        }
+                        if(flag){
+                            alert('上传成功')
+                        }else{
+                            alert('文件格式错误')
+                        }
+                        function uploadImage(formData){
+                            $.ajax({
+                                url: "../../../storeImg.php",
+                                type: "POST",
+                                data: formData,
+                                dataType:'JSON',
+                                processData: false,
+                                contentType: false,
+                                cache: false,
+                                success: function (data) {
+                                    if(data['success'] === 1) {
+                                    }else{
+                                        flag = false;
+                                    }
+                                }
+                            })
+                        }
+                    },
+                    beforeSend: function () {
+                        //在where字段后加入用户选择的车间范围
+                        testSession(userSessionInfo);
+                        loadingPicOpen();
+                    },
+                    complete: function (XMLHttpRequest, status) {
+                        loadingPicClose();
+                        if (status === 'timeout') {
+                            ajaxTimeOut1.abort();    // 超时后中断请求
+                            alert('网络超时，请检查网络连接');
+                        }
+                    }
+                })
+            });
+        })
+
     }
 
 
@@ -7616,147 +7761,8 @@ $(document).ready(function() {
 
     }
 
-    //图片上传功能。
-    $("#cardSubmit").off('click').on('click', function () {
-        var payId = sessionGet('payId');
-        var uname = sessionGet('user');
-        //取用户身份证号
-        var ajaxTimeOut1 = $.ajax({
-            url: "../../../ways.php",
-            type: "POST",
-            timeout: 8000,
-            data: {
-                funcName: 'getInfo', serverName: '10.101.62.62', uid: 'sa', pwd: '2huj15h1', Database: 'USERINFO',
-                tableName: 'userinfo1', column: ' cardid ', where: ' where payId = \'' + payId + '\'', order: ' '
-            },
-            dataType: 'json',
-            success: function (data) {
-                var cardId = data['row']['cardid'];
-                var fileCard = document.getElementById('cardInput');
-                var formData = new FormData($("#cardForm")[0]);
-                var path = uname + cardId + '驾驶证' + '.jpg';
-                var setStr = 'cardPath = \'..' + '/' + 'images' + '/' + 'userPic' + '/' + path + '\'';
-                //该变量是update语句中set后面的句段
-
-                formData.append("file", fileCard);
-                formData.append("uname", uname);
-                formData.append("cardId", cardId);
-                formData.append("serverName", '10.101.62.73');
-                formData.append("uid", 'sa');
-                formData.append("pwd", '2huj15h1');
-                formData.append("Database", 'JSZGL');
-                formData.append("tableName", 'jbxx');
-                formData.append("where", ' where ' + ' payId = \'' + payId + '\'');
-                formData.append("setStr", setStr);
-                if (fileCard.value === "" || fileCard.size <= 0) {
-                    alert("请选择图片");
-                    return;
-                }
-                $.ajax({
-                    url: "../../../storeImg.php",
-                    type: "POST",
-                    data: formData,
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    cache: false,
-                    success: function (data) {
-                        if (data['success'] === 1) {
-                            alert('驾驶证上传成功。请刷新页面来查看证件信息');
-                            $("#cardInput").val('');
-                            $('#cardPreview').css('display', 'none');
-                        }
-                    }
-                })
 
 
-            },
-            beforeSend: function () {
-                //在where字段后加入用户选择的车间范围
-                testSession(userSessionInfo);
-                loadingPicOpen();
-            },
-            complete: function (XMLHttpRequest, status) {
-                loadingPicClose();
-                if (status === 'timeout') {
-                    ajaxTimeOut1.abort();    // 超时后中断请求
-                    alert('网络超时，请检查网络连接');
-                }
-            }
-        })
-    });
-    $("#photoSubmit").off('click').on('click', function () {
-        var payId = sessionGet('payId');
-        var uname = sessionGet('user');
-        //取用户身份证号
-        var ajaxTimeOut1 = $.ajax({
-            url: "../../../ways.php",
-            type: "POST",
-            timeout: 8000,
-            data: {
-                funcName: 'getInfo', serverName: '10.101.62.62', uid: 'sa', pwd: '2huj15h1', Database: 'USERINFO',
-                tableName: 'userinfo1', column: ' cardid ', where: ' where payId = \'' + payId + '\'', order: ' '
-            },
-            dataType: 'json',
-            success: function (data) {
-                var cardId = data['row']['cardid'];
-
-                var filePhoto = document.getElementById('photoInput');
-                var formData2 = new FormData($("#photoForm")[0]);
-
-                var path = uname + cardId + '电子照' + $("#photoInput").val().substring($("#photoInput").val().lastIndexOf("."));
-                var setStr = 'photoPath = \'..' + '/' + 'images' + '/' + 'userPic' + '/' + path + '\'';
-                //该变量是update语句中set后面的句段
-
-                formData2.append("file", filePhoto);
-                formData2.append("uname", uname);
-                formData2.append("cardId", cardId);
-                formData2.append("serverName", '10.101.62.73');
-                formData2.append("uid", 'sa');
-                formData2.append("pwd", '2huj15h1');
-                formData2.append("Database", 'JSZGL');
-                formData2.append("tableName", 'jbxx');
-                formData2.append("where", ' where ' + ' payId = \'' + payId + '\'');
-                formData2.append("setStr", setStr);
-                if (filePhoto.value === "" || filePhoto.size <= 0) {
-                    alert("请选择图片");
-                    return;
-                }
-
-                $.ajax({
-                    url: "../../../storePhoto.php",
-                    type: "POST",
-                    data: formData2,
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    cache: false,
-                    success: function (data) {
-                        if (data['success'] === 1) {
-                            alert('电子照上传成功');
-                            $("#photoInput").val('');
-                            $('#photoPreview').css('display', 'none');
-                        }
-
-                    }
-                })
-
-
-            },
-            beforeSend: function () {
-                //在where字段后加入用户选择的车间范围
-                testSession(userSessionInfo);
-                loadingPicOpen();
-            },
-            complete: function (XMLHttpRequest, status) {
-                loadingPicClose();
-                if (status === 'timeout') {
-                    ajaxTimeOut1.abort();    // 超时后中断请求
-                    alert('网络超时，请检查网络连接');
-                }
-            }
-        })
-    })
 
 
 

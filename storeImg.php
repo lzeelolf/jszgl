@@ -15,13 +15,11 @@ if ($_FILES['file']["type"] == 'image/png' || $_FILES['file']["type"] == 'image/
     }
     else
     {
-
         //自定义文件名称
-        $array='jpg';
-        $newfilename=$_POST['uname'].$_POST['cardId'].'驾驶证';
-        $_FILES['file']["name"]=$newfilename.".".$array;
+        $newfilename=$_POST['fileName'];
+        $_FILES['file']["name"]=$newfilename;
         $upload_file = iconv("UTF-8", "GB2312", $_FILES["file"]["name"]);
-        if (!is_dir("source/images/userPic"))//当路径不穿在
+        if (!is_dir("source/images/userPic"))//当路径不存在
         {
             mkdir("source/images/userPic");//创建路径
         }
@@ -29,16 +27,13 @@ if ($_FILES['file']["type"] == 'image/png' || $_FILES['file']["type"] == 'image/
         $url=$url.$upload_file;
         if (file_exists($url.$upload_file))//当文件存在
         {
-            $ret['notice'] = '存在同名文件，已覆盖';
             move_uploaded_file($_FILES['file']["tmp_name"],$url);
         }
         else//当文件不存在
         {
             move_uploaded_file($_FILES['file']["tmp_name"],$url);
-            $ret['notice'] = '驾驶证上传成功';
         }
         $ret['success'] = 1;
-
         update($_POST['serverName'],$_POST['uid'],$_POST['pwd'],$_POST['Database'],$_POST['tableName'],$_POST['setStr'],$_POST['where']);
     }
 }
