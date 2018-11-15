@@ -6,6 +6,29 @@ function initialScreen(){
     }
 }
 
+//取公用参数信息
+var csData = getCs();
+function getCs(){
+    var csData = {};
+        $.ajax({
+        url: "../../../ways.php",
+        type: "POST",
+        timeout: 8000,
+        async:false,
+        data: {
+            funcName: 'getCsxx', serverName: '10.101.62.73', uid: 'sa', pwd: '2huj15h1', Database: 'jszgl',
+            tableName: 'csxx', column: ' * '
+        },
+        dataType: 'json',
+        success: function (data) {
+            csData = Object.assign({},data)
+            return csData
+        }
+    });
+    return csData;
+}
+
+
 //session存储函数,参数为：键名，值名
 function sessionSet(key,value){
     sessionStorage.setItem(key,value);
@@ -56,13 +79,19 @@ function resizePage(){
     $("#bottom").css('height',windowHeight*0.25+'px');
 }
 
-
-
+//检查arr数组中是否含有值为字符串str的元素，
+function checkIfInArray(str,arr){
+    for(var i =0;i<arr.length;i++){
+        if(arr[i] === str){
+            return true
+        }
+    }
+    return false
+}
 //检查登录状态和用户名
 function loginStatus(){
     if(sessionGet('user')){
         $(".navbar-inverse .name").text(sessionGet('user'))
-        //$("#bigContent #leftContent .name").text(sessionGet('user'))
     }else{
         alert('请先登录！');
         window.location.href = 'login.html';
@@ -70,86 +99,6 @@ function loginStatus(){
 }
 
 
-//显示证件查询结果(index.html)
-function displayQueryForm(){
-    var obj = checkQueryRequest();
-    obj = addQueryDepartment(obj);
-    if(obj === undefined){
-        return false
-    }
-    var ajaxTimeOut = $.ajax({
-        url: "../../../ways.php",
-        type:"POST",
-        timeout:8000,
-        //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-        data:{funcName:'select',where:obj.where,serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
-            tableName:'jbxx',column:obj.column,order:obj.order},
-        dataType:'json',
-        success:function(data){
-            if(data.success === 1){
-                //把使用过的多余属性删除，便于处理数据
-                delete data['success'];
-                displayQueryTable(data,document.getElementById('queryCardContent'),document.getElementById('cardPageContent'),'pageMode',obj,'queryCardContentTable');
-                //生成EXCEL按钮出现
-                $("#queryCardBanner .htmlToXls").css("visibility",'visible');
-            }else{
-                alert('您查询的信息不存在');
-            }
-        },
-        beforeSend:function(){
-            //在where字段后加入用户选择的车间范围
-            testSession(userSessionInfo);
-            loadingPicOpen();
-        },
-        complete: function (XMLHttpRequest,status) {
-            loadingPicClose();
-            if($("#querySelectBanner").attr('class') === 'less'){
-                $("#querySelectBanner").dequeue().animate({'height':'0'},700,function(){
-                    $("#querySelectBanner").attr('class','more');
-                    $("#more").text('更多...');
-                });
-            }
-            if(status === 'timeout') {
-                ajaxTimeOut.abort();    // 超时后中断请求
-                alert('网络超时，请检查网络连接');
-            }
-        }
-    })
-}
-
-
-//displayQueryTable函数，用来显示查询结果的表格(table)并添加内容   最好做成可以通用的函数，根据传入数据的不同来改变
-//第一个参数data是传入的数据(obj),第二个参数是要添加表格的位置即父元素,第三个参数分页模式,目前还未增加第二种模式
-//obj是sql语句对象,tableName是要给新建的表格添加的ID，true是是否添加表头排序功能
-function displayQueryTable(data,element,pageElement,mode,obj,tableName){
-    if(mode === 'pageMode'){
-        //分页,每页30条
-        pageDividing(data,data['count'],30,element,pageElement,obj,tableName,true);
-    }
-}
-
-
-
-//分页函数，data是数据集，参数total是数据总条目数，countPerPage是每页几条,
-// dataPosition代表数据插入的位置（父元素）习惯是个div标签，
-// pagePosition代表分页器插入的位置(父元素)习惯是个div标签
-//obj是sql语句对象
-function pageDividing(data,total,countPerPage,dataPosition,pagePosition,obj,tableName,headEvent){
-    //把多余的属性删除，便于处理
-    delete data['count'];
-    for(var i in data){
-        if(data[i]['Department']){
-            if(data[i]['Department'].split(',').length>1){
-                data[i]['Department'] = data[i]['Department'].split(',')[0];
-            }
-        }
-
-    }
-    showTableHead(data,pagePosition,dataPosition,headEvent,tableName,obj,total,countPerPage);
-    showList(data,1,countPerPage,dataPosition);
-    showPagingList(data,total,countPerPage,pagePosition,1,dataPosition);
-
-}
 
 //生成excel函数
 function htmlToXls(data,name,filterArray,headerArray){
@@ -174,273 +123,19 @@ function htmlToXls(data,name,filterArray,headerArray){
     toExcel.saveExcel();
 }
 
-//显示表头，由于表头是固定的，不能每次都动态添加   参数是数据集data和插入的位置dataPosition
-function showTableHead(data,pagePosition,dataPosition,headEvent,tableName,obj,total,countPerPage){
-    var html = '<table><tr>';
-    for(var i in data['row1']){
-        //字典，中英文对照
-        var j ='';
-        switch(i){
-            case 'payId':
-                j = '工资号';
-                break;
-            case 'archivesId':
-                j = '档案号';
-                break;
-            case 'UName':
-                j = '姓&nbsp;&nbsp;&nbsp;&nbsp;名';
-                break;
-            case 'department':
-                j = '部&nbsp;&nbsp;&nbsp;&nbsp;门';
-                break;
-            case 'birthDate':
-                j = '出生日期';
-                break;
-            case 'txrq':
-                j = '退休日期';
-                break;
-            case 'deadline':
-                j = '有效截止日期';
-                break;
-            case 'sjDate':
-                j = '司机初次<br>领证日期';
-                break;
-            case 'sjRemark':
-                j = '批&nbsp;准&nbsp;文&nbsp;号';
-                break;
-            case 'sjDriveCode':
-                j = '准驾类型代码';
-                break;
-            case 'sjDriveType':
-                j = '准&nbsp;驾&nbsp;类&nbsp;型';
-                break;
-            case 'status':
-                j = '驾驶证状态';
-                break;
-            case 'age':
-                j = '年龄';
-                break;
-            case 'startDate':
-                j = '有效起始日期';
-                break;
-            case 'cardPath':
-                break;
-            case 'photoPath':
-                break;
-            case 'changeType':
-                j = '申请类型';
-                break;
-            case 'remainingDays':
-                j = '距到期剩余天数';
-                break;
-        }
-        html += '<th id='+i+'>'+j+'</th>';
-    }
-    html += '</tr>';
-    $(dataPosition).empty();
-    $(dataPosition).append(html);
-    $(dataPosition).children('table').attr('cellspacing',0).attr('cellpadding',0).attr('id',tableName);
-
-    //是否给表头添加事件
-    if(headEvent === true){
-        boundHeadEvent($(dataPosition).children('table').children('tbody').children('tr').children('th'),obj,$(pagePosition),total,countPerPage);
-        //表头点击排序
-        function boundHeadEvent(eventElement,obj,pagePosition,total,countPerPage){
-            //permission变量用来记录是否允许用户进行排序：
-            //如果用户在查询之后变更了勾选的车间，就不能进行排序了
-            var permission = 1;
-            $('#queryCardBanner input').off('change').change(function(){
-                permission =0;
-                $(eventElement).css({'cursor':'default','color':"#bbb"});
-            });
-            //给表头栏目添加事件：例如点击工资号，升序，再次点击，降序排列
-            $(eventElement).off('click').on('click',function(){
-                var width = parseInt($(this).css('width').split('px')[0]);
-                var positionY = -78;
-                //做火狐兼容
-                if(navigator.userAgent.indexOf('Firefox')>=0){
-                    positionY = -66;
-                }
-                if(permission){
-                    //把点击的th的所有兄弟th的背景清空、排序属性重置
-                    $(this).siblings().attr('status','');
-                    $(this).siblings().css({"background-image":'none','background-position-y':'-3px'});
-                    //如果已有status属性并为空，说明是从升序转来，转降序排列并且设置背景
-                    if($(this).attr('status') === ' '){
-                        $(this).attr('status','DESC');
-                        $(this).css({'background-position-y':positionY+'px'});
-                        //两行文本的背景略有不同
-                        if($(this).text().length>7){
-                            $(this).css('background-position-y',(positionY+12)+'px')
-                        }
-                    }else if($(this).attr('status') === 'DESC'){
-                        $(this).css({'background-position-y':(positionY+75)+'px'});
-                        $(this).attr('status',' ');
-                        if($(this).text().length>7){
-                            $(this).css('background-position-y',(positionY+87)+'px')
-                        }
-                    }else{
-                        $(this).attr('status',' ');
-                        $(this).css({'background-position-x':width*0.89+'px','background-image':'url(../images/sprite.png)','background-position-y':(positionY+75)+'px'});
-                        if($(this).text().length>7){
-                            $(this).css('background-position-y',(positionY+87)+'px')
-                        }
-                    }
-                    orderAjaxRequest($(this).attr('id'),$(this).attr('status'),$(pagePosition).children('.cur').text(),obj,total,countPerPage,dataPosition,pagePosition);
-                }else{
-                    alert('请重新进行查询');
-                }
-            })
-        };
-    }
 
 
-}
-//参数：要按哪列排序、排序方式、当前是第几页、sql语句对象
-function orderAjaxRequest(orderColumn,orderWay,current,obj,total,countPerPage,dataPosition,pagePosition){
-    var ajaxTimeOut = $.ajax({
-        url: "../../../ways.php",
-        type:"POST",
-        timeout:8000,
-        //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
-        data:{funcName:'select',where:obj.where,serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
-            tableName:'jbxx',column:obj.column,order:' order by '+orderColumn+' '+orderWay},
-        dataType:'json',
-        success:function(data){
-            if(data.success === 1){
-                //把使用过的多余属性删除，便于处理数据
-                delete data['success'];
-                delete data['count'];
-                showList(data,current,countPerPage,dataPosition);
-                showPagingList(data,total,countPerPage,pagePosition,current,dataPosition);
-            }else{
-                alert('您查询的信息不存在');
-            }
-        },
-        beforeSend:function(){
-            loadingPicOpen();
-            testSession(userSessionInfo);
-        },
-        complete: function (XMLHttpRequest,status) {
-            loadingPicClose();
-            if(status === 'timeout') {
-                ajaxTimeOut.abort();    // 超时后中断请求
-                alert('网络超时，请检查网络连接');
-            }
-        }
-    })
-}
-
-//显示数据列表的函数，参数是数据集data,第page页,每页条数,目标位置
-function showList(data,page,countPerPage,dataPosition){
-    //等待画面
-    loadingPicOpen();
-    //添加表头
-    var html ='<tr>';
-    var j =0;
-    //取数据，拼接字符串
-    for(var i in data){
-        if(j>=countPerPage*(page-1) && j<countPerPage*page && i ){
-            j++;
-            for(var m in data[i]){
-                html += '<td>'+data[i][m]+'</td>';
-            }
-            html+="</tr>"
-        }else if(j>countPerPage*page){
-            html += '</table>';
-            break;
-        }else{
-            j++;
-        }
-    }
-    //把字符串加入文档，注意要先把表格清空。表头固定，所以只删除除表头之外的tr
-    var id = $(dataPosition).attr('id');
-    $("#"+id+" tr:not(:first)").remove();
-    $($("#"+id+" tbody")).append(html);
-    //判断条目是否不够一页，如果不够，用空白栏目布满
-    if($(dataPosition).children('table').children('tbody').children('tr').length < countPerPage+1){
-        //要再添加count行以补满表格
-        html ='';
-        var count = countPerPage-$(dataPosition).children('table').children('tbody').children('tr').length+1;
-        var columns = getHowManyColumns(data);
-        //两层循环，添加tr和td
-        for(var m=0;m<count;m++){
-            html+='<tr>';
-            for(var n=0;n<columns;n++){
-                html+="<td></td>";
-            }
-            html+="</tr>";
-        }
-        $(dataPosition).children('table').children('tbody').append(html);
-    }
-    //关闭等待画面
-    loadingPicClose()
-}
-//显示分页控件的函数，参数是数据集条数,每页条数，生成分页控件的目标位置，current当前序号
-function showPagingList(data,total,countPerPage,pagePosition,current,dataPosition){
-    var html ='';
-    //第一次查询，显示分页栏，显示第几页/共几页
-    $(pagePosition).css("display",'block');
-    $(pagePosition).children(".cur").html(current);
-    //共max页
-    var max = Math.ceil(total/countPerPage);
-    $(pagePosition).children(".total").html(max);
-    //给select标签添加option子元素
-    for(var i =0;i<max;i++){
-        html+= '<option>'+(i+1)+'</option>';
-    }
-    $(pagePosition).children(".selectPage").empty();
-    $(pagePosition).children(".selectPage").append(html);
-    //通过参数，获知目前是第几页，更改下拉菜单的当前值
-    $(pagePosition).children(".selectPage").children("option:eq("+(current-1)+")").attr('selected','selected');
-    //控件添加完毕，绑定事件。参数是总页数和当前页码
-    boundPageEvent(data,max,current,total,countPerPage,pagePosition,dataPosition);
-}
-//绑定分页控件的点击事件，参数是最大页数和当前页数
-function boundPageEvent(data,max,cur,total,countPerPage,pagePosition,dataPosition){
-    $(pagePosition).children(".home").off('click').click(function(){
-        if(cur!==1){
-            showList(data,1,countPerPage,dataPosition);
-            showPagingList(data,total,countPerPage,pagePosition,1,dataPosition);
-            cur = 1;
-        }
-    });
-    $(pagePosition).children(".prev").off('click').click(function(){
-        if(parseInt(cur)!==1){
-            showList(data,cur-1,countPerPage,dataPosition);
-            showPagingList(data,total,countPerPage,pagePosition,cur-1,dataPosition);
-            cur-=1;
-        }
-    });
-    $(pagePosition).children(".next").off('click').click(function(){
-        cur =parseInt(cur);
-        if(cur!==max){
-            //此处要做类型转换，以免页码的类型由数值变成字符串，+1操作就出现bug了
-            showList(data,cur+1,countPerPage,dataPosition);
-            showPagingList(data,total,countPerPage,pagePosition,cur+1,dataPosition);
-            cur+=1;
-        }
-    });
-    $(pagePosition).children(".last").off('click').click(function(){
-        if(cur!==max){
-            showList(data,max,countPerPage,dataPosition);
-            showPagingList(data,total,countPerPage,pagePosition,max,dataPosition);
-            cur = max;
-        }
-    });
-    //下拉菜单的事件由change()绑定，off()防止累加绑定。
-    $(pagePosition).children(".selectPage").off('change').change(function(){
-        var cur = $(this).children('option:selected').val();
-        showList(data,cur,countPerPage,dataPosition);
-        showPagingList(data,total,countPerPage,pagePosition,cur,dataPosition);
-    })
+function boundOutputExcel(data){
     //生成excel文件
     $("#queryCardBanner .htmlToXls").off('click').on('click',function(){
         if(confirm('是否要将查询结果生成Excel文件？')){
-            var filterArray = ['PayId','ArchivesId','UName','BirthDate','Txrq','Department','fsjDate','fsjRemark','fsjDriveCode',
-                'fsjDriveType','sjDate','sjRemark','sjDriveCode','sjDriveType','deadline','status'];
-            var headerArray =['工资号','档案号','姓名','出生日期','退休日期','部门','副司机初次领证日期','批准文号','准驾类型代码','准驾类型',
-                '司机初次领证日期','批准文号','准驾类型代码','准驾类型','证件有效截止日期','驾驶证状态']
+            var filterArray = [];
+            var headerArray =[];
+            var arr  = $("#queryTable th");
+            for(var i =0;i<arr.length;i++){
+                filterArray.push($(arr[i]).attr('id'));
+                headerArray.push($(arr[i]).text());
+            }
             htmlToXls(data,'机车驾驶证统计信息表',filterArray,headerArray)
         }
     })
@@ -534,13 +229,6 @@ function testSession(obj){
         }
     })
 
-
-
-
-
-
-
-
     if(obj.token === sessionGet('token') && obj.user ===sessionGet('user') && obj.power ===sessionGet('power') && obj.department === sessionGet('department') && obj.payId === sessionGet('payId')){
     }else{
         alert('用户信息发生变化，请重新登录');
@@ -571,15 +259,12 @@ function checkQueryRequest(){
         var querySql = {};
         querySql.where = '';
         querySql.order = '';
-        querySql.column = '';
+        querySql.column = 'payId,archivesId,uName,department,birthDate,txrq,cardId,sjDate,sjDriveCode,status,startDate,deadline,yearlyCheckDate,PC';
         var arr  = $("#inputArea>div>input:checked");
         if(arr.length === 0){
             alert('请至少选择一列您要查看的信息');
-            //后期如果数据库jbxx写入了更多列，在这里更改
-        }else if(arr.length === $('#inputArea input').length){
-            querySql.column = 'payId,archivesId,UName,department,birthDate,txrq,' +
-                '           sjDate,sjRemark,sjDriveCode,sjDriveType,status,startDate,deadline';
         }else{
+            querySql.column = '';
             for(var i =0;i<arr.length;i++){
                 querySql.column += $(arr[i]).attr('id')+',';
             }
@@ -1256,14 +941,15 @@ function checkQueryRequest(){
 //渲染页面中需要动态添加的元素(高级搜索中的checkbox等)
 function appendElement(){
     var html ='';
+    var columnArr = 'payId,archivesId,uName,department,birthDate,txrq,cardId,sjDate,sjDriveCode,status,startDate,deadline,yearlyCheckDate,PC'.split(',');
     $.ajax({
         url: "../../../ways.php",
         type:"POST",
         timeout:8000,
         //若后期连接数据库的接口需求有变化，需要从这里更改数据的键值
         data:{funcName:'appendElement',serverName:'10.101.62.73',uid:'sa',pwd:'2huj15h1',Database:'JSZGL',
-            tableName:'jbxx',column:'top 1 payId,archivesId,UName,department,txrq,birthDate,' +
-            'sjDate,sjRemark,sjDriveCode,sjDriveType,status,deadline,startDate'},
+            tableName:'jbxx',column:'top 1 payId,archivesId,uName,department,txrq,birthDate,' +
+            'sjDate,sjRemark,sjDriveCode,sjDriveType,status,deadline,startDate,yearlyCheckDate,PC'},
         dataType:'json',
         success:function(data){
             for(var i in data['row']){
@@ -1276,11 +962,8 @@ function appendElement(){
                     case 'archivesId':
                         j = '档案号';
                         break;
-                    case 'UName':
+                    case 'uName':
                         j = '姓名';
-                        break;
-                    case 'sex':
-                        j = '性别';
                         break;
                     case 'department':
                         j = '部门';
@@ -1312,11 +995,22 @@ function appendElement(){
                     case 'startDate':
                         j = '有效起始日期';
                         break;
+                    case 'yearlyCheckDate':
+                        j = '年鉴日期';
+                        break;
+                    case 'PC':
+                        j = '批次';
+                        break;
 
                 }
                 html += '<div><input type=\"checkbox\" id=\"'+ i +'\"><label for=\"'+i+'\">'+j+'</label></div>';
             }
             $("#inputArea").append(html);
+            for(var i=0;i<$("#inputArea input").length;i++){
+                if(checkIfInArray($("#inputArea input:eq("+i+")").attr('id'),columnArr)){
+                    $("#inputArea input:eq("+i+")").prop('checked',true);
+                }
+            }
             //给单选框和复选框分别绑定事件，全选、全不选
             $("#inputArea>div>input").off('change').on('change',function(){
                 $("#all").prop('checked',false);
@@ -1348,8 +1042,6 @@ function appendElement(){
                     $("#inputArea>div>input").prop("checked",false);
                 }
             });
-            $("#all").prop("checked",true);
-            $("#inputArea>div>input").prop("checked",true);
         }
     });
 }
@@ -1373,7 +1065,7 @@ function appendSelection(){
             success:function(data){
                 delete data['success'];
                 delete data['count'];
-                __html = '<select name=\"value\" id=\"value\">';
+                __html = '<select style="margin-top: 20px" name=\"value\" id=\"value\">';
                 for(var i in data){
                     if(data[i][column]!==''){
                         __html += '<option value=\"'+data[i][column]+'\">'+data[i][column]+'</option>';
@@ -1399,7 +1091,7 @@ function appendSelection(){
                 __html = '';
                 for(var i in data){
                     if(data[i]['name']!==''){
-                        __html += '<input class=\"marginLeft10px\" type=\"checkbox\" id=\"'+data[i]['name']+'\"/><label for=\"'+data[i]['name']+'\">'+data[i]['name']+'</label>';
+                        __html += '<label class="checkbox inline" for=\"'+data[i]['name']+'\"><input class=\"marginLeft10px\" type=\"checkbox\" id=\"'+data[i]['name']+'\"/>'+data[i]['name']+'</label>';
                     }
                 }
                 $("#valueDiv").empty().append(__html)
@@ -1420,10 +1112,11 @@ function appendSelection(){
                 __html = '';
                 for(var i in data){
                     if(data[i]['nr1']!==''){
-                        __html += '<input class="marginLeft6px" type=\"checkbox\" id=\"'+data[i]['name']+'\"/><label class=\"font12px" for=\"'+data[i]['name']+'\">'+data[i]['nr1']+'</label>';
+                        __html += '<label class=\"checkbox inline" for=\"'+data[i]['name']+'\"><input class="marginLeft6px" type=\"checkbox\" id=\"'+data[i]['name']+'\"/>'+data[i]['nr1']+'</label>';
                     }
                 }
                 $("#valueDiv").empty().append(__html)
+
             }
         })
     }else if(column === 'deadline' || column === 'startDate'){
@@ -1440,7 +1133,7 @@ function appendSelection(){
             success:function(data){
                 delete data['success'];
                 delete data['count'];
-                __html = '<select name=\"value\" id=\"value\">';
+                __html = '<select style="margin-top: 20px" name=\"value\" id=\"value\">';
                 for(var i in data){
                     if(data[i]['nr2']!==''){
                         __html += '<option value=\"'+data[i]['nr2']+'\">'+data[i]['nr2']+'</option>';
@@ -1466,9 +1159,9 @@ function appendValue(){
         //_html = '<input type=\"date\" id=\"value\"/>';
         _html = '<input type=\"text\" id=\"value\"/>';
     }else if((selectType === 'between') && (column === 'payId' || column === 'archivesId' || column === 'age' || column === 'remainingDays')){
-        _html = '<input type="text" id="value1"/>至<input type="text" id="value2"/>之间'
+        _html = '<input type="text" id="value1"/><span>至</span><input type="text" id="value2"/><span>之间</span>'
     }else if((selectType === 'between') && column === 'sjDate'){
-        _html = '<input type="text" id="value1"/>至<input type="text" id="value2"/>之间'
+        _html = '<input type="text" id="value1"/><span>至</span><input type="text" id="value2"/><span>之间</span>'
     }else if((selectType === 'earlier' || selectType ==='later') && (column === 'deadline' || column === 'startDate')){
         var flag = '';
         if(selectType === 'earlier'){
@@ -1478,10 +1171,25 @@ function appendValue(){
         }
         _html = '<input class="marginTop20px" type=\"text\" id=\"value\"/>';
     }else if((selectType === 'between') && (column === 'deadline' || column ==='startDate')){
-        _html = '<input class="marginTop20px" type="text" id="value1"/>至<input type="text" id="value2"/>之间'
+        _html = '<input class="marginTop20px" type="text" id="value1"/><span>至</span><input type="text" id="value2"/><span>之间</span>'
     }
     $("#valueDiv").empty().append(_html)
 }
+//绑定“更多”按钮事件
+$("#more").off('click').on('click', function () {
+    if ($("#querySelectBanner").attr('class') === 'less') {
+        $("#querySelectBanner").dequeue().animate({'height': '0'}, 700, function () {
+            $("#querySelectBanner").attr('class', 'more');
+            $("#more").text('更多...');
+        });
+    } else {
+        $("#querySelectBanner").dequeue().animate({'height': '270px'}, 700, function () {
+            $("#querySelectBanner").attr('class', 'less');
+            $("#more").text('收起');
+        });
+    }
+
+});
 
 //添加车间选项
 function addQueryDepartment(obj){

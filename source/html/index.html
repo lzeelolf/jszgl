@@ -125,7 +125,7 @@
 <div class="navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
         <p class="welcome float">欢迎</p>
-        <a href="#" class="floatR"><i class="icon-cog icon-white"></i></a>
+        <a href="#" class="floatR" id="options"><i class="icon-cog icon-white"></i></a>
         <p class="name floatR"></p>
     </div>
 </div>
@@ -384,10 +384,104 @@
     <div class="modal-body">
         <p class="lead text-error">本车间有尚未完善照片（驾驶证扫描件、身份证正反面扫描件、电子照片）的人员</p>
         <table id="improveAlertTable" cellpadding="0" cellspacing="0" class="table table-bordered table-striped"></table>
+        <div id="improveAlertPage" class="text-center">
+            <span class="prev">上一页</span>
+            <span>第</span>
+            <span class="cur"></span>
+            <span>页&nbsp;/</span>
+            <span>共</span>
+            <span class="total"></span>
+            <span>页</span>
+            <span class="next">下一页</span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">我知道了</button>
+    </div>
+</div>
+<div id="paramOption" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="paramOptionLabel">参数设置</h3>
+    </div>
+    <div class="modal-body">
+        <p class="text-info">在现实情况改变的情况下，请编辑参数：</p>
+        <div class="accordion" id="accordion">
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                        准驾类型编辑
+                    </a>
+                </div>
+                <div id="collapse1" class="accordion-body collapse in">
+                    <div class="accordion-inner">
+                        <p class="text-warning">准驾类型的等级用于判断是否可以由甲型转乙型，用数字表示（数字越大表示等级越高）。新增机型时，请参照已有的值来进行设置。</p>
+                        <table id="paramOptionDriveCodeTable" cellpadding="0" cellspacing="0" class="table table-bordered table-striped"></table>
+                        <small>您可以对已有的准驾类型进行编辑或删除，也可以新加准驾类型</small>
+                        <p class="lead">新增准驾类型</p>
+                        <form class="form-horizontal">
+                            <div class="control-group">
+                                <label class="control-label" for="inputCode">准驾代码</label>
+                                <div class="controls">
+                                    <input type="text" id="inputCode" placeholder="例：J1">
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="inputType">准驾机型</label>
+                                <div class="controls">
+                                    <input type="text" id="inputType" placeholder="例：动车组和内燃、电力机车">
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="inputLevel">等级</label>
+                                <div class="controls">
+                                    <input type="text" id="inputLevel" placeholder="例：5">
+                                </div>
+                            </div>
+                            <div class="control-group text-center">
+                                <button class="btn btn-inverse">清除</button>
+                                <button class="btn btn-primary">提交</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                        更改所需材料
+                    </a>
+                </div>
+                <div id="collapse2" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                        更改所需材料
+                    </div>
+                </div>
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                        有效期和预警期
+                    </a>
+                </div>
+                <div id="collapse3" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                        有效期和预警期
+                    </div>
+                </div>
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+                        更改单位名称
+                    </a>
+                </div>
+                <div id="collapse4" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                        更改单位名称
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-        <button class="btn btn-primary">上传</button>
+        <button class="btn btn-primary">提交</button>
+
     </div>
 </div>
 
@@ -539,9 +633,12 @@
 
                 </div>
                 <div id="queryCardContent">
+                    <table id="queryTable" cellpadding="0" cellspacing="0" class="table table-bordered table-striped"></table>
                 </div>
-                <div id="cardPageContent">
-                    <span class="home">首页</span>
+                <div id="queryPage">
+                    <span>共</span>
+                    <span class="totalCount"></span>
+                    <span>条</span>
                     <span class="prev">上一页</span>
                     <span>第</span>
                     <span class="cur"></span>
@@ -550,10 +647,6 @@
                     <span class="total"></span>
                     <span>页</span>
                     <span class="next">下一页</span>
-                    <span class="last">末页</span>
-                    <span>转到：第</span>
-                    <select name="selectPage" class="selectPage"></select>
-                    <span>页</span>
                 </div>
             </div>
             <div class="jykUse cjUse" id="dataContainer">

@@ -120,7 +120,7 @@ a,a:hover,a:active,a:visited{
     float: left;
     margin-top: 50px;
     width: 12%;
-    min-height: 450px;
+    min-height: 200px;
     text-align: center;
     background-color: rgba(245, 245, 242, 1);
     box-shadow: 0 0 5px 1px #999 ;
@@ -320,9 +320,8 @@ a,a:hover,a:active,a:visited{
     margin-top: 2px;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect {
-    overflow: hidden;
     width: 100%;
-    height: 80px;
+    min-height: 80px;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect>div{
 
@@ -334,71 +333,36 @@ a,a:hover,a:active,a:visited{
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea{
     width:100%;
-    overflow: hidden;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea>select,#selectArea>#selectTypeDiv{
     float: left;
-    margin-left: 30px;
+    margin:20px 0 0 15px;
     font-size: 14px;
+    max-width: 200px;
  }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea>#valueDiv{
     float: left;
-    margin-left: 30px;
+    margin-left: 15px;
     font-size: 14px;
     max-width: 364px;
 }
-#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #value{
-    width: auto;
-    height: 19px;
-    margin-top: 20px;
-    font-size: 12px;
-}
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea>select>option,#selectTypeDiv>select,#selectTypeDiv>select>option,#valueDiv,#value>option,select#value{
     font-size: 14px;
-}
-#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea select#value{
-    font-size: 14px;
-    height: 23px;
+    max-width: 100px;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #value1,#value2{
-    height: 19px;
-    width: 65px;
-    font-size: 12px;
-    margin-top: 20px;
+    max-width: 110px;
 }
-#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea #valueDiv input{
-
+#bigContent #rightContent .operateContent #queryCardContainer #querySelectBanner #whatToSelect #selectArea #valueDiv input[type=text]{
+    margin-top: 20px;
 }
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent{
     overflow-x: auto;
 }
-#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table{
-    background-color: white;
-}
-#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr{
-    height: 24px;
-}
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr>th{
     cursor:pointer;
 }
-#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr th{
-    background-image: none;
-    background-origin: content-box;
-    background-position-y: -3px;
-}
-#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent th,#bigContent #rightContent .operateContent #queryCardContainer #queryCardContent td{
-    height: 24px;
-    line-height: 24px;
-    padding: 0 15px 0 15px;
-    border: 1px solid #333;
-    border-right: none;
-    font-size: 14px!important;
-    white-space: nowrap;
-    user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-}
-#bigContent #rightContent .operateContent #queryCardContainer #cardPageContent{
+#bigContent #rightContent .operateContent #queryCardContainer #queryPage{
     display: none;
     margin-top: 20px;
     padding: 10px 0 10px 0;
@@ -807,16 +771,6 @@ a,a:hover,a:active,a:visited{
 }
 #bigContent #rightContent #giveOutContainer #giveOutContent{
     padding-top: 10px;
-}
-
-#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable th,#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable td{
-    border: 1px solid #333;
-    border-left: none;
-    padding: 5px 10px 5px 10px;
-    font-size: 14px;
-}
-#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable th:first-child,#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable td:first-child{
-    border-left: 1px solid #333;
 }
 #bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable .giveOut{
     color: cornflowerblue;
