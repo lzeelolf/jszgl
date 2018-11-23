@@ -14,7 +14,6 @@ body{
     overflow-y: visible;
     background-color: rgba(26, 117, 252, 0.2);
     position: relative;
-    min-height: 1000px;
 }
 a,a:hover,a:active,a:visited{
     text-decoration: none;
@@ -111,20 +110,44 @@ a,a:hover,a:active,a:visited{
 }
 #bigContent{
     width: 100%;
-    overflow: hidden;
     background-color: rgba(26, 117, 252, 0);
-    position: absolute;
     top: 40px;
+    height: 100%;
 }
 #bigContent #leftContent{
-    float: left;
-    margin-top: 50px;
     width: 12%;
+    top: 15%;
+    left: 0;
     min-height: 200px;
     text-align: center;
     background-color: rgba(245, 245, 242, 1);
     box-shadow: 0 0 5px 1px #999 ;
     border-radius: 5px;
+    position: absolute;
+}
+#leftContent #foldButton{
+    width: 20px;
+    height: 50px;
+    position: absolute;
+    z-index:999;
+    border-radius: 0 3px 3px 0;
+    border: 1px solid #bbbbbb;
+    background-color: rgba(245, 245, 242, 1);
+    border-left: none;
+    top: 50%;
+    margin-top: -25px;
+    right:-21px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+#foldButton:hover{
+    color: #f60;
+}
+#foldButton i{
+    color: inherit;
+    display: block;
+    line-height: 50px;
+    font-size: 20px;
 }
 .welcome{
     height: 40px;
@@ -149,11 +172,7 @@ a,a:hover,a:active,a:visited{
     color:#eee;
     margin: 0 30px 0 0 ;
 }
-#bigContent #leftContent #buttonList{
-    list-style-type: none;
-}
 #bigContent #leftContent #buttonList li{
-    color:#333;
     font-weight: bold;
     text-align: center;
     font-size: 12px;
@@ -176,16 +195,17 @@ a,a:hover,a:active,a:visited{
 #bigContent #leftContent #buttonList li:last-child{
     border-bottom: solid #ccc 1px;
 }
-#bigContent #leftContent #buttonList li:hover{
+#bigContent #leftContent #buttonList li:hover,#buttonList li.cur{
     font-weight: bold;
     background-color: rgba(26, 117, 252, 0.5);
     color: white;
     transition: 0.3s;
 }
 #bigContent #rightContent{
-    float: left;
-    width: 80%;
-    margin-left: 4%;
+    position: absolute;
+    width: 86%;
+    left:14%;
+    top:40px;
     min-height: 600px;
     background-color: rgba(245, 245, 242, 1);
     box-shadow: 0 0 3px 1px #999 ;
@@ -362,8 +382,7 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent .operateContent #queryCardContainer #queryCardContent table tr>th{
     cursor:pointer;
 }
-#bigContent #rightContent .operateContent #queryCardContainer #queryPage{
-    display: none;
+#queryPage{
     margin-top: 20px;
     padding: 10px 0 10px 0;
 }
@@ -680,44 +699,14 @@ a,a:hover,a:active,a:visited{
 #reasonContainer #reasonContent>div>input{
     float: left;
 }
-#bigContent #rightContent #checkContainer #checkBanner{
-    height: 40px;
-    border-bottom: 1px solid #333333;
-}
-#bigContent #rightContent #checkContainer #checkBanner>div{
-    height: 40px;
-    border: 1px solid #333;
-    border-bottom: none;
-    font-size: 14px;
-    line-height: 40px;
-    border-radius: 10px 15px 0 0;
-    cursor: pointer;
-    width: 80px;
-}
-#bigContent #rightContent #checkContainer #checkContent{
-    position: relative;
-    overflow: hidden;
-    height: 700px;
-}
-#bigContent #rightContent #checkContainer #checkContent>div:not(#fixCheckPage){
-    position: absolute;
-    background: white;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-#bigContent #rightContent #checkContainer #checkContent #fixApplyContent #fixCheckTable,#exchangeCheckTable{
-    margin: 10px 0 0 0;
-}
 
-
-#bigContent #rightContent #checkContainer #checkContent .seeInfo{
+#exchangeApplyCheckContent .seeInfo,#fixApplyCheckContent .seeInfo{
     font-size: 12px;
     color: cornflowerblue;
     text-decoration: underline;
     cursor: pointer;
 }
-#bigContent #rightContent #checkContainer #checkContent .pass{
+#exchangeApplyCheckContent .pass,#fixApplyCheckContent .pass{
     float: left;
     margin-left: 10px;
     background:url("../images/pass.png");
@@ -725,19 +714,13 @@ a,a:hover,a:active,a:visited{
     height: 32px;
     cursor: pointer;
 }
-#bigContent #rightContent #checkContainer #checkContent .reject{
+#exchangeApplyCheckContent .reject,#fixApplyCheckContent .reject{
     float: left;
     margin-left: 30px;
     background: url("../images/reject.png");
     width: 16px;
     height: 16px;
     margin-top: 8px;
-    cursor: pointer;
-}
-#bigContent #rightContent #checkContainer #checkContent #fixApplyPage,#bigContent #rightContent #checkContainer #checkContent #exchangeApplyPage{
-    display: none;
-}
- .prev, .next{
     cursor: pointer;
 }
 #bigContent #rightContent #alertContainer #alertBanner {
@@ -750,87 +733,90 @@ a,a:hover,a:active,a:visited{
 #bigContent #rightContent #alertContainer #alertBanner *{
     float: left;
 }
-
-#bigContent #rightContent #alertContainer #alertContent #alertPage ,#dataPage,#giveOutPage{
+#alertPage ,#dataPage,#giveOutPage,#exchangePage,#fixPage,#appendPage,#drdcPage,#summary,#levelUpPage,#checkWithPC,#exchangePage,#fixPage,#queryPage,#deleteHistoryPage,#dcHistoryPage{
     display: none;
 }
-#bigContent #rightContent #alertContainer #alertContent #alertTable th,#bigContent #rightContent #alertContainer #alertContent #alertTable td{
-    border: 1px solid #333;
-    border-left: none;
-    padding: 5px 10px 5px 10px;
-    font-size: 14px;
+.prev, .next{
+    cursor: pointer;
 }
-#bigContent #rightContent #alertContainer #alertContent #alertTable th:first-child,#bigContent #rightContent #alertContainer #alertContent #alertTable td:first-child{
-    border-left: 1px solid #333;
-}
-#bigContent #rightContent #alertContainer #alertContent #alertTable .tz,#giveOutTable .tz{
+
+#bigContent #rightContent #alertContainer #alertContent #alertTable .tz,#alertTable .sq{
     font-size: 12px;
     text-decoration: underline;
     color: cornflowerblue;
     cursor: pointer;
+}
+#alertTable td:last-child{
+    display: none;
 }
 #bigContent #rightContent #giveOutContainer #giveOutContent{
     padding-top: 10px;
 }
-#bigContent #rightContent #giveOutContainer #giveOutContent #giveOutTable .giveOut{
+#exchangeGiveOutTable .giveOut,#fixGiveOutTable .giveOut{
     color: cornflowerblue;
     font-size: 12px;
     text-decoration: underline;
     cursor: pointer;
 }
-#bigContent #rightContent #editContainer #editBanner,#yearlyContainer .yearlyBanner{
+#editContainer #editBanner,#yearlyContainer .yearlyBanner,#deleteBanner{
     overflow: hidden;
 }
-#bigContent #rightContent #editContainer .tip,#yearlyContainer .tip{
+#editContainer .tip,#yearlyContainer .tip,#deleteBanner .tip{
     text-align: left;
     margin-top: 4px;
     text-indent: 2em;
 }
-#bigContent #rightContent #editContainer .queryInput,#yearlyContainer .queryInput{
+#editContainer .queryInput,#yearlyContainer .queryInput,#deleteContainer .queryInput{
     width: 60px;
     margin-right: 10px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent,#yearlyContainer .queryInfoContent{
+#editContainer .queryInfoContent,#yearlyContainer .queryInfoContent,#deleteContainer .queryInfoContent{
     width: 100%;
     overflow: hidden;
     display: none;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryPicInfo{
+#editContainer .queryInfoContent .queryPicInfo{
     width: 40%;
-    height: 250px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo{
+#editContainer .queryInfoContent .queryInfo{
     width: 55%;
     padding-left: 5%;
-    height: 250px;
+}
+#deleteContainer .queryInfoContent .queryInfo{
+    width: 60%;
+    margin-left: 25%;
 }
 #yearlyContainer .queryPicInfo{
     padding: 20px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .date,#yearlyContainer .queryInfo .date{
-    width: 100px;
+#editContainer .queryInfoContent .queryInfo .date,#yearlyContainer .queryInfo .date,#deleteContainer .queryInfo .date{
+    width: 130px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div,#yearlyContainer .queryInfo>div{
-    margin-top: 40px;
+#editContainer .queryInfoContent .queryInfo>div,#yearlyContainer .queryInfo>div,#deleteContainer .queryInfo>div{
+    margin-top: 20px;
     height: 30px;
     white-space: nowrap;
 }
 div.sjRemark{
     width: 130px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>*,#yearlyContainer .queryInfo>div>*{
+#editContainer .queryInfoContent .queryInfo>div>*,#yearlyContainer .queryInfo>div>*,#deleteContainer .queryInfo>div>*{
     float: left;
     height: 29px;
     line-height: 30px;
     margin-right: 10px;
     font-size: 14px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo>div>div,#yearlyContainer .queryInfo>div>div{
+.queryInfoContent p{
+}
+#editContainer .queryInfoContent .queryInfo>div>div,#yearlyContainer .queryInfo>div>div,#deleteContainer .queryInfo>div>div{
     border-bottom: 1px solid #333;
+    font-weight: bold;
     padding: 0;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo input,#yearlyContainer .queryInfo input{
+#editContainer .queryInfoContent .queryInfo input,#yearlyContainer .queryInfo input{
     border:none;
+    font-weight: bold;
     background-color: inherit;
     width: 100%;
     height: 100%;
@@ -839,35 +825,39 @@ div.sjRemark{
     -webkit-user-select: unset;
     font-size: 14px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .payId,#yearlyContainer .queryInfo .archivesId{
+#editContainer .queryInfoContent .queryInfo .payId,#yearlyContainer .queryInfo .archivesId{
     width: 70px;
 }
-#bigContent #rightContent #editContainer .queryInfoContent .queryInfo .driveCodeInput{
+#editContainer .queryInfoContent .queryInfo .driveCodeInput{
     width: 40px;
 }
-#bigContent #rightContent #editContainer .editButtonBanner{
+#editContainer .editButtonBanner,#deleteContainer .deleteButtonBanner{
     display: none;
     height: 40px;
     margin-top: 50px;
 }
-#bigContent #rightContent #editContainer .editButtonBanner .rydc,.cjEdit,.infoFix,.logout,.phyTestOk,.phyTestNo,.yearlyCheck,.uploadImg{
+.editButtonBanner .rydc,.cjEdit,.infoFix,.logout,.phyTestOk,.phyTestNo,.yearlyCheck,.uploadImg{
     font-size: 12px;
     margin-right: 50px;
 }
-#bigContent #rightContent #editContainer .editButtonBanner .cjEdit{
-    display: none;
-}
-#bigContent #rightContent #editContainer .textContent{
+#deleteContainer .logOutContent{
     width: 100%;
     height: 40px;
     line-height: 40px;
     display: none;
 }
-#bigContent #rightContent #editContainer .logOutContent{
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
+
+#deleteHistoryTable th:first-child,#deleteHistoryTable td:first-child,#dcHistoryTable th:first-child,#dcHistoryTable td:first-child,#deleteHistoryTable th:nth-child(2),#deleteHistoryTable td:nth-child(2),#dcHistoryTable th:nth-child(2),#dcHistoryTable td:nth-child(2){
     display: none;
+}
+.thumbnails img{
+    width:120px;
+}
+.thumbnail:hover{
+    cursor: pointer;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    transition: border linear .2s,box-shadow linear .2s;
+    background-color: #f1f1f1;
 }
 #summaryContainer .summaryBanner p{
     text-align: left;
@@ -878,9 +868,6 @@ div.sjRemark{
     display: none;
 }
 
-#summaryContainer #summaryPage{
-    display: none;
-}
 #summaryContainer .summaryContent {
     overflow: auto;
 }
@@ -955,23 +942,20 @@ body table.table th,body table.table td{
     line-height: 30px;
     font-size: 14px;
 }
-#appendContainer #appendPage{
-    display: none;
-}
-#appendContainer  .table .dr,#appendContainer  .table .ts,#appendContainer  .table .dc,#dataTable .back{
+#drdcContainer  .table .dr,#appendContainer  .table .ts,#drdcContainer  .table .dc,#deleteHistoryTable .back,#dcHistoryTable .back{
     text-decoration: underline;
     color: cornflowerblue;
     cursor: pointer;
     font-size: 12px;
 }
-#appendContainer  .table .tz,#appendContainer  .table .tx{
+#drdcContainer  .table .tz,#drdcContainer  .table .tx{
     text-decoration: underline;
     color: cornflowerblue;
     cursor: pointer;
     font-size: 12px;
     margin-left: 4px;
 }
-#appendBanner #quit,#dr{
+#appendBanner #quit,#dr,#exchangeBanner li,#fixBanner li{
     position: relative;
 }
 #appendBanner #quit .redPoint,#dr .redPoint{
@@ -1061,9 +1045,6 @@ body table.table th,body table.table td{
     font-weight: bold;
 }
 #appendContainer .levelUpContent .content{
-    display: none;
-}
-#appendContainer #levelUpPage,#checkWithPCPage{
     display: none;
 }
 #appendContainer #uploadContent,#uploadContent2 table{

@@ -1,6 +1,6 @@
 //初始化视窗
 function initialScreen(){
-    $("body").css('width',screen.width);
+    $("body").css({'width':screen.width,'height':screen.height});
     if(screen.width < 1024){
         alert('为了更好地显示页面,请至少将分辨率设置为1024*768');
     }
